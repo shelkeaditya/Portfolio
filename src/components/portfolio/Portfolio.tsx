@@ -354,8 +354,8 @@ function NavPanel({
               className={cn(
                "group relative flex items-center gap-2 rounded-2xl px-4 py-3.5 transition-all duration-300 ease-out",
                isActive
-                 ? "bg-violet-500/10 text-violet-300 border-l-2 border-violet-500 shadow-[0_0_20px_rgba(124,58,237,0.25)]"
-                 : "text-muted-foreground hover:bg-white/5 hover:text-white hover:translate-x-1"
+                 ? "bg-violet-500/10 text-violet-500 border-l-2 border-violet-500 shadow-[0_0_20px_rgba(124,58,237,0.25)]"
+                 : "text-muted-foreground hover:bg-black/8 hover:translate-x-1"
 )}
             >
               <span
@@ -495,14 +495,12 @@ function ResumeBlock({
   icon,
 }: {
   title: string;
-  accent: "orange" | "orange" | "purple";
+  accent: "orange" | "purple";
   icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const color =
     accent === "orange"
-      ? "var(--accent-orange)"
-      : accent === "orange"
       ? "var(--accent-orange)"
       : "var(--accent-purple)";
   return (
