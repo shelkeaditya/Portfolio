@@ -1,0 +1,219 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+
+@custom-variant dark (&:is(.dark *));
+*{font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;}
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.75rem;
+  /* Light theme — soft premium gray */
+  --background: oklch(0.965 0.003 250);
+  --foreground: oklch(0.18 0.02 265);
+  --card: oklch(0.99 0.002 250);
+  --card-foreground: oklch(0.18 0.02 265);
+  --popover: oklch(0.99 0.002 250);
+  --popover-foreground: oklch(0.18 0.02 265);
+  --primary: oklch(0.58 0.16 260);
+  --primary-foreground: oklch(0.99 0.003 250);
+  --secondary: oklch(0.93 0.005 250);
+  --secondary-foreground: oklch(0.18 0.02 265);
+  --muted: oklch(0.93 0.005 250);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent: oklch(0.92 0.01 260);
+  --accent-foreground: oklch(0.18 0.02 265);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: oklch(0.99 0.003 250);
+  --border: oklch(0.88 0.008 255);
+  --input: oklch(0.88 0.008 255);
+  --ring: oklch(0.58 0.16 260);
+  --accent-blue: oklch(0.64 0.16 250);
+  --accent-purple: oklch(0.62 0.18 295);
+  --accent-orange: oklch(0.72 0.17 50);
+  --surface-1: oklch(0.97 0.003 250);
+  --surface-2: oklch(0.94 0.005 250);
+  --surface-3: oklch(0.91 0.007 255);
+}
+
+.dark {
+  /* Discord-inspired premium dark */
+  --background: #000000;   /* #16181F */
+  --foreground: #E8E6E1;
+  --card: oklch(0.22 0.012 270);         /* #1E1F22 */
+  --card-foreground: #E8E6E1;
+  --popover: #161B22;
+  --popover-foreground: oklch(0.96 0.005 250);
+  --primary: #E8820C;
+  --primary-foreground: #ffffff;
+  --secondary: #21262D;    /* #2B2D31 */
+  --secondary-foreground: #E8E6E1
+  --muted: #21262D;
+  --muted-foreground: #8B949E;
+  --accent: #21262D;
+  --accent-foreground: #E8E6E1;
+  --destructive: oklch(0.65 0.22 22);
+  --destructive-foreground: oklch(0.98 0.003 250);
+  --border: #30363D;
+  --input: #21262D;
+  --ring: 	#E8820C;
+  --accent-blue: oklch(0.7 0.14 250);
+  --accent-purple: oklch(0.7 0.16 295);
+  --accent-orange: #E8820C;
+  --surface-1: #0D1117;
+  --surface-2: #161B22;
+  --surface-3: #1C2128;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family:
+      "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+      Arial, sans-serif;
+    font-feature-settings: "cv11", "ss01", "ss03";
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .surface-1 { background-color: var(--surface-1); }
+  .surface-2 { background-color: var(--surface-2); }
+  .surface-3 { background-color: var(--surface-3); }
+  .text-accent-blue { color: var(--accent-blue); }
+  .text-accent-purple { color: var(--accent-purple); }
+  .text-accent-orange { color: var(--accent-orange); }
+  .bg-accent-blue { background-color: var(--accent-blue); }
+  .bg-accent-purple { background-color: var(--accent-purple); }
+  .bg-accent-orange { background-color: var(--accent-orange); }
+
+  .ambient-bg {
+    background:
+      radial-gradient(1200px 600px at 15% -10%, color-mix(in oklab, var(--accent-blue) 14%, transparent), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, color-mix(in oklab, var(--accent-purple) 12%, transparent), transparent 60%),
+      radial-gradient(700px 400px at 50% 110%, color-mix(in oklab, var(--accent-orange) 8%, transparent), transparent 60%),
+      var(--background);
+  }
+
+  .grid-texture {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--foreground) 4%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 4%, transparent) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+
+  .heading-bar {
+    display: inline-flex;
+    height: 4px;
+    width: 64px;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .heading-bar > span:first-child { flex: 1; background: var(--accent-orange); }
+  .heading-bar > span:last-child  { flex: 1; background: var(--accent-blue); }
+}
+
+/* ── Geometric triangle background decoration ── */
+.poly-bg-left,
+.poly-bg-right {
+  position: fixed;
+  top: 0;
+  width: 420px;
+  height: 420px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.poly-bg-left  { left: 0; }
+.poly-bg-right {
+  right: 0;
+  bottom: 0;
+  top: auto;
+}
+
+.poly-bg-left svg,
+.poly-bg-right svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Hide on small screens so it doesn't eat content */
+@media (max-width: 768px) {
+  .poly-bg-left,
+  .poly-bg-right {
+    width: 200px;
+    height: 200px;
+    opacity: 0.6;
+  }
+}
+
+/* Hide completely on very small screens */
+@media (max-width: 480px) {
+  .poly-bg-left,
+  .poly-bg-right { display: none; }
+}
