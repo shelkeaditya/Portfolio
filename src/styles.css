@@ -66,7 +66,6 @@
 
 :root {
   --radius: 0.75rem;
-  /* Light theme — soft premium gray */
   --background: oklch(0.965 0.003 250);
   --foreground: oklch(0.18 0.02 265);
   --card: oklch(0.99 0.002 250);
@@ -95,20 +94,19 @@
 }
 
 .dark {
-  /* Discord-inspired premium dark */
-  --background: #000000;   /* #16181F */
+  --background: #0a0a0c;   /* #16181F */
   --foreground: #E8E6E1;
-  --card: oklch(0.22 0.012 270);         /* #1E1F22 */
+  --card: oklch(0.13 0 0);         /* #1E1F22 */
   --card-foreground: #E8E6E1;
   --popover: #161B22;
   --popover-foreground: oklch(0.96 0.005 250);
   --primary: #E8820C;
   --primary-foreground: #ffffff;
-  --secondary: #21262D;    /* #2B2D31 */
+  --secondary: oklch(0.20 0 0);    /* #2B2D31 */
   --secondary-foreground: #E8E6E1
-  --muted: #21262D;
+  --muted: #18181c;
   --muted-foreground: #8B949E;
-  --accent: #21262D;
+  --accent: #18181c;
   --accent-foreground: #E8E6E1;
   --destructive: oklch(0.65 0.22 22);
   --destructive-foreground: oklch(0.98 0.003 250);
@@ -118,9 +116,9 @@
   --accent-blue: oklch(0.7 0.14 250);
   --accent-purple: oklch(0.7 0.16 295);
   --accent-orange: #E8820C;
-  --surface-1: #0D1117;
-  --surface-2: #161B22;
-  --surface-3: #1C2128;
+  --surface-1: oklch(0.12 0 0);
+  --surface-2: oklch(0.15 0 0);
+  --surface-3: oklch(0.18 0 0);
 }
 
 @layer base {

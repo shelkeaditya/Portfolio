@@ -28,6 +28,8 @@ import {
   CheckCircle2,
   BookOpen,
   GraduationCap,
+  CircleCheck,
+  Clock3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -82,39 +84,55 @@ function SectionHeading({ title }: { title: string }) {
 }
 
 function ProfileHero({ onJourney }: { onJourney: () => void }) {
+  const { theme, toggle } = useTheme();
+
   return (
     <section className="relative">
       <div className="surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
+
+        <button
+          onClick={toggle}
+          className="absolute top-3 right-3 z-20 md:hidden surface-3 rounded-xl border border-border/60 p-2"
+        >
+          {theme === "dark" ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <Moon className="h-5 w-5" />
+          )}
+        </button>
+
         {/* Very subtle low-intensity ambient orange lighting */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "radial-gradient(900px 320px at 15% 0%, color-mix(in oklab, var(--accent-orange) 8%, transparent), transparent 70%), radial-gradient(600px 240px at 100% 100%, color-mix(in oklab, var(--accent-orange) 5%, transparent), transparent 70%)",
+              "radial-gradient(600px 200px at 10% 0%, color-mix(in oklab, var(--accent-orange) 8%, transparent), transparent 70%)," +
+              "radial-gradient(400px 160px at 90% 100%, color-mix(in oklab, var(--accent-orange) 5%, transparent), transparent 70%)",
           }}
         />
-        <div className="relative flex flex-col gap-6 p-5 md:flex-row md:items-center md:gap-10 md:px-8 md:py-6">
-          {/* Profile picture */}
-          <div className="shrink-0">
-            <div className="group relative w-fit">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -inset-1 rounded-2xl opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100"
-                style={{ background: "color-mix(in oklab, var(--accent-orange) 30%, transparent)" }}
-              />
-              <img
-                src={profileImg}
-                alt="Aditya Shelke"
-                width={160}
-                height={160}
-                className="relative h-32 w-32 md:h-40 md:w-40 rounded-3xl object-cover shadow-[0_18px_40px_-18px_rgba(0,0,0,0.7)] ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 ease-out group-hover:scale-[1.02] group-hover:ring-[color:var(--accent-orange)]"
-              />
-            </div>
-          </div>
+
+        <div className="relative flex flex-col items-center gap-6 p-5 md:flex-row md:items-center md:text-left md:gap-10 md:px-8 md:py-6">
+  {/* Profile picture */}
+  <div className="shrink-0 flex justify-center">
+    <div className="group relative w-fit">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-1 rounded-2xl opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100"
+        style={{ background: "color-mix(in oklab, var(--accent-orange) 30%, transparent)" }}
+      />
+      <img
+        src={profileImg}
+        alt="Aditya Shelke"
+        width={160}
+        height={160}
+        className="relative h-32 w-32 md:h-40 md:w-40 rounded-3xl object-cover shadow-[0_18px_40px_-18px_rgba(0,0,0,0.7)] ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 ease-out group-hover:scale-[1.02] group-hover:ring-[color:var(--accent-orange)]"
+      />
+    </div>
+  </div>
 
           {/* Identity column */}
-          <div className="min-w-0 md:w-[370px] md:border-r md:border-border/60 md:pr-12">
+          <div className="min-w-0 w-full md:w-[370px] md:border-r md:border-border/60 md:pr-12 text-center md:text-left">
             <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
               Aditya <span className="text-violet-400">Shelke</span>
             </h1>
@@ -129,7 +147,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
             </div>
 
             {/* Icons only social row */}
-            <div className="mt-5 flex flex-wrap items-center gap-2">
+            <div className="mt-5 flex flex-wrap justify-center md:justify-start items-center gap-2">
               <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
               <IconLink href="https://x.com/shelke__aditya" icon={TwitterIcon} label="Twitter" />
               <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
@@ -139,13 +157,13 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
           </div>
 
           {/* Metadata grid */}
-          <div className="min-w-0 flex-1">
-            <div className="grid grid-cols-1 gap-x-10 gap-y-6 sm:grid-cols-2">
+          <div className="min-w-0 w-full flex-1 text-left">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-2">
                 <div className="group transition-all duration-300 hover:text-orange-300">
   
               <MetaRow icon={Mail} label="Email"
               >
-                <a href="mailto:work.shelkeaditya@gmail.com" className="flex items-center gap-2 transition-all duration-300 group-hover:text-orange-300">
+                <a href="mailto:work.shelkeaditya@gmail.com" className="flex items-center gap-2 hover:text-foreground hover:underline underline-offset-2 transition-colors duration-200">
                   <span className="transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]">
                    Email
                  </span> 
@@ -157,7 +175,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
                 <a
                   href="/aditya-shelke-resume.pdf"
                   download 
-                  className="group transition-all duration-300 hover:text-white-40"
+                  className="flex items-center gap-2 hover:text-[color:var(--accent-orange)] transition-colors duration-200"
                 >
                   {/* <Download className="h-4 w-4 transition-all duration-300 group-hover:scale-110 group-hover:text-orange-400" /> */}
               
@@ -165,7 +183,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
                 </a>
               </MetaRow>
               
-              <MetaRow icon={MapPin} label="Location">Maharashtra, India</MetaRow>
+              <MetaRow icon={MapPin} label="Location">Pune, India</MetaRow>
               <div>
                 <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
                   Status
@@ -355,7 +373,7 @@ function NavPanel({
                "group relative flex items-center gap-2 rounded-2xl px-4 py-3.5 transition-all duration-300 ease-out",
                isActive
                  ? "bg-violet-500/10 text-violet-500 border-l-2 border-violet-500 shadow-[0_0_20px_rgba(124,58,237,0.25)]"
-                 : "text-muted-foreground hover:bg-black/8 hover:translate-x-1"
+                 : "text-muted-foreground hover:bg-foreground/8 hover:translate-x-1"
 )}
             >
               <span
@@ -411,16 +429,18 @@ function About() {
       </p>
       <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {[
-          { icon: Cloud, label: "Cloud Native", value: "AWS • GCP • Azure" },
-          { icon: Container, label: "DevOps", value: "Docker • CI/CD • Terraform" },
-          { icon: Lock, label: "Security", value: "Networking • TryHackMe" },
+          { icon: Cloud, label: "Cloud", value: "AWS • GCP • Azure" },
+          { icon: Container, label: "DevOps", value: "Docker • Kubernetes • CI/CD" },
+          { icon: Lock, label: "Security", value: "Linux • Networking • VAPT" },
         ].map(({ icon: Icon, label, value }) => (
           <div
             key={label}
-            className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/40"
+            className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/25"
           >
-            <Icon className="h-5 w-5 text-accent-orange" />
-            <div className="mt-3 text-sm font-medium text-foreground">{label}</div>
+            <div className="flex items-center gap-2 mb-1">
+              <Icon className="h-5 w-5 text-accent-orange" />
+              <div className="text-sm font-medium text-foreground">{label}</div>
+            </div>
             <div className="text-xs text-muted-foreground">{value}</div>
           </div>
         ))}
@@ -440,15 +460,15 @@ function Resume() {
         icon={<Briefcase className="h-5 w-5 text-orange-400" />}
         >
           <ResumeItem
-            heading="Freelance Cloud & DevOps Projects"
+            heading="Hands-on Cloud Labs & Projects"
             year="2023 – Present" 
-            location="Remote"
+            location="Self Learning"
             description="Worked on hands-on cloud and DevOps projects involving AWS services, Linux administration, containerization, CI/CD workflows, and virtualization. Built and managed small-scale deployment environments while continuously improving automation, infrastructure, and security fundamentals."
             
             points={[
               "Deployed AWS EC2, S3, IAM, and VPC configurations",
               "Built CI/CD pipelines using GitHub Actions",
-              "Practiced Terraform basics",
+              "Practiced Terraform ",
               "Worked with Linux server management",
               "Learned Docker workflows",
             ]}
@@ -475,12 +495,12 @@ function Resume() {
         icon={<Award className="h-5 w-5 text-purple-400" />}
         >
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <SkillCard icon={Cloud} title="Cloud" items={["AWS", "GCP Basics", "Azure Basics"]} />
-            <SkillCard icon={Container} title="DevOps" items={["Docker", "GitHub Actions", "CI/CD", "Terraform Basics", "Kubernetes Basics"]} />
+            <SkillCard icon={Cloud} title="Cloud" items={["AWS", "GCP ", "Azure "]} />
+            <SkillCard icon={Container} title="DevOps" items={["Docker", "GitHub Actions", "CI/CD", "Terraform ", "Kubernetes "]} />
             <SkillCard icon={Terminal} title="Linux" items={["Bash", "Linux CLI", "SSH", "Ubuntu", "Debian"]} />
             <SkillCard icon={ShieldCheck} title="Security" items={["Cybersecurity Fundamentals", "Networking", "TryHackMe", "Vulnerability Assessment"]} />
             <SkillCard icon={Code2} title="Tools" items={["Git", "VS Code", "Postman", "Nginx", "VMware", "VirtualBox"]} />
-            <SkillCard icon={Code2} title="Languages" items={["Python", "Bash", "Java", "Basic JavaScript"]} />
+            <SkillCard icon={Code2} title="Languages" items={["Python", "Bash", "Java", " JavaScript"]} />
           </div>
         </ResumeBlock>
       </div>
@@ -540,7 +560,7 @@ function ResumeItem({
     </h4>
 
     {college && (
-      <div className="text-base font-medium text-orange-300/80">
+      <div className="text-base font-medium text-rose-400/50">
         {college}
       </div>
     )}
@@ -574,10 +594,10 @@ function SkillCard({
   items: string[];
 }) {
   return (
-    <div className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/40">
-      <div className="flex items-center gap-2 text-foreground">
-        <Icon className="h-4 w-4 text-accent-orange" />
-        <div className="text-sm font-medium">{title}</div>
+    <div className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/25">
+      <div className="flex items-center gap-2">
+        <Icon className="h-5 w-5 text-accent-orange" />
+        <div className="text-sm font-medium text-foreground">{title}</div>
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {items.map((i) => (
@@ -612,23 +632,88 @@ const CARDS: {
     description:
       "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and AWS services.",
     buttons: [
-      { label: "Certificate", href: "#" },
-      { label: "Verify Credential", href: "#" },
+      { label: "Certificate", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" },
     ],
   },
   {
-    category: "Projects",
-    emoji: "🚀",
-    title: "GitHub Portfolio",
-    subtitle: "Personal Developer Portfolio",
-    description:
-      "Personal developer portfolio showcasing cloud, DevOps, and cybersecurity focused work.",
-    tech: ["HTML", "CSS", "JavaScript", "React"],
-    buttons: [
-      { label: "Live Site", href: "#" },
-      { label: "GitHub", href: "https://github.com/shelkeaditya" },
-    ],
-  },
+  category: "Projects",
+  emoji: "🔐",
+  title: "DevSecOps Flask Platform",
+  subtitle: "Secure CI/CD Application",
+  description:
+    "Flask application integrated with DevSecOps practices including containerization, CI/CD workflows, and security-focused development.",
+  tech: ["Flask", "Docker", "GitHub Actions", "CI/CD"],
+  buttons: [
+    {
+      label: "GitHub",
+      href: "https://github.com/shelkeaditya/devsecops-flask",
+    },
+  ],
+},
+
+{
+  category: "Projects",
+  emoji: "📊",
+  title: "Resilient Server Monitoring Platform",
+  subtitle: "Infrastructure Monitoring",
+  description:
+    "Monitoring platform designed to track server health, performance metrics, and system availability for reliable infrastructure management.",
+  tech: ["Linux", "Monitoring", "Networking", "Python"],
+  buttons: [
+    {
+      label: "GitHub",
+      href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform",
+    },
+  ],
+},
+
+{
+  category: "Projects",
+  emoji: "⚙️",
+  title: "CI/CD Platform",
+  subtitle: "Automation Pipeline",
+  description:
+    "Implemented automated build, testing, and deployment workflows to streamline software delivery and infrastructure management.",
+  tech: ["GitHub Actions", "Docker", "CI/CD", "Linux"],
+  buttons: [
+    {
+      label: "GitHub",
+      href: "https://github.com/shelkeaditya/CICD-Platform",
+    },
+  ],
+},
+
+{
+  category: "Projects",
+  emoji: "🤖",
+  title: "AI-Based Backup Management",
+  subtitle: "Backup Automation",
+  description:
+    "Intelligent backup management solution focused on automation, recovery planning, and efficient data protection workflows.",
+  tech: ["Python", "AI", "Automation", "Linux"],
+  buttons: [
+    {
+      label: "GitHub",
+      href: "https://github.com/shelkeaditya/Ai-based-backup-management",
+    },
+  ],
+},
+
+{
+  category: "Projects",
+  emoji: "☁️",
+  title: "Nextcloud on Linux",
+  subtitle: "Private Cloud Storage",
+  description:
+    "Deployed and configured a self-hosted Nextcloud environment on Linux for secure file sharing, storage, and collaboration.",
+  tech: ["Linux", "Nextcloud", "Docker", "Networking"],
+  buttons: [
+    {
+      label: "GitHub",
+      href: "https://github.com/shelkeaditya/Nextcloud-on-Linux",
+    },
+  ],
+},
   {
     category: "Badges",
     emoji: "🎖",
@@ -677,10 +762,15 @@ function Portfolio_Section() {
           >
             <div className="flex items-start justify-between gap-3">
               <div>
+              <div className="flex items-center gap-2">
                 <div className="text-2xl">{c.emoji}</div>
-                <h4 className="mt-2 text-base font-semibold text-foreground">{c.title}</h4>
-                <div className="text-xs text-muted-foreground">{c.subtitle}</div>
-              </div>
+                <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
+                </div>
+
+  <div className="mt-1 text-xs text-muted-foreground">
+    {c.subtitle}
+  </div>
+</div>
               <span className="surface-3 rounded-md border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
                 {c.category}
               </span>
@@ -751,28 +841,114 @@ function Contact() {
     }, 700);
   }
   return (
+   <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+
+  {/* Left column */}
+  <div>
+
+    <SectionHeading title="Let's Connect." />
+
+    <p className="text-muted-foreground max-w-2xl mb-6">
+    Have an opportunity, project, or question? Feel free to reach out via email
+    or connect with me on LinkedIn. I'm currently open to cloud, DevOps and
+    security related opportunities.
+  </p>
+
+  <form
+    onSubmit={onSubmit}
+    className="surface-2 grid max-w-xl gap-4 rounded-2xl border border-border/60 p-6"
+  >
+    <Field label="Name">
+      <Input
+        required
+        name="name"
+        placeholder="Your name"
+        className="surface-3 h-10"
+      />
+    </Field>
+
+    <Field label="Email">
+      <Input
+        required
+        type="email"
+        name="email"
+        placeholder="you@example.com"
+        className="surface-3 h-10"
+      />
+    </Field>
+
+    <Field label="Message">
+      <Textarea
+        required
+        name="message"
+        placeholder="What's on your mind?"
+        rows={5}
+        className="surface-3"
+      />
+    </Field>
+
     <div>
-      <SectionHeading title="Contact." />
-      <form
-        onSubmit={onSubmit}
-        className="surface-2 grid max-w-xl gap-4 rounded-2xl border border-border/60 p-6"
+      <Button
+        type="submit"
+        disabled={sending}
+        className="gap-2"
       >
-        <Field label="Name">
-          <Input required name="name" placeholder="Your name" className="surface-3 h-10" />
-        </Field>
-        <Field label="Email">
-          <Input required type="email" name="email" placeholder="you@example.com" className="surface-3 h-10" />
-        </Field>
-        <Field label="Message">
-          <Textarea required name="message" placeholder="What's on your mind?" rows={5} className="surface-3" />
-        </Field>
-        <div>
-          <Button type="submit" disabled={sending} className="gap-2">
-            <Send className="h-4 w-4" />
-            {sending ? "Sending..." : "Send Message"}
-          </Button>
-        </div>
-      </form>
+        <Send className="h-4 w-4" />
+        {sending ? "Sending..." : "Send Message"}
+      </Button>
+    </div>
+  </form>
+</div>
+
+
+  {/* Right column - Quick Info */}
+  <div className="surface-2 rounded-2xl border border-border/60 p-6 h-fit mt-48">
+  <h3 className="text-lg font-semibold mb-5">Quick Info</h3>
+
+  <div className="space-y-5">
+
+    <div className="flex items-start gap-3">
+      <MapPin className="h-5 w-5 text-orange-400 mt-0.5" />
+      <div>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">
+          Location
+        </p>
+        <p>Pune, India</p>
+      </div>
+    </div>
+
+    <div className="flex items-start gap-3">
+      <Clock3 className="h-5 w-5 text-blue-400 mt-0.5" />
+      <div>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">
+          Response Time
+        </p>
+        <p>Usually within 24 hours</p>
+      </div>
+    </div>
+
+    <div className="flex items-start gap-3">
+      <Briefcase className="h-5 w-5 text-violet-400 mt-0.5" />
+      <div>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">
+          Availability
+        </p>
+        <p>Open to Cloud & DevOps Roles</p>
+      </div>
+    </div>
+
+    <div className="flex items-start gap-3">
+      <CircleCheck className="h-5 w-5 text-green-400 mt-0.5" />
+      <div>
+        <p className="text-xs uppercase tracking-wider text-muted-foreground">
+          Status
+        </p>
+        <p className="text-green-400">Open to Work</p>
+      </div>
+    </div>
+
+    </div>
+    </div>
     </div>
   );
 }
@@ -810,7 +986,7 @@ function Journey() {
             >
               <span className="h-1.5 w-1.5 rounded-full bg-accent-orange transition-all group-hover:scale-150" />
             </span>
-            <div className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/40">
+            <div className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/25">
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <span className="rounded-md border border-border/60 px-1.5 py-0.5 text-[10px] uppercase tracking-wider">
                   {j.year}
@@ -850,9 +1026,9 @@ export default function Portfolio() {
     <div className="ambient-bg relative min-h-screen text-foreground">
       <div aria-hidden className="pointer-events-none absolute inset-0 grid-texture opacity-40" />
       <Toaster />
-     
-{/* Top-left corner — Violet × Crimson */}
-<div className="poly-bg-left">
+      
+      {/* poly-bg triangles stay the same */}
+      <div className="poly-bg-left">
   <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
     <polygon points="0,0 165,0 0,165"            fill="#7C3AED" opacity="0.80"/>
     <polygon points="165,0 215,0 0,215 0,165"    fill="#BE123C" opacity="0.65"/>
@@ -874,14 +1050,13 @@ export default function Portfolio() {
   </svg>
 </div>
 
-{/* Bottom-right corner — Violet */}
 <div className="poly-bg-right">
   <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="420,420 255,420 420,255"                  fill="#7C3AED" opacity="0.70"/>
-    <polygon points="255,420 205,420 420,205 420,255"          fill="#5B21B6" opacity="0.55"/>
-    <polygon points="205,420 162,420 420,162 420,205"          fill="#7C3AED" opacity="0.28"/>
-    <polygon points="162,420 124,420 420,124 420,162"          fill="#5B21B6" opacity="0.14"/>
-    <polygon points="124,420 90,420  420,90  420,124"          fill="#7C3AED" opacity="0.07"/>
+    <polygon points="420,420 255,420 420,255"         fill="#7C3AED" opacity="0.70"/>
+    <polygon points="255,420 205,420 420,205 420,255" fill="#5B21B6" opacity="0.55"/>
+    <polygon points="205,420 162,420 420,162 420,205" fill="#7C3AED" opacity="0.28"/>
+    <polygon points="162,420 124,420 420,124 420,162" fill="#5B21B6" opacity="0.14"/>
+    <polygon points="124,420 90,420  420,90  420,124" fill="#7C3AED" opacity="0.07"/>
     <defs>
       <linearGradient id="fxR" x1="1" y1="0" x2="0" y2="0">
         <stop offset="40%" stopColor="var(--background)" stopOpacity="0"/>
@@ -896,19 +1071,48 @@ export default function Portfolio() {
     <rect width="420" height="420" fill="url(#fyR)"/>
   </svg>
 </div>
+
       <div className="relative mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
         <ProfileHero onJourney={() => setActive("journey")} />
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]">
-          <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)]">
+          <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0">
             <SectionRenderer active={active} />
           </main>
-          <NavPanel active={active} setActive={setActive} theme={theme} toggleTheme={toggle} />
+
+          {/* Side nav — desktop only */}
+          <div className="hidden md:block">
+            <NavPanel active={active} setActive={setActive} theme={theme} toggleTheme={toggle} />
+          </div>
         </div>
 
-        <footer className="mt-12 border-t border-border/60 pt-6 pb-2 text-center text-xs text-muted-foreground">
+        <footer className="mt-12 border-t border-border/60 pt-6 pb-2 text-center text-xs text-muted-foreground hidden md:block">
           © 2026 Aditya Rajendra Shelke
         </footer>
+      </div>
+
+      {/* Bottom nav — mobile only */}
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 md:hidden">
+        <div className="surface-1 flex items-center gap-0 rounded-2xl border border-border/60 px-2 py-2 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.6)]">
+          {NAV.map(({ key, label, icon: Icon }) => {
+            const isActive = active === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setActive(key)}
+                className={cn(
+                  "flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200",
+                  isActive
+                    ? "bg-violet-500/15 text-violet-400"
+                    : "text-muted-foreground hover:bg-foreground/8 hover:text-foreground"
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="text-[10px] font-medium uppercase tracking-wider">{label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
