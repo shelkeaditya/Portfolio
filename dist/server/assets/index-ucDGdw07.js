@@ -5263,38 +5263,109 @@ function SkillCard({
 const CARDS = [
   {
     category: "Certifications",
-    emoji: "🏆",
+    icon: <Award className="h-5 w-5 text-yellow-400" />,
     title: "AWS Certified Cloud Practitioner",
     subtitle: "Issued by Amazon Web Services",
-    description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and AWS services.",
+    description:
+      "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and AWS services.",
     buttons: [
-      { label: "Certificate", href: "#" },
-      { label: "Verify Credential", href: "#" }
-    ]
+      {
+        label: "Certificate",
+        href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c",
+      },
+    ],
   },
+    {
+    category: "Projects",
+    icon: <ShieldCheck className="h-5 w-5 text-green-400" />,
+    title: "DevSecOps Flask Platform",
+    subtitle: "Secure CI/CD Application",
+    description:
+      "Flask application integrated with DevSecOps practices including containerization, CI/CD workflows, and security-focused development.",
+    tech: ["Flask", "Docker", "GitHub Actions", "CI/CD"],
+    buttons: [
+      {
+        label: "GitHub",
+        href: "https://github.com/shelkeaditya/devsecops-flask",
+      },
+    ],
+  },
+  
   {
     category: "Projects",
-    emoji: "🚀",
-    title: "GitHub Portfolio",
-    subtitle: "Personal Developer Portfolio",
-    description: "Personal developer portfolio showcasing cloud, DevOps, and cybersecurity focused work.",
-    tech: ["HTML", "CSS", "JavaScript", "React"],
+    icon: <Activity className="h-5 w-5 text-blue-400" />,
+    title: "Resilient Server Monitoring Platform",
+    subtitle: "Infrastructure Monitoring",
+    description:
+      "Monitoring platform designed to track server health, performance metrics, and system availability for reliable infrastructure management.",
+    tech: ["Linux", "Monitoring", "Networking", "Python"],
     buttons: [
-      { label: "Live Site", href: "#" },
-      { label: "GitHub", href: "https://github.com/shelkeaditya" }
-    ]
+      {
+        label: "GitHub",
+        href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform",
+      },
+    ],
   },
+  
   {
-    category: "Badges",
-    emoji: "🎖",
-    title: "TryHackMe Badge",
-    subtitle: "Cybersecurity Learning",
-    description: "Cybersecurity learning badges focused on Linux, networking, reconnaissance, and penetration testing.",
+    category: "Projects",
+    icon: <Workflow className="h-5 w-5 text-orange-400" />,
+    title: "CI/CD Platform",
+    subtitle: "Automation Pipeline",
+    description:
+      "Implemented automated build, testing, and deployment workflows to streamline software delivery and infrastructure management.",
+    tech: ["GitHub Actions", "Docker", "CI/CD", "Linux"],
     buttons: [
-      { label: "Profile", href: "#" },
-      { label: "Badge", href: "#" }
-    ]
-  }
+      {
+        label: "GitHub",
+        href: "https://github.com/shelkeaditya/CICD-Platform",
+      },
+    ],
+  },
+  
+  {
+    category: "Projects",
+    icon: <Bot className="h-5 w-5 text-cyan-400" />,
+    title: "AI-Based Backup Management",
+    subtitle: "Backup Automation",
+    description:
+      "Intelligent backup management solution focused on automation, recovery planning, and efficient data protection workflows.",
+    tech: ["Python", "AI", "Automation", "Linux"],
+    buttons: [
+      {
+        label: "GitHub",
+        href: "https://github.com/shelkeaditya/Ai-based-backup-management",
+      },
+    ],
+  },
+  
+  {
+    category: "Projects",
+    icon: <Cloud className="h-5 w-5 text-cyan-400" />,
+    title: "Nextcloud on Linux",
+    subtitle: "Private Cloud Storage",
+    description:
+      "Deployed and configured a self-hosted Nextcloud environment on Linux for secure file sharing, storage, and collaboration.",
+    tech: ["Linux", "Nextcloud", "Docker", "Networking"],
+    buttons: [
+      {
+        label: "GitHub",
+        href: "https://github.com/shelkeaditya/Nextcloud-on-Linux",
+      },
+    ],
+  },
+    {
+      category: "Badges",
+      icon: <Award className="h-5 w-5 text-purple-400" />,
+      title: "TryHackMe Badge",
+      subtitle: "Cybersecurity Learning",
+      description:
+        "Cybersecurity learning badges focused on Linux, networking, reconnaissance, and penetration testing.",
+      buttons: [
+        { label: "Profile", href: "#" },
+        { label: "Badge", href: "#" },
+      ],
+    },
 ];
 function Portfolio_Section() {
   const [filter, setFilter] = reactExports.useState("All");

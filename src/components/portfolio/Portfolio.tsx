@@ -30,6 +30,11 @@ import {
   GraduationCap,
   CircleCheck,
   Clock3,
+  FolderKanban,
+  BadgeCheck,
+  Bot,
+  Workflow,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -617,7 +622,7 @@ type PortfolioFilter = "All" | "Projects" | "Certifications" | "Badges";
 
 const CARDS: {
   category: Exclude<PortfolioFilter, "All">;
-  emoji: string;
+  icon: React.ReactNode;
   title: string;
   subtitle: string;
   description: string;
@@ -625,19 +630,22 @@ const CARDS: {
   buttons: { label: string; href: string }[];
 }[] = [
   {
-    category: "Certifications",
-    emoji: "🏆",
-    title: "AWS Certified Cloud Practitioner",
-    subtitle: "Issued by Amazon Web Services",
-    description:
-      "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and AWS services.",
-    buttons: [
-      { label: "Certificate", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" },
-    ],
-  },
+  category: "Certifications",
+  icon: <Award className="h-5 w-5 text-yellow-400" />,
+  title: "AWS Certified Cloud Practitioner",
+  subtitle: "Issued by Amazon Web Services",
+  description:
+    "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and AWS services.",
+  buttons: [
+    {
+      label: "Certificate",
+      href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c",
+    },
+  ],
+},
   {
   category: "Projects",
-  emoji: "🔐",
+  icon: <ShieldCheck className="h-5 w-5 text-green-400" />,
   title: "DevSecOps Flask Platform",
   subtitle: "Secure CI/CD Application",
   description:
@@ -653,7 +661,7 @@ const CARDS: {
 
 {
   category: "Projects",
-  emoji: "📊",
+  icon: <Activity className="h-5 w-5 text-blue-400" />,
   title: "Resilient Server Monitoring Platform",
   subtitle: "Infrastructure Monitoring",
   description:
@@ -669,7 +677,7 @@ const CARDS: {
 
 {
   category: "Projects",
-  emoji: "⚙️",
+  icon: <Workflow className="h-5 w-5 text-orange-400" />,
   title: "CI/CD Platform",
   subtitle: "Automation Pipeline",
   description:
@@ -685,7 +693,7 @@ const CARDS: {
 
 {
   category: "Projects",
-  emoji: "🤖",
+  icon: <Bot className="h-5 w-5 text-cyan-400" />,
   title: "AI-Based Backup Management",
   subtitle: "Backup Automation",
   description:
@@ -701,7 +709,7 @@ const CARDS: {
 
 {
   category: "Projects",
-  emoji: "☁️",
+  icon: <Cloud className="h-5 w-5 text-cyan-400" />,
   title: "Nextcloud on Linux",
   subtitle: "Private Cloud Storage",
   description:
@@ -716,7 +724,7 @@ const CARDS: {
 },
   {
     category: "Badges",
-    emoji: "🎖",
+    icon: <Award className="h-5 w-5 text-purple-400" />,
     title: "TryHackMe Badge",
     subtitle: "Cybersecurity Learning",
     description:
@@ -763,7 +771,9 @@ function Portfolio_Section() {
             <div className="flex items-start justify-between gap-3">
               <div>
               <div className="flex items-center gap-2">
-                <div className="text-2xl">{c.emoji}</div>
+                <div className="text-3xl">
+                  {c.icon}
+                </div>
                 <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
                 </div>
 
