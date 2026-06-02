@@ -501,8 +501,8 @@ function Resume() {
         >
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <SkillCard icon={Cloud} title="Cloud" items={["AWS", "GCP ", "Azure "]} />
-            <SkillCard icon={Container} title="DevOps" items={["Docker", "GitHub Actions", "CI/CD", "Terraform ", "Kubernetes "]} />
-            <SkillCard icon={Terminal} title="Linux" items={["Bash", "Linux CLI", "SSH", "Ubuntu", "Debian"]} />
+            <SkillCard icon={Container} title="DevOps" items={["Docker", "GitHub Actions", "CI/CD", "Terraform ", "Kubernetes ", "Jenkins "]} />
+            <SkillCard icon={Terminal} title="Linux" items={["Bash", "Linux CLI", "SSH", "Ubuntu", "Debian", "Kali"]} />
             <SkillCard icon={ShieldCheck} title="Security" items={["Cybersecurity Fundamentals", "Networking", "TryHackMe", "Vulnerability Assessment"]} />
             <SkillCard icon={Code2} title="Tools" items={["Git", "VS Code", "Postman", "Nginx", "VMware", "VirtualBox"]} />
             <SkillCard icon={Code2} title="Languages" items={["Python", "Bash", "Java", " JavaScript"]} />
