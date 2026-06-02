@@ -503,7 +503,7 @@ function Resume() {
             <SkillCard icon={Cloud} title="Cloud" items={["AWS", "GCP ", "Azure "]} />
             <SkillCard icon={Container} title="DevOps" items={["Docker", "GitHub Actions", "CI/CD", "Terraform ", "Kubernetes ", "Jenkins "]} />
             <SkillCard icon={Terminal} title="Linux" items={["Bash", "Linux CLI", "SSH", "Ubuntu", "Debian", "Kali"]} />
-            <SkillCard icon={ShieldCheck} title="Security" items={["Cybersecurity Fundamentals", "Networking", "TryHackMe", "Vulnerability Assessment"]} />
+            <SkillCard icon={ShieldCheck} title="Security" items={["Cybersecurity Fundamentals", "Networking", "TryHackMe", "VAPT"]} />
             <SkillCard icon={Code2} title="Tools" items={["Git", "VS Code", "Postman", "Nginx", "VMware", "VirtualBox"]} />
             <SkillCard icon={Code2} title="Languages" items={["Python", "Bash", "Java", " JavaScript"]} />
           </div>
