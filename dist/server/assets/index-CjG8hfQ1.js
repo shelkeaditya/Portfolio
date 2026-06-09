@@ -1,5 +1,5 @@
-import { r as reactExports, U as jsxRuntimeExports, a0 as React, T as React$1 } from "./server-_JWi3b-0.js";
-import { R as ReactDOM } from "./router-CF2OsT_v.js";
+import { r as reactExports, U as jsxRuntimeExports, a0 as React, T as React$1 } from "./server-BTG_Ww--.js";
+import { R as ReactDOM } from "./router-CK4IJahb.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -79,7 +79,17 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$o = [
+const __iconNode$t = [
+  [
+    "path",
+    {
+      d: "M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2",
+      key: "169zse"
+    }
+  ]
+];
+const Activity = createLucideIcon("activity", __iconNode$t);
+const __iconNode$s = [
   [
     "path",
     {
@@ -89,8 +99,8 @@ const __iconNode$o = [
   ],
   ["circle", { cx: "12", cy: "8", r: "6", key: "1vp47v" }]
 ];
-const Award = createLucideIcon("award", __iconNode$o);
-const __iconNode$n = [
+const Award = createLucideIcon("award", __iconNode$s);
+const __iconNode$r = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -100,23 +110,42 @@ const __iconNode$n = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$n);
-const __iconNode$m = [
+const BookOpen = createLucideIcon("book-open", __iconNode$r);
+const __iconNode$q = [
+  ["path", { d: "M12 8V4H8", key: "hb8ula" }],
+  ["rect", { width: "16", height: "12", x: "4", y: "8", rx: "2", key: "enze0r" }],
+  ["path", { d: "M2 14h2", key: "vft8re" }],
+  ["path", { d: "M20 14h2", key: "4cs60a" }],
+  ["path", { d: "M15 13v2", key: "1xurst" }],
+  ["path", { d: "M9 13v2", key: "rq6x2g" }]
+];
+const Bot = createLucideIcon("bot", __iconNode$q);
+const __iconNode$p = [
   ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
   ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
 ];
-const Briefcase = createLucideIcon("briefcase", __iconNode$m);
-const __iconNode$l = [
+const Briefcase = createLucideIcon("briefcase", __iconNode$p);
+const __iconNode$o = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+];
+const CircleCheck = createLucideIcon("circle-check", __iconNode$o);
+const __iconNode$n = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "M12 6v6h4", key: "135r8i" }]
+];
+const Clock3 = createLucideIcon("clock-3", __iconNode$n);
+const __iconNode$m = [
   ["path", { d: "M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z", key: "p7xjir" }]
 ];
-const Cloud = createLucideIcon("cloud", __iconNode$l);
-const __iconNode$k = [
+const Cloud = createLucideIcon("cloud", __iconNode$m);
+const __iconNode$l = [
   ["path", { d: "m18 16 4-4-4-4", key: "1inbqp" }],
   ["path", { d: "m6 8-4 4 4 4", key: "15zrgr" }],
   ["path", { d: "m14.5 4-5 16", key: "e7oirm" }]
 ];
-const CodeXml = createLucideIcon("code-xml", __iconNode$k);
-const __iconNode$j = [
+const CodeXml = createLucideIcon("code-xml", __iconNode$l);
+const __iconNode$k = [
   [
     "path",
     {
@@ -129,20 +158,20 @@ const __iconNode$j = [
   ["path", { d: "M14 19.8v-8.1", key: "159ecu" }],
   ["path", { d: "M18 17.5V9.4", key: "11uown" }]
 ];
-const Container = createLucideIcon("container", __iconNode$j);
-const __iconNode$i = [
+const Container = createLucideIcon("container", __iconNode$k);
+const __iconNode$j = [
   ["path", { d: "M12 15V3", key: "m9g1x1" }],
   ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
   ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
 ];
-const Download = createLucideIcon("download", __iconNode$i);
-const __iconNode$h = [
+const Download = createLucideIcon("download", __iconNode$j);
+const __iconNode$i = [
   ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
   ["path", { d: "M10 14 21 3", key: "gplh6r" }],
   ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
 ];
-const ExternalLink = createLucideIcon("external-link", __iconNode$h);
-const __iconNode$g = [
+const ExternalLink = createLucideIcon("external-link", __iconNode$i);
+const __iconNode$h = [
   [
     "path",
     {
@@ -155,8 +184,8 @@ const __iconNode$g = [
   ["path", { d: "M16 13H8", key: "t4e002" }],
   ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const FileText = createLucideIcon("file-text", __iconNode$g);
-const __iconNode$f = [
+const FileText = createLucideIcon("file-text", __iconNode$h);
+const __iconNode$g = [
   [
     "path",
     {
@@ -165,8 +194,8 @@ const __iconNode$f = [
     }
   ]
 ];
-const Flag = createLucideIcon("flag", __iconNode$f);
-const __iconNode$e = [
+const Flag = createLucideIcon("flag", __iconNode$g);
+const __iconNode$f = [
   [
     "path",
     {
@@ -176,8 +205,8 @@ const __iconNode$e = [
   ],
   ["path", { d: "M9 18c-4.51 2-5-2-7-2", key: "9comsn" }]
 ];
-const Github = createLucideIcon("github", __iconNode$e);
-const __iconNode$d = [
+const Github = createLucideIcon("github", __iconNode$f);
+const __iconNode$e = [
   [
     "path",
     {
@@ -188,14 +217,14 @@ const __iconNode$d = [
   ["path", { d: "M22 10v6", key: "1lu8f3" }],
   ["path", { d: "M6 12.5V16a6 3 0 0 0 12 0v-3.5", key: "1r8lef" }]
 ];
-const GraduationCap = createLucideIcon("graduation-cap", __iconNode$d);
-const __iconNode$c = [
+const GraduationCap = createLucideIcon("graduation-cap", __iconNode$e);
+const __iconNode$d = [
   ["rect", { width: "20", height: "20", x: "2", y: "2", rx: "5", ry: "5", key: "2e1cvw" }],
   ["path", { d: "M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z", key: "9exkf1" }],
   ["line", { x1: "17.5", x2: "17.51", y1: "6.5", y2: "6.5", key: "r4j83e" }]
 ];
-const Instagram = createLucideIcon("instagram", __iconNode$c);
-const __iconNode$b = [
+const Instagram = createLucideIcon("instagram", __iconNode$d);
+const __iconNode$c = [
   [
     "path",
     {
@@ -206,18 +235,18 @@ const __iconNode$b = [
   ["rect", { width: "4", height: "12", x: "2", y: "9", key: "mk3on5" }],
   ["circle", { cx: "4", cy: "4", r: "2", key: "bt5ra8" }]
 ];
-const Linkedin = createLucideIcon("linkedin", __iconNode$b);
-const __iconNode$a = [
+const Linkedin = createLucideIcon("linkedin", __iconNode$c);
+const __iconNode$b = [
   ["rect", { width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2", key: "1w4ew1" }],
   ["path", { d: "M7 11V7a5 5 0 0 1 10 0v4", key: "fwvmzm" }]
 ];
-const Lock = createLucideIcon("lock", __iconNode$a);
-const __iconNode$9 = [
+const Lock = createLucideIcon("lock", __iconNode$b);
+const __iconNode$a = [
   ["path", { d: "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7", key: "132q7q" }],
   ["rect", { x: "2", y: "4", width: "20", height: "16", rx: "2", key: "izxlao" }]
 ];
-const Mail = createLucideIcon("mail", __iconNode$9);
-const __iconNode$8 = [
+const Mail = createLucideIcon("mail", __iconNode$a);
+const __iconNode$9 = [
   [
     "path",
     {
@@ -227,8 +256,8 @@ const __iconNode$8 = [
   ],
   ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }]
 ];
-const MapPin = createLucideIcon("map-pin", __iconNode$8);
-const __iconNode$7 = [
+const MapPin = createLucideIcon("map-pin", __iconNode$9);
+const __iconNode$8 = [
   [
     "path",
     {
@@ -237,14 +266,14 @@ const __iconNode$7 = [
     }
   ]
 ];
-const Moon = createLucideIcon("moon", __iconNode$7);
-const __iconNode$6 = [
+const Moon = createLucideIcon("moon", __iconNode$8);
+const __iconNode$7 = [
   ["path", { d: "M4 11a9 9 0 0 1 9 9", key: "pv89mb" }],
   ["path", { d: "M4 4a16 16 0 0 1 16 16", key: "k0647b" }],
   ["circle", { cx: "5", cy: "19", r: "1", key: "bfqh0e" }]
 ];
-const Rss = createLucideIcon("rss", __iconNode$6);
-const __iconNode$5 = [
+const Rss = createLucideIcon("rss", __iconNode$7);
+const __iconNode$6 = [
   [
     "path",
     {
@@ -254,8 +283,8 @@ const __iconNode$5 = [
   ],
   ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
 ];
-const Send = createLucideIcon("send", __iconNode$5);
-const __iconNode$4 = [
+const Send = createLucideIcon("send", __iconNode$6);
+const __iconNode$5 = [
   [
     "path",
     {
@@ -265,8 +294,8 @@ const __iconNode$4 = [
   ],
   ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const ShieldCheck = createLucideIcon("shield-check", __iconNode$4);
-const __iconNode$3 = [
+const ShieldCheck = createLucideIcon("shield-check", __iconNode$5);
+const __iconNode$4 = [
   ["circle", { cx: "12", cy: "12", r: "4", key: "4exip2" }],
   ["path", { d: "M12 2v2", key: "tus03m" }],
   ["path", { d: "M12 20v2", key: "1lh1kg" }],
@@ -277,13 +306,13 @@ const __iconNode$3 = [
   ["path", { d: "m6.34 17.66-1.41 1.41", key: "1m8zz5" }],
   ["path", { d: "m19.07 4.93-1.41 1.41", key: "1shlcs" }]
 ];
-const Sun = createLucideIcon("sun", __iconNode$3);
-const __iconNode$2 = [
+const Sun = createLucideIcon("sun", __iconNode$4);
+const __iconNode$3 = [
   ["path", { d: "M12 19h8", key: "baeox8" }],
   ["path", { d: "m4 17 6-6-6-6", key: "1yngyt" }]
 ];
-const Terminal = createLucideIcon("terminal", __iconNode$2);
-const __iconNode$1 = [
+const Terminal = createLucideIcon("terminal", __iconNode$3);
+const __iconNode$2 = [
   [
     "path",
     {
@@ -292,12 +321,18 @@ const __iconNode$1 = [
     }
   ]
 ];
-const Twitter = createLucideIcon("twitter", __iconNode$1);
-const __iconNode = [
+const Twitter = createLucideIcon("twitter", __iconNode$2);
+const __iconNode$1 = [
   ["path", { d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", key: "975kel" }],
   ["circle", { cx: "12", cy: "7", r: "4", key: "17ys0d" }]
 ];
-const User = createLucideIcon("user", __iconNode);
+const User = createLucideIcon("user", __iconNode$1);
+const __iconNode = [
+  ["rect", { width: "8", height: "8", x: "3", y: "3", rx: "2", key: "by2w9f" }],
+  ["path", { d: "M7 11v4a2 2 0 0 0 2 2h4", key: "xkn7yn" }],
+  ["rect", { width: "8", height: "8", x: "13", y: "13", rx: "2", key: "1cgmvn" }]
+];
+const Workflow = createLucideIcon("workflow", __iconNode);
 function r(e) {
   var t, f, n = "";
   if ("string" == typeof e || "number" == typeof e) n += e;
@@ -4855,19 +4890,28 @@ function SectionHeading({ title }) {
   ] });
 }
 function ProfileHero({ onJourney }) {
+  const { theme, toggle } = useTheme();
   return /* @__PURE__ */ jsxRuntimeExports.jsx("section", { className: "relative", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        onClick: toggle,
+        className: "absolute top-3 right-3 z-20 md:hidden surface-3 rounded-xl border border-border/60 p-2",
+        children: theme === "dark" ? /* @__PURE__ */ jsxRuntimeExports.jsx(Sun, { className: "h-5 w-5" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Moon, { className: "h-5 w-5" })
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
       {
         "aria-hidden": true,
         className: "pointer-events-none absolute inset-0",
         style: {
-          background: "radial-gradient(900px 320px at 15% 0%, color-mix(in oklab, var(--accent-orange) 8%, transparent), transparent 70%), radial-gradient(600px 240px at 100% 100%, color-mix(in oklab, var(--accent-orange) 5%, transparent), transparent 70%)"
+          background: "radial-gradient(600px 200px at 10% 0%, color-mix(in oklab, var(--accent-orange) 8%, transparent), transparent 70%),radial-gradient(400px 160px at 90% 100%, color-mix(in oklab, var(--accent-orange) 5%, transparent), transparent 70%)"
         }
       }
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex flex-col gap-6 p-5 md:flex-row md:items-center md:gap-10 md:px-8 md:py-6", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "group relative w-fit", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex flex-col items-center gap-6 p-5 md:flex-row md:items-center md:text-left md:gap-10 md:px-8 md:py-6", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "shrink-0 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "group relative w-fit", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "div",
           {
@@ -4887,7 +4931,7 @@ function ProfileHero({ onJourney }) {
           }
         )
       ] }) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 md:w-[370px] md:border-r md:border-border/60 md:pr-12", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 w-full md:w-[370px] md:border-r md:border-border/60 md:pr-12 text-center md:text-left", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("h1", { className: "text-2xl md:text-3xl font-semibold tracking-tight text-foreground", children: [
           "Aditya ",
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-violet-400", children: "Shelke" })
@@ -4896,13 +4940,13 @@ function ProfileHero({ onJourney }) {
           Typewriter,
           {
             words: [
-              "Cloud Engineer",
-              "DevOps Engineer",
-              "Security Analyst"
+              "Cloud Computing",
+              "DevOps",
+              "CyberSecurity"
             ]
           }
         ) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-5 flex flex-wrap items-center gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-5 flex flex-wrap justify-center md:justify-start items-center gap-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://instagram.com/shelke__aditya", icon: Instagram, label: "Instagram" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://x.com/shelke__aditya", icon: Twitter, label: "Twitter" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://linkedin.com/in/shelkeaditya", icon: Linkedin, label: "LinkedIn" }),
@@ -4910,13 +4954,13 @@ function ProfileHero({ onJourney }) {
           /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: onJourney, icon: Flag, label: "Journey", accent: "orange" })
         ] })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "min-w-0 flex-1", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-x-10 gap-y-6 sm:grid-cols-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "min-w-0 w-full flex-1 text-left", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-2", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "group transition-all duration-300 hover:text-orange-300", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
           MetaRow,
           {
             icon: Mail,
             label: "Email",
-            children: /* @__PURE__ */ jsxRuntimeExports.jsx("a", { href: "mailto:work.shelkeaditya@gmail.com", className: "flex items-center gap-2 transition-all duration-300 group-hover:text-orange-300", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]", children: "Email" }) })
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx("a", { href: "mailto:work.shelkeaditya@gmail.com", className: "flex items-center gap-2 hover:text-foreground hover:underline underline-offset-2 transition-colors duration-200", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]", children: "Email" }) })
           }
         ) }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(MetaRow, { icon: Download, label: "CV", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -4924,11 +4968,11 @@ function ProfileHero({ onJourney }) {
           {
             href: "/aditya-shelke-resume.pdf",
             download: true,
-            className: "group transition-all duration-300 hover:text-white-40",
+            className: "flex items-center gap-2 hover:text-[color:var(--accent-orange)] transition-colors duration-200",
             children: "Download"
           }
         ) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(MetaRow, { icon: MapPin, label: "Location", children: "Maharashtra, India" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(MetaRow, { icon: MapPin, label: "Location", children: "Pune, India" }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground", children: "Status" }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-1.5 flex items-center gap-2 text-sm font-semibold text-emerald-400", children: [
@@ -5066,7 +5110,7 @@ function NavPanel({
           onClick: () => setActive(key),
           className: cn$1(
             "group relative flex items-center gap-2 rounded-2xl px-4 py-3.5 transition-all duration-300 ease-out",
-            isActive ? "bg-violet-500/10 text-violet-300 border-l-2 border-violet-500 shadow-[0_0_20px_rgba(124,58,237,0.25)]" : "text-muted-foreground hover:bg-white/5 hover:text-white hover:translate-x-1"
+            isActive ? "bg-violet-500/10 text-violet-500 border-l-2 border-violet-500 shadow-[0_0_20px_rgba(124,58,237,0.25)]" : "text-muted-foreground hover:bg-foreground/8 hover:translate-x-1"
           ),
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -5125,16 +5169,18 @@ function About() {
     /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "About Me." }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-5xl text-[15px] leading-relaxed text-muted-foreground", children: "I’m Aditya Shelke, a graduate in Cloud Technology and Information Security with a strong interest in Cloud Computing, DevOps, Linux, Networking, and Cybersecurity. I enjoy working with AWS services, automation tools, Linux environments, and container technologies while continuously exploring scalable and secure systems. Over time, I’ve worked on academic and self-learning projects involving cloud deployments, virtualization, CI/CD workflows, and infrastructure fundamentals. I’m currently focused on building my expertise in Cloud Engineering, DevOps practices, and Security while improving my practical skills through continuous learning and hands-on projects." }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3", children: [
-      { icon: Cloud, label: "Cloud Native", value: "AWS • GCP • Azure" },
-      { icon: Container, label: "DevOps", value: "Docker • CI/CD • Terraform" },
-      { icon: Lock, label: "Security", value: "Networking • TryHackMe" }
+      { icon: Cloud, label: "Cloud", value: "AWS • GCP • Azure" },
+      { icon: Container, label: "DevOps", value: "Docker • Kubernetes • CI/CD" },
+      { icon: Lock, label: "Security", value: "Linux • Networking • VAPT" }
     ].map(({ icon: Icon2, label, value }) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "div",
       {
-        className: "surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/40",
+        className: "surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/25",
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-5 w-5 text-accent-orange" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 text-sm font-medium text-foreground", children: label }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 mb-1", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-5 w-5 text-accent-orange" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm font-medium text-foreground", children: label })
+          ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs text-muted-foreground", children: value })
         ]
       },
@@ -5155,14 +5201,14 @@ function Resume() {
           children: /* @__PURE__ */ jsxRuntimeExports.jsx(
             ResumeItem,
             {
-              heading: "Freelance Cloud & DevOps Projects",
+              heading: "Hands-on Cloud Labs & Projects",
               year: "2023 – Present",
-              location: "Remote",
+              location: "Self Learning",
               description: "Worked on hands-on cloud and DevOps projects involving AWS services, Linux administration, containerization, CI/CD workflows, and virtualization. Built and managed small-scale deployment environments while continuously improving automation, infrastructure, and security fundamentals.",
               points: [
                 "Deployed AWS EC2, S3, IAM, and VPC configurations",
                 "Built CI/CD pipelines using GitHub Actions",
-                "Practiced Terraform basics",
+                "Practiced Terraform ",
                 "Worked with Linux server management",
                 "Learned Docker workflows"
               ]
@@ -5194,12 +5240,12 @@ function Resume() {
           accent: "purple",
           icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Award, { className: "h-5 w-5 text-purple-400" }),
           children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: Cloud, title: "Cloud", items: ["AWS", "GCP Basics", "Azure Basics"] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: Container, title: "DevOps", items: ["Docker", "GitHub Actions", "CI/CD", "Terraform Basics", "Kubernetes Basics"] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: Terminal, title: "Linux", items: ["Bash", "Linux CLI", "SSH", "Ubuntu", "Debian"] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: ShieldCheck, title: "Security", items: ["Cybersecurity Fundamentals", "Networking", "TryHackMe", "Vulnerability Assessment"] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: Cloud, title: "Cloud", items: ["AWS", "GCP ", "Azure "] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: Container, title: "DevOps", items: ["Docker", "GitHub Actions", "CI/CD", "Terraform ", "Kubernetes ", "Jenkins "] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: Terminal, title: "Linux", items: ["Bash", "Linux CLI", "SSH", "Ubuntu", "Debian", "Kali"] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: ShieldCheck, title: "Security", items: ["Cybersecurity Fundamentals", "Networking", "TryHackMe", "VAPT"] }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: CodeXml, title: "Tools", items: ["Git", "VS Code", "Postman", "Nginx", "VMware", "VirtualBox"] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: CodeXml, title: "Languages", items: ["Python", "Bash", "Java", "Basic JavaScript"] })
+            /* @__PURE__ */ jsxRuntimeExports.jsx(SkillCard, { icon: CodeXml, title: "Languages", items: ["Python", "Bash", "Java", " JavaScript"] })
           ] })
         }
       )
@@ -5231,7 +5277,7 @@ function ResumeItem({
   return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "surface-2 rounded-xl border border-border/60 p-5", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start justify-between gap-6", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex-1", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-xl font-semibold text-foreground", children: heading }),
-      college && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-base font-medium text-orange-300/80", children: college }),
+      college && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-base font-medium text-rose-400/50", children: college }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-2xl text-sm leading-relaxed text-muted-foreground", children: description })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-right", children: [
@@ -5245,10 +5291,10 @@ function SkillCard({
   title,
   items
 }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/40", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 text-foreground", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-4 w-4 text-accent-orange" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm font-medium", children: title })
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/25", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-5 w-5 text-accent-orange" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm font-medium text-foreground", children: title })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 flex flex-wrap gap-1.5", children: items.map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
       "span",
@@ -5263,109 +5309,98 @@ function SkillCard({
 const CARDS = [
   {
     category: "Certifications",
-    icon: <Award className="h-5 w-5 text-yellow-400" />,
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Award, { className: "h-5 w-5 text-yellow-400" }),
     title: "AWS Certified Cloud Practitioner",
     subtitle: "Issued by Amazon Web Services",
-    description:
-      "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and AWS services.",
+    description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and AWS services.",
     buttons: [
       {
         label: "Certificate",
-        href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c",
-      },
-    ],
+        href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c"
+      }
+    ]
   },
-    {
+  {
     category: "Projects",
-    icon: <ShieldCheck className="h-5 w-5 text-green-400" />,
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "h-5 w-5 text-green-400" }),
     title: "DevSecOps Flask Platform",
     subtitle: "Secure CI/CD Application",
-    description:
-      "Flask application integrated with DevSecOps practices including containerization, CI/CD workflows, and security-focused development.",
+    description: "Flask application integrated with DevSecOps practices including containerization, CI/CD workflows, and security-focused development.",
     tech: ["Flask", "Docker", "GitHub Actions", "CI/CD"],
     buttons: [
       {
         label: "GitHub",
-        href: "https://github.com/shelkeaditya/devsecops-flask",
-      },
-    ],
+        href: "https://github.com/shelkeaditya/devsecops-flask"
+      }
+    ]
   },
-  
   {
     category: "Projects",
-    icon: <Activity className="h-5 w-5 text-blue-400" />,
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Activity, { className: "h-5 w-5 text-blue-400" }),
     title: "Resilient Server Monitoring Platform",
     subtitle: "Infrastructure Monitoring",
-    description:
-      "Monitoring platform designed to track server health, performance metrics, and system availability for reliable infrastructure management.",
+    description: "Monitoring platform designed to track server health, performance metrics, and system availability for reliable infrastructure management.",
     tech: ["Linux", "Monitoring", "Networking", "Python"],
     buttons: [
       {
         label: "GitHub",
-        href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform",
-      },
-    ],
+        href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform"
+      }
+    ]
   },
-  
   {
     category: "Projects",
-    icon: <Workflow className="h-5 w-5 text-orange-400" />,
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Workflow, { className: "h-5 w-5 text-orange-400" }),
     title: "CI/CD Platform",
     subtitle: "Automation Pipeline",
-    description:
-      "Implemented automated build, testing, and deployment workflows to streamline software delivery and infrastructure management.",
+    description: "Implemented automated build, testing, and deployment workflows to streamline software delivery and infrastructure management.",
     tech: ["GitHub Actions", "Docker", "CI/CD", "Linux"],
     buttons: [
       {
         label: "GitHub",
-        href: "https://github.com/shelkeaditya/CICD-Platform",
-      },
-    ],
+        href: "https://github.com/shelkeaditya/CICD-Platform"
+      }
+    ]
   },
-  
   {
     category: "Projects",
-    icon: <Bot className="h-5 w-5 text-cyan-400" />,
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Bot, { className: "h-5 w-5 text-cyan-400" }),
     title: "AI-Based Backup Management",
     subtitle: "Backup Automation",
-    description:
-      "Intelligent backup management solution focused on automation, recovery planning, and efficient data protection workflows.",
+    description: "Intelligent backup management solution focused on automation, recovery planning, and efficient data protection workflows.",
     tech: ["Python", "AI", "Automation", "Linux"],
     buttons: [
       {
         label: "GitHub",
-        href: "https://github.com/shelkeaditya/Ai-based-backup-management",
-      },
-    ],
+        href: "https://github.com/shelkeaditya/Ai-based-backup-management"
+      }
+    ]
   },
-  
   {
     category: "Projects",
-    icon: <Cloud className="h-5 w-5 text-cyan-400" />,
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Cloud, { className: "h-5 w-5 text-cyan-400" }),
     title: "Nextcloud on Linux",
     subtitle: "Private Cloud Storage",
-    description:
-      "Deployed and configured a self-hosted Nextcloud environment on Linux for secure file sharing, storage, and collaboration.",
+    description: "Deployed and configured a self-hosted Nextcloud environment on Linux for secure file sharing, storage, and collaboration.",
     tech: ["Linux", "Nextcloud", "Docker", "Networking"],
     buttons: [
       {
         label: "GitHub",
-        href: "https://github.com/shelkeaditya/Nextcloud-on-Linux",
-      },
-    ],
+        href: "https://github.com/shelkeaditya/Nextcloud-on-Linux"
+      }
+    ]
   },
-    {
-      category: "Badges",
-      icon: <Award className="h-5 w-5 text-purple-400" />,
-      title: "TryHackMe Badge",
-      subtitle: "Cybersecurity Learning",
-      description:
-        "Cybersecurity learning badges focused on Linux, networking, reconnaissance, and penetration testing.",
-      buttons: [
-        { label: "Profile", href: "#" },
-        { label: "Badge", href: "#" },
-      ],
-    },
+  {
+    category: "Badges",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Award, { className: "h-5 w-5 text-purple-400" }),
+    title: "TryHackMe Badge",
+    subtitle: "Cybersecurity Learning",
+    description: "Cybersecurity learning badges focused on Linux, networking, reconnaissance, and penetration testing.",
+    buttons: [
+      { label: "Profile", href: "#" },
+      { label: "Badge", href: "#" }
+    ]
+  }
 ];
 function Portfolio_Section() {
   const [filter, setFilter] = reactExports.useState("All");
@@ -5395,9 +5430,11 @@ function Portfolio_Section() {
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start justify-between gap-3", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-2xl", children: c.emoji }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "mt-2 text-base font-semibold text-foreground", children: c.title }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-xs text-muted-foreground", children: c.subtitle })
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-3xl", children: c.icon }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-base font-semibold text-foreground", children: c.title })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-1 text-xs text-muted-foreground", children: c.subtitle })
             ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "surface-3 rounded-md border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground", children: c.category })
           ] }),
@@ -5454,24 +5491,94 @@ function Contact() {
       e.target.reset();
     }, 700);
   }
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Contact." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      "form",
-      {
-        onSubmit,
-        className: "surface-2 grid max-w-xl gap-4 rounded-2xl border border-border/60 p-6",
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Name", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { required: true, name: "name", placeholder: "Your name", className: "surface-3 h-10" }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Email", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { required: true, type: "email", name: "email", placeholder: "you@example.com", className: "surface-3 h-10" }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Message", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Textarea, { required: true, name: "message", placeholder: "What's on your mind?", rows: 5, className: "surface-3" }) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { type: "submit", disabled: sending, className: "gap-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "h-4 w-4" }),
-            sending ? "Sending..." : "Send Message"
-          ] }) })
-        ]
-      }
-    )
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-6 lg:grid-cols-[1fr_320px]", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Let's Connect." }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-muted-foreground max-w-2xl mb-6", children: "Have an opportunity, project, or question? Feel free to reach out via email or connect with me on LinkedIn. I'm currently open to cloud, DevOps and security related opportunities." }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "form",
+        {
+          onSubmit,
+          className: "surface-2 grid max-w-xl gap-4 rounded-2xl border border-border/60 p-6",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Name", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Input,
+              {
+                required: true,
+                name: "name",
+                placeholder: "Your name",
+                className: "surface-3 h-10"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Email", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Input,
+              {
+                required: true,
+                type: "email",
+                name: "email",
+                placeholder: "you@example.com",
+                className: "surface-3 h-10"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Message", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Textarea,
+              {
+                required: true,
+                name: "message",
+                placeholder: "What's on your mind?",
+                rows: 5,
+                className: "surface-3"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              Button,
+              {
+                type: "submit",
+                disabled: sending,
+                className: "gap-2",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "h-4 w-4" }),
+                  sending ? "Sending..." : "Send Message"
+                ]
+              }
+            ) })
+          ]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 rounded-2xl border border-border/60 p-6 h-fit mt-48", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-lg font-semibold mb-5", children: "Quick Info" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-5", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(MapPin, { className: "h-5 w-5 text-orange-400 mt-0.5" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-wider text-muted-foreground", children: "Location" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Pune, India" })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Clock3, { className: "h-5 w-5 text-blue-400 mt-0.5" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-wider text-muted-foreground", children: "Response Time" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Usually within 24 hours" })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Briefcase, { className: "h-5 w-5 text-violet-400 mt-0.5" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-wider text-muted-foreground", children: "Availability" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Open to Cloud & DevOps Roles" })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { className: "h-5 w-5 text-green-400 mt-0.5" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-wider text-muted-foreground", children: "Status" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-green-400", children: "Open to Work" })
+          ] })
+        ] })
+      ] })
+    ] })
   ] });
 }
 function Field({ label, children }) {
@@ -5500,7 +5607,7 @@ function Journey() {
           children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-1.5 w-1.5 rounded-full bg-accent-orange transition-all group-hover:scale-150" })
         }
       ),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/40", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/25", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center gap-2 text-xs text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "rounded-md border border-border/60 px-1.5 py-0.5 text-[10px] uppercase tracking-wider", children: j.year }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-1 text-base font-medium text-foreground", children: j.title }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm text-muted-foreground", children: j.desc })
@@ -5566,11 +5673,29 @@ function Portfolio() {
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileHero, { onJourney: () => setActive("journey") }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("main", { className: "surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SectionRenderer, { active }) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(NavPanel, { active, setActive, theme, toggleTheme: toggle })
+        /* @__PURE__ */ jsxRuntimeExports.jsx("main", { className: "surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SectionRenderer, { active }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "hidden md:block", children: /* @__PURE__ */ jsxRuntimeExports.jsx(NavPanel, { active, setActive, theme, toggleTheme: toggle }) })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("footer", { className: "mt-12 border-t border-border/60 pt-6 pb-2 text-center text-xs text-muted-foreground", children: "© 2026 Aditya Rajendra Shelke" })
-    ] })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("footer", { className: "mt-12 border-t border-border/60 pt-6 pb-2 text-center text-xs text-muted-foreground hidden md:block", children: "© 2026 Aditya Rajendra Shelke" })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fixed bottom-0 left-1/2 -translate-x-1/2 z-50 md:hidden", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "surface-1 flex items-center gap-0 rounded-2xl border border-border/60 px-2 py-2 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.6)]", children: NAV.map(({ key, label, icon: Icon2 }) => {
+      const isActive = active === key;
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          onClick: () => setActive(key),
+          className: cn$1(
+            "flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200",
+            isActive ? "bg-violet-500/15 text-violet-400" : "text-muted-foreground hover:bg-foreground/8 hover:text-foreground"
+          ),
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-5 w-5" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] font-medium uppercase tracking-wider", children: label })
+          ]
+        },
+        key
+      );
+    }) }) })
   ] });
 }
 const SplitComponent = Portfolio;

@@ -144,9 +144,9 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
             <div className="mt-2 h-6 md:h-7">
               <Typewriter
                 words={[
-                  "Cloud Engineer",
-                  "DevOps Engineer",
-                  "Security Analyst",
+                  "Cloud Computing",
+                  "DevOps",
+                  "CyberSecurity",
                 ]}
               />
             </div>
