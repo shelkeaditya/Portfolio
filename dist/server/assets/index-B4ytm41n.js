@@ -1,5 +1,5 @@
-import { r as reactExports, U as jsxRuntimeExports, a0 as React, T as React$1 } from "./server-BTG_Ww--.js";
-import { R as ReactDOM } from "./router-CK4IJahb.js";
+import { r as reactExports, U as jsxRuntimeExports, a0 as React, T as React$1 } from "./server-Bh4-7tQ5.js";
+import { R as ReactDOM } from "./router-BHOwTHzD.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -4966,7 +4966,7 @@ function ProfileHero({ onJourney }) {
         /* @__PURE__ */ jsxRuntimeExports.jsx(MetaRow, { icon: Download, label: "CV", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
           "a",
           {
-            href: "/aditya-shelke-resume.pdf",
+            href: "/Aditya Shelke CV.pdf",
             download: true,
             className: "flex items-center gap-2 hover:text-[color:var(--accent-orange)] transition-colors duration-200",
             children: "Download"

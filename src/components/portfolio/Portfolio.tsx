@@ -178,7 +178,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
             
               <MetaRow icon={Download} label="CV" >
                 <a
-                  href="/aditya-shelke-resume.pdf"
+                  href="/Aditya Shelke CV.pdf"
                   download 
                   className="flex items-center gap-2 hover:text-[color:var(--accent-orange)] transition-colors duration-200"
                 >

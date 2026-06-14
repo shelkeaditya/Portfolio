@@ -9,12 +9,12 @@
     "file": "assets/styles-UHJ5Yefl.css",
     "src": "C:/Portfolio/src/styles.css"
   },
-  "_router-CK4IJahb.js": {
-    "file": "assets/router-CK4IJahb.js",
+  "_router-BHOwTHzD.js": {
+    "file": "assets/router-BHOwTHzD.js",
     "name": "router",
     "isDynamicEntry": true,
     "imports": [
-      "_server-BTG_Ww--.js"
+      "_server-Bh4-7tQ5.js"
     ],
     "dynamicImports": [
       "src/routes/index.tsx?tsr-split=component"
@@ -23,22 +23,22 @@
       "assets/styles-UHJ5Yefl.css"
     ]
   },
-  "_server-BTG_Ww--.js": {
-    "file": "assets/server-BTG_Ww--.js",
+  "_server-Bh4-7tQ5.js": {
+    "file": "assets/server-Bh4-7tQ5.js",
     "name": "server",
     "isDynamicEntry": true,
     "dynamicImports": [
       "tanstack-start-manifest:v",
-      "_router-CK4IJahb.js",
+      "_router-BHOwTHzD.js",
       "src/start.ts",
       "%23tanstack-start-plugin-adapters"
     ]
   },
-  "_worker-entry-CmYuE8dS.js": {
-    "file": "assets/worker-entry-CmYuE8dS.js",
+  "_worker-entry-a877EC5C.js": {
+    "file": "assets/worker-entry-a877EC5C.js",
     "name": "worker-entry",
     "dynamicImports": [
-      "_server-BTG_Ww--.js"
+      "_server-Bh4-7tQ5.js"
     ]
   },
   "src/assets/profile.jpeg": {
@@ -46,29 +46,29 @@
     "src": "src/assets/profile.jpeg"
   },
   "src/routes/index.tsx?tsr-split=component": {
-    "file": "assets/index-CjG8hfQ1.js",
+    "file": "assets/index-B4ytm41n.js",
     "name": "index",
     "src": "src/routes/index.tsx?tsr-split=component",
     "isDynamicEntry": true,
     "imports": [
-      "_server-BTG_Ww--.js",
-      "_router-CK4IJahb.js"
+      "_server-Bh4-7tQ5.js",
+      "_router-BHOwTHzD.js"
     ],
     "assets": [
       "assets/profile-DYU8eqih.jpeg"
     ]
   },
   "src/start.ts": {
-    "file": "assets/start-Bci80agB.js",
+    "file": "assets/start-CuIYqgR1.js",
     "name": "start",
     "src": "src/start.ts",
     "isDynamicEntry": true,
     "imports": [
-      "_worker-entry-CmYuE8dS.js"
+      "_worker-entry-a877EC5C.js"
     ]
   },
   "tanstack-start-manifest:v": {
-    "file": "assets/_tanstack-start-manifest_v-vyVwOwRG.js",
+    "file": "assets/_tanstack-start-manifest_v-VWvb4ywo.js",
     "name": "_tanstack-start-manifest_v",
     "src": "tanstack-start-manifest:v",
     "isDynamicEntry": true
@@ -79,7 +79,7 @@
     "src": "virtual:cloudflare/worker-entry",
     "isEntry": true,
     "imports": [
-      "_worker-entry-CmYuE8dS.js"
+      "_worker-entry-a877EC5C.js"
     ]
   }
 }
