@@ -841,6 +841,7 @@ import emailjs from '@emailjs/browser';
 
 function Contact() {
   const [sending, setSending] = useState(false);
+  const [cooldown, setCooldown] = useState(false);
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
   e.preventDefault();
   setSending(true);
@@ -855,6 +856,8 @@ function Contact() {
   )
   .then(() => {
     setSending(false);
+    setCooldown(true);
+    setTimeout(() => setCooldown(false), 60000);
     toast.success("Message sent — I'll get back to you shortly.");
     form.reset();
   })
@@ -913,11 +916,11 @@ function Contact() {
     <div>
       <Button
         type="submit"
-        disabled={sending}
+        disabled={sending || cooldown}
         className="gap-2"
       >
         <Send className="h-4 w-4" />
-        {sending ? "Sending..." : "Send Message"}
+        {sending ? "Sending..." : cooldown ? "Please wait..." : "Send Message"}
       </Button>
     </div>
   </form>
