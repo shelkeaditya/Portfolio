@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-IqC4O6ob.js";
-import { R as ReactDOM } from "./router-tMh0xqnz.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-Do0iwmRc.js";
+import { R as ReactDOM } from "./router-Cv0qcIx6.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5679,6 +5679,7 @@ function Blog() {
 }
 function Contact() {
   const [sending, setSending] = reactExports.useState(false);
+  const [cooldown, setCooldown] = reactExports.useState(false);
   function onSubmit(e) {
     e.preventDefault();
     setSending(true);
@@ -5690,6 +5691,8 @@ function Contact() {
       "X7cczgqlSFWmadFLE"
     ).then(() => {
       setSending(false);
+      setCooldown(true);
+      setTimeout(() => setCooldown(false), 6e4);
       toast.success("Message sent — I'll get back to you shortly.");
       form.reset();
     }).catch(() => {
@@ -5740,11 +5743,11 @@ function Contact() {
               Button,
               {
                 type: "submit",
-                disabled: sending,
+                disabled: sending || cooldown,
                 className: "gap-2",
                 children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "h-4 w-4" }),
-                  sending ? "Sending..." : "Send Message"
+                  sending ? "Sending..." : cooldown ? "Please wait..." : "Send Message"
                 ]
               }
             ) })
