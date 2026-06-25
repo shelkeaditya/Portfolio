@@ -139,24 +139,22 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
           {/* Identity column */}
           <div className="min-w-0 w-full md:w-[370px] md:border-r md:border-border/60 md:pr-12 text-center md:text-left">
             <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
-              Aditya <span className="text-violet-400">Shelke</span>
+              Aditya Shelke
             </h1>
             <div className="mt-2 h-6 md:h-7">
               <Typewriter
                 words={[
-                  "Cloud Computing",
-                  "DevOps",
-                  "CyberSecurity",
+                  "Cloud & DevOps Engineer",
                 ]}
               />
             </div>
 
             {/* Icons only social row */}
             <div className="mt-5 flex flex-wrap justify-center md:justify-start items-center gap-2">
-              <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
-              <IconLink href="https://x.com/shelke__aditya" icon={TwitterIcon} label="Twitter" />
               <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
               <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
+              <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
+              <IconLink href="https://x.com/shelke__aditya" icon={TwitterIcon} label="Twitter" />
               <IconButton onClick={onJourney} icon={Flag} label="Journey" accent="orange" />
             </div>
           </div>
@@ -166,11 +164,11 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
             <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-2">
                 <div className="group transition-all duration-300 hover:text-orange-300">
   
-              <MetaRow icon={Mail} label="Email"
+              <MetaRow icon={Mail} label="EMAIL"
               >
                 <a href="mailto:work.shelkeaditya@gmail.com" className="flex items-center gap-2 hover:text-foreground hover:underline underline-offset-2 transition-colors duration-200">
                   <span className="transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]">
-                   Email
+                   Reach Out
                  </span> 
                 </a>
               </MetaRow>
@@ -839,17 +837,32 @@ function Blog() {
   );
 }
 
+import emailjs from '@emailjs/browser';
+
 function Contact() {
   const [sending, setSending] = useState(false);
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSending(true);
-    setTimeout(() => {
-      setSending(false);
-      toast.success("Message sent — I'll get back to you shortly.");
-      (e.target as HTMLFormElement).reset();
-    }, 700);
-  }
+  e.preventDefault();
+  setSending(true);
+
+  const form = e.target as HTMLFormElement;
+
+  emailjs.sendForm(
+    'service_fdq7bwf',
+    'template_jpawssn',
+    form,
+    'X7cczgqlSFWmadFLE'
+  )
+  .then(() => {
+    setSending(false);
+    toast.success("Message sent — I'll get back to you shortly.");
+    form.reset();
+  })
+  .catch(() => {
+    setSending(false);
+    toast.error("Something went wrong. Please try again.");
+  });
+}
   return (
    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
 
