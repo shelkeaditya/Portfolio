@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-DRKxJBJ_.js";
-import { R as ReactDOM } from "./router-DKmdmzFy.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-DpOXiMdc.js";
+import { R as ReactDOM } from "./router-Bfk2knpT.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5663,7 +5663,21 @@ function Contact() {
           children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Name", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { required: true, name: "name", placeholder: "Your name", className: "surface-3 h-10 w-full" }) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Email", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Input, { required: true, type: "email", name: "email", placeholder: "you@example.com", className: "surface-3 h-10 w-full" }) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Message", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Textarea, { required: true, name: "message", placeholder: "What's on your mind?", rows: 2, className: "surface-3 w-full resize-none overflow-hidden" }) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Field, { label: "Message", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Textarea,
+              {
+                required: true,
+                name: "message",
+                placeholder: "What's on your mind?",
+                rows: 2,
+                className: "surface-3 w-full resize-none overflow-hidden",
+                onInput: (e) => {
+                  const el = e.currentTarget;
+                  el.style.height = "auto";
+                  el.style.height = el.scrollHeight + "px";
+                }
+              }
+            ) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { type: "submit", disabled: sending || cooldown, className: "gap-2", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "h-4 w-4" }),
               sending ? "Sending…" : cooldown ? "Please wait…" : "Send Message"

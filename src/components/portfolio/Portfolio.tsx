@@ -848,7 +848,18 @@ function Contact() {
             <Input required type="email" name="email" placeholder="you@example.com" className="surface-3 h-10 w-full" />
           </Field>
           <Field label="Message">
-            <Textarea required name="message" placeholder="What's on your mind?" rows={2} className="surface-3 w-full resize-none overflow-hidden" />
+            <Textarea
+              required
+              name="message"
+              placeholder="What's on your mind?"
+              rows={2}
+              className="surface-3 w-full resize-none overflow-hidden"
+              onInput={(e) => {
+                const el = e.currentTarget;
+                el.style.height = "auto";
+                el.style.height = el.scrollHeight + "px";
+              }}
+            />
           </Field>
           <div>
             <Button type="submit" disabled={sending || cooldown} className="gap-2">
