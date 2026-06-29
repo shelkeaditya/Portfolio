@@ -879,13 +879,16 @@ function Contact() {
             {/* Email row */}
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-              <span className="text-sm text-foreground truncate">work.shelkeaditya@gmail.com</span>
+              <a href="mailto:work.shelkeaditya@gmail.com"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              work.shelkeaditya@gmail.com
+            </a>
             </div>
 
             {/* Location row */}
             <div className="flex items-center gap-3">
               <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
-              <span className="text-sm text-foreground">Pune, India</span>
+              <span className="flex items-center gap-2 text-sm text-muted-foreground">Pune, Maharashtra</span>
             </div>
 
             {/* Find me on */}
