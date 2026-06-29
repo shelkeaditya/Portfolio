@@ -82,7 +82,7 @@ const JOURNEY = [
 
   { year: "Aug 2024", title: "AWS & Cloud Architecture",    desc: "Explored AWS fundamentals, cloud architecture, virtualization, networking, and security through coursework and hands-on labs." },
 
-  { year: "Apr 2025", title: "DevOps Journey",              desc: "Attended a 5-day AWS seminar and expanded into Docker, Linux administration, Cybersecurity, and DevOps practices." },
+  { year: "Apr 2025", title: "Infrastructure Automation",   desc: "Began automating deployments and managing cloud infrastructure using Docker, Linux, and DevOps tools." },
 
   { year: "Jun 2025", title: "Real-World Projects",         desc: "Built the Telemedicine Platform as a final-year group project while developing an internship-level cloud and DevOps project independently and learning Kubernetes." },
 

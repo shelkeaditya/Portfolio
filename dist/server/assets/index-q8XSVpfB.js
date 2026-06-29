@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-pElJ4ZWC.js";
-import { R as ReactDOM } from "./router-DRJZ95lD.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-DRKxJBJ_.js";
+import { R as ReactDOM } from "./router-DKmdmzFy.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5057,12 +5057,15 @@ const NAV = [
   { key: "contact", label: "Contact", icon: Send }
 ];
 const JOURNEY = [
-  { year: "2022", title: "B.Tech Admission", desc: "Cloud Technology & Information Security - Ajeenkya DY Patil University" },
-  { year: "2022", title: "Linux & Networking", desc: "Learned OS fundamentals, TCP/IP, subnetting, and server administration" },
-  { year: "2023", title: "AWS & DevOps", desc: "Deep dive into cloud services, automation tooling and CI/CD workflows" },
-  { year: "2024", title: "AWS Certified", desc: "Passed AWS Certified Cloud Practitioner (CLF-C02)" },
-  { year: "2025", title: "Containers & Orchestration", desc: "Hands-on with Docker, Kubernetes, Helm and container security" },
-  { year: "Now", title: "Cloud & DevSecOps Intern", desc: "Interning at E-Sutra Technologies - building real-world DevOps skills" }
+  { year: "Aug 2022", title: "Started B.Tech Journey", desc: "Began B.Tech in Cloud Technology & Information Security at Ajeenkya DY Patil University." },
+  { year: "Aug 2023", title: "Programming Foundations", desc: "Built programming fundamentals with C and Java while strengthening problem-solving skills." },
+  { year: "Jan 2024", title: "Cloud & Security", desc: "Started learning Cloud Computing, Linux, Networking, Python, and Information Security, building a strong technical foundation." },
+  { year: "Aug 2024", title: "AWS & Cloud Architecture", desc: "Explored AWS fundamentals, cloud architecture, virtualization, networking, and security through coursework and hands-on labs." },
+  { year: "Apr 2025", title: "Infrastructure Automation", desc: "Began automating deployments and managing cloud infrastructure using Docker, Linux, and DevOps tools." },
+  { year: "Jun 2025", title: "Real-World Projects", desc: "Built the Telemedicine Platform as a final-year group project while developing an internship-level cloud and DevOps project independently and learning Kubernetes." },
+  { year: "Jan 2026", title: "Internship & CI/CD", desc: "Worked on Jenkins, Power BI, CI/CD pipelines, and enhanced cloud and DevOps projects during my internship." },
+  { year: "Apr 2026", title: "AWS Certified", desc: "Earned the AWS Certified Cloud Practitioner (CLF-C02), validating foundational knowledge of AWS Cloud services, architecture, security, and best practices." },
+  { year: "Present", title: "Growing as a Cloud Engineer", desc: "Continuing to build expertise in AWS, Kubernetes, DevOps, Linux, Networking, and Security through hands-on projects and continuous learning." }
 ];
 const CARDS = [
   // ── Certifications ──────────────────────────────────────
@@ -5488,7 +5491,7 @@ function Resume() {
           {
             heading: "Cloud & DevSecOps Intern",
             college: "E-Sutra Technologies",
-            year: "2025 – Present",
+            year: "Jun 2026 – Present",
             location: "Remote",
             description: "Working on real-world DevOps and cloud tasks including CI/CD pipeline management, infrastructure automation, and security practices in an Agile team environment.",
             points: [
@@ -5502,9 +5505,9 @@ function Resume() {
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
           ResumeItem,
           {
-            heading: "Hands-on Cloud Labs & Self Projects",
-            year: "2023 – Present",
-            location: "Self Learning",
+            heading: "Cloud Labs & Projects",
+            year: "Mar 2023 – Aug 2025",
+            location: "",
             description: "Built and managed personal cloud and DevOps projects involving AWS services, Linux administration, containerisation, CI/CD workflows, and infrastructure automation.",
             points: [
               "Deployed AWS EC2, S3, IAM, VPC, ELB, EKS, ECR, CloudWatch configurations",
@@ -5521,7 +5524,7 @@ function Resume() {
         {
           heading: "B.Tech - Cloud Technology & Information Security",
           college: "Ajeenkya DY Patil University",
-          year: "2022 – 2026",
+          year: "Aug 2022 – May 2026",
           location: "Pune, India"
         }
       ) }),
