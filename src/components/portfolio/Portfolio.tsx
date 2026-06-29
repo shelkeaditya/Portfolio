@@ -35,48 +35,170 @@ import {
   Bot,
   Workflow,
   Activity,
+  Link,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button }   from "@/components/ui/button";
+import { Input }    from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
-import profileImg from "@/assets/profile.jpeg";
+import { toast }    from "sonner";
+import { Toaster }  from "@/components/ui/sonner";
+import emailjs      from "@emailjs/browser";
+import profileImg   from "@/assets/profile.jpeg";
 
-type SectionKey = "about" | "resume" | "portfolio" | "blog" | "contact" | "journey";
+// ═══════════════════════════════════════════════════════════
+// TYPES
+// ═══════════════════════════════════════════════════════════
 
-const NAV: { key: SectionKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: "about", label: "About", icon: User },
-  { key: "resume", label: "Resume", icon: FileText },
-  { key: "portfolio", label: "Portfolio", icon: Briefcase },
-  { key: "blog", label: "Blog", icon: BookOpen },
-  { key: "contact", label: "Contact", icon: Send },
+type SectionKey      = "about" | "resume" | "portfolio" | "blog" | "contact" | "journey";
+type PortfolioFilter = "All" | "Projects" | "Certifications" | "Badges";
+
+// ═══════════════════════════════════════════════════════════
+// CONSTANTS — Navigation
+// ═══════════════════════════════════════════════════════════
+
+const NAV: {
+  key:   SectionKey;
+  label: string;
+  icon:  React.ComponentType<{ className?: string }>;
+}[] = [
+  { key: "about",     label: "About",     icon: User      },
+  { key: "resume",    label: "Resume",    icon: FileText   },
+  { key: "portfolio", label: "Portfolio", icon: Briefcase  },
+  { key: "blog",      label: "Blog",      icon: BookOpen   },
+  { key: "contact",   label: "Contact",   icon: Send       },
 ];
+
+// ═══════════════════════════════════════════════════════════
+// CONSTANTS — Journey timeline
+// ═══════════════════════════════════════════════════════════
+
+const JOURNEY = [
+  { year: "2022", title: "B.Tech Admission",              desc: "Cloud Technology & Information Security — Ajeenkya DY Patil University" },
+  { year: "2022", title: "Linux & Networking",            desc: "Learned OS fundamentals, TCP/IP, subnetting, and server administration"  },
+  { year: "2023", title: "AWS & DevOps",                  desc: "Deep dive into cloud services, automation tooling and CI/CD workflows"   },
+  { year: "2024", title: "AWS Certified",                 desc: "Passed AWS Certified Cloud Practitioner (CLF-C02)"                       },
+  { year: "2025", title: "Containers & Orchestration",    desc: "Hands-on with Docker, Kubernetes, Helm and container security"           },
+  { year: "Now",  title: "Cloud & DevSecOps Intern",      desc: "Interning at E-Sutra Technologies — building real-world DevOps skills"   },
+];
+
+// ═══════════════════════════════════════════════════════════
+// CONSTANTS — Portfolio cards
+// ═══════════════════════════════════════════════════════════
+
+const CARDS: {
+  category:    Exclude<PortfolioFilter, "All">;
+  icon:        React.ReactNode;
+  title:       string;
+  subtitle:    string;
+  description: string;
+  tech:        string[];
+  buttons:     { label: string; href: string }[];
+}[] = [
+  // ── Certifications ──────────────────────────────────────
+  {
+    category:    "Certifications",
+    icon:        <Award className="h-5 w-5 text-yellow-400" />,
+    title:       "AWS Certified Cloud Practitioner",
+    subtitle:    "Amazon Web Services · CLF-C02",
+    description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and core AWS services.",
+    tech:        ["AWS", "Cloud Concepts", "IAM", "EC2", "S3", "Pricing & Support"],
+    buttons:     [{ label: "View Badge", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" }],
+  },
+
+  // ── Projects ────────────────────────────────────────────
+  {
+    category:    "Projects",
+    icon:        <ShieldCheck className="h-5 w-5 text-green-400" />,
+    title:       "DevSecOps Flask Platform",
+    subtitle:    "Secure CI/CD Application",
+    description: "Flask application with integrated DevSecOps practices — containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
+    tech:        ["Python", "Flask", "Docker", "GitHub Actions", "Trivy", "SonarQube"],
+    buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }],
+  },
+  {
+    category:    "Projects",
+    icon:        <Activity className="h-5 w-5 text-blue-400" />,
+    title:       "Resilient Server Monitoring Platform",
+    subtitle:    "Infrastructure Monitoring",
+    description: "Monitoring platform that tracks server health, CPU/memory metrics, and system availability with alerting for reliable infra management.",
+    tech:        ["Linux", "Python", "Bash", "Networking", "Nginx"],
+    buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform" }],
+  },
+  {
+    category:    "Projects",
+    icon:        <Workflow className="h-5 w-5 text-orange-400" />,
+    title:       "CI/CD Platform",
+    subtitle:    "Automation Pipeline",
+    description: "End-to-end automated build, test, and deployment pipeline that streamlines software delivery and infrastructure provisioning.",
+    tech:        ["GitHub Actions", "Docker", "Jenkins", "Linux", "Shell Scripting"],
+    buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/CICD-Platform" }],
+  },
+  {
+    category:    "Projects",
+    icon:        <Bot className="h-5 w-5 text-cyan-400" />,
+    title:       "AI-Based Backup Management",
+    subtitle:    "Intelligent Backup Automation",
+    description: "Backup management solution using Python automation for scheduling, recovery planning, and efficient data protection workflows.",
+    tech:        ["Python", "Linux", "Bash", "Cron", "Automation"],
+    buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/Ai-based-backup-management" }],
+  },
+  {
+    category:    "Projects",
+    icon:        <Cloud className="h-5 w-5 text-sky-400" />,
+    title:       "Nextcloud on Linux",
+    subtitle:    "Self-Hosted Private Cloud",
+    description: "Deployed and configured Nextcloud on a Linux server for secure self-hosted file sharing, storage, and team collaboration.",
+    tech:        ["Linux", "Nextcloud", "Docker", "Nginx", "Networking"],
+    buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/Nextcloud-on-Linux" }],
+  },
+
+  // ── Badges ──────────────────────────────────────────────
+  {
+    category:    "Badges",
+    icon:        <Award className="h-5 w-5 text-purple-400" />,
+    title:       "TryHackMe",
+    subtitle:    "Cybersecurity Learning Platform",
+    description: "Earned badges across Linux fundamentals, networking, web reconnaissance, and hands-on penetration testing rooms.",
+    tech:        ["Linux", "Networking", "Recon", "Web Hacking", "CTF"],
+    buttons:     [
+      { label: "Profile", href: "#" },
+      { label: "Badge",   href: "#" },
+    ],
+  },
+];
+
+// ═══════════════════════════════════════════════════════════
+// HOOK — Theme
+// ═══════════════════════════════════════════════════════════
 
 function useTheme() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+
   useEffect(() => {
-    const saved = (typeof window !== "undefined" && localStorage.getItem("theme")) as
-      | "dark"
-      | "light"
-      | null;
+    const saved = (typeof window !== "undefined" && localStorage.getItem("theme")) as "dark" | "light" | null;
     const t = saved ?? "dark";
     setTheme(t);
     document.documentElement.classList.toggle("dark", t === "dark");
   }, []);
+
   const toggle = () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
     document.documentElement.classList.toggle("dark", next === "dark");
     localStorage.setItem("theme", next);
   };
+
   return { theme, toggle };
 }
 
+// ═══════════════════════════════════════════════════════════
+// PRIMITIVES — Shared UI building blocks
+// ═══════════════════════════════════════════════════════════
+
 function SectionHeading({ title }: { title: string }) {
   const hasDot = title.endsWith(".");
-  const base = hasDot ? title.slice(0, -1) : title;
+  const base   = hasDot ? title.slice(0, -1) : title;
   return (
     <div className="mb-8">
       <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
@@ -88,252 +210,8 @@ function SectionHeading({ title }: { title: string }) {
   );
 }
 
-function ProfileHero({ onJourney }: { onJourney: () => void }) {
-  const { theme, toggle } = useTheme();
-
-  return (
-    <section className="relative">
-      <div className="surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
-
-        <button
-          onClick={toggle}
-          className="absolute top-3 right-3 z-20 md:hidden surface-3 rounded-xl border border-border/60 p-2"
-        >
-          {theme === "dark" ? (
-            <Sun className="h-5 w-5" />
-          ) : (
-            <Moon className="h-5 w-5" />
-          )}
-        </button>
-
-        {/* Very subtle low-intensity ambient orange lighting */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(600px 200px at 10% 0%, color-mix(in oklab, var(--accent-orange) 8%, transparent), transparent 70%)," +
-              "radial-gradient(400px 160px at 90% 100%, color-mix(in oklab, var(--accent-orange) 5%, transparent), transparent 70%)",
-          }}
-        />
-
-        <div className="relative flex flex-col items-center gap-6 p-5 md:flex-row md:items-center md:text-left md:gap-10 md:px-8 md:py-6">
-  {/* Profile picture */}
-  <div className="shrink-0 flex justify-center">
-    <div className="group relative w-fit">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -inset-1 rounded-2xl opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100"
-        style={{ background: "color-mix(in oklab, var(--accent-orange) 30%, transparent)" }}
-      />
-      <img
-        src={profileImg}
-        alt="Aditya Shelke"
-        width={160}
-        height={160}
-        className="relative h-32 w-32 md:h-40 md:w-40 rounded-3xl object-cover shadow-[0_18px_40px_-18px_rgba(0,0,0,0.7)] ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 ease-out group-hover:scale-[1.02] group-hover:ring-[color:var(--accent-orange)]"
-      />
-    </div>
-  </div>
-
-          {/* Identity column */}
-          <div className="min-w-0 w-full md:w-[370px] md:border-r md:border-border/60 md:pr-12 text-center md:text-left">
-            <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
-              Aditya Shelke
-            </h1>
-            <div className="mt-2 h-6 md:h-7">
-              <Typewriter
-                words={[
-                  "Cloud & DevOps Engineer",
-                ]}
-              />
-            </div>
-
-            {/* Icons only social row */}
-            <div className="mt-5 flex flex-wrap justify-center md:justify-start items-center gap-2">
-              <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
-              <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
-              <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
-              <IconLink href="https://x.com/shelke__aditya" icon={TwitterIcon} label="Twitter" />
-              <IconButton onClick={onJourney} icon={Flag} label="Journey" accent="orange" />
-            </div>
-          </div>
-
-          {/* Metadata grid */}
-          <div className="min-w-0 w-full flex-1 text-left">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-2">
-                <div className="group transition-all duration-300 hover:text-orange-300">
-  
-              <MetaRow icon={Mail} label="EMAIL"
-              >
-                <a href="mailto:work.shelkeaditya@gmail.com" className="flex items-center gap-2 hover:text-foreground hover:underline underline-offset-2 transition-colors duration-200">
-                  <span className="transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]">
-                   Reach Out
-                 </span> 
-                </a>
-              </MetaRow>
-            </div>
-            
-              <MetaRow icon={Download} label="CV" >
-                <a
-                  href="/Aditya Shelke CV.pdf"
-                  download 
-                  className="flex items-center gap-2 hover:text-[color:var(--accent-orange)] transition-colors duration-200"
-                >
-                  {/* <Download className="h-4 w-4 transition-all duration-300 group-hover:scale-110 group-hover:text-orange-400" /> */}
-              
-                Download
-                </a>
-              </MetaRow>
-              
-              <MetaRow icon={MapPin} label="Location">Pune, India</MetaRow>
-              <div>
-                <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                  Status
-                </div>
-                <div className="mt-1.5 flex items-center gap-2 text-sm font-semibold text-emerald-400">
-                  <span className="relative inline-flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/50" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-                  </span>
-                  Open to Work
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function IconLink({
-  href,
-  icon: Icon,
-  label,
-  accent = "orange",
-}: {
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  accent?: "orange" | "orange";
-}) {
-  const hoverColor =
-    accent === "orange" ? "var(--accent-orange)" : "var(--accent-orange)";
-  return (
-    <a
-      href={href}
-      target={href.startsWith("http") ? "_blank" : undefined}
-      rel="noreferrer"
-      aria-label={label}
-      title={label}
-      className="group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/60 hover:text-foreground"
-      style={{ ["--hover" as never]: hoverColor }}
-    >
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-lg opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-60"
-        style={{ background: `color-mix(in oklab, ${hoverColor} 25%, transparent)` }}
-      />
-      <Icon className="relative h-4 w-4" />
-    </a>
-  );
-}
-
-function IconButton({
-  onClick,
-  icon: Icon,
-  label,
-  accent = "orange",
-}: {
-  onClick: () => void;
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  accent?: "orange" | "orange";
-}) {
-  const hoverColor =
-    accent === "orange" ? "var(--accent-orange)" : "var(--accent-orange)";
-  return (
-    <button
-      onClick={onClick}
-      aria-label={label}
-      title={label}
-      className="group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/60 hover:text-foreground"
-    >
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-lg opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-60"
-        style={{ background: `color-mix(in oklab, ${hoverColor} 25%, transparent)` }}
-      />
-      <Icon className="relative h-4 w-4" />
-    </button>
-  );
-}
-
-function Typewriter({ words }: { words: string[] }) {
-  const [index, setIndex] = useState(0);
-  const [text, setText] = useState("");
-  const [deleting, setDeleting] = useState(false);
-
-  useEffect(() => {
-    const current = words[index % words.length];
-    const atFull = !deleting && text === current;
-    const atEmpty = deleting && text === "";
-    const delay = atFull ? 1600 : atEmpty ? 400 : deleting ? 35 : 70;
-
-    const t = setTimeout(() => {
-      if (atFull) {
-        setDeleting(true);
-        return;
-      }
-      if (atEmpty) {
-        setDeleting(false);
-        setIndex((i) => (i + 1) % words.length);
-        return;
-      }
-      setText((prev) =>
-        deleting ? current.slice(0, prev.length - 1) : current.slice(0, prev.length + 1),
-      );
-    }, delay);
-
-    return () => clearTimeout(t);
-  }, [text, deleting, index, words]);
-
-  return (
-    <p className="text-base md:text-lg font-medium text-muted-foreground">
-      <span>{text}</span>
-      <span
-        aria-hidden
-        className="ml-0.5 inline-block h-[1em] w-[2px] translate-y-[3px] bg-foreground/70 animate-pulse"
-      />
-    </p>
-  );
-}
-
-function Meta({
-  icon: Icon,
-  label,
-  children,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="surface-3 flex items-center gap-3 rounded-lg border border-border/60 px-3 py-2">
-      <Icon className="h-4 w-4 text-muted-foreground" />
-      <div className="min-w-0">
-        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
-        <div className="truncate text-sm text-foreground">{children}</div>
-      </div>
-    </div>
-  );
-}
-
 function MetaRow({
-  icon: Icon,
-  label,
-  children,
+  icon: Icon, label, children,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -341,9 +219,7 @@ function MetaRow({
 }) {
   return (
     <div>
-      <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
-        {label}
-      </div>
+      <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
       <div className="mt-1.5 flex items-center gap-2 text-sm text-foreground">
         <Icon className="h-4 w-4 text-muted-foreground" />
         <span className="truncate">{children}</span>
@@ -352,15 +228,209 @@ function MetaRow({
   );
 }
 
-function NavPanel({
-  active,
-  setActive,
-  theme,
-  toggleTheme,
+function IconLink({
+  href, icon: Icon, label,
 }: {
-  active: SectionKey;
-  setActive: (s: SectionKey) => void;
-  theme: "dark" | "light";
+  href:  string;
+  icon:  React.ComponentType<{ className?: string }>;
+  label: string;
+}) {
+  return (
+    <a
+      href={href}
+      target={href.startsWith("http") ? "_blank" : undefined}
+      rel="noreferrer"
+      aria-label={label}
+      title={label}
+      className="group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/60 hover:text-foreground"
+    >
+      <span aria-hidden className="pointer-events-none absolute inset-0 rounded-lg opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-60"
+        style={{ background: "color-mix(in oklab, var(--accent-orange) 25%, transparent)" }} />
+      <Icon className="relative h-4 w-4" />
+    </a>
+  );
+}
+
+function IconButton({
+  onClick, icon: Icon, label,
+}: {
+  onClick: () => void;
+  icon:    React.ComponentType<{ className?: string }>;
+  label:   string;
+}) {
+  return (
+    <button onClick={onClick} aria-label={label} title={label}
+      className="group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/60 hover:text-foreground"
+    >
+      <span aria-hidden className="pointer-events-none absolute inset-0 rounded-lg opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-60"
+        style={{ background: "color-mix(in oklab, var(--accent-orange) 25%, transparent)" }} />
+      <Icon className="relative h-4 w-4" />
+    </button>
+  );
+}
+
+function TechBadge({ label }: { label: string }) {
+  return (
+    <span className="surface-3 rounded-md border border-border/60 px-2 py-0.5 text-[11px] text-muted-foreground">
+      {label}
+    </span>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <div className="mb-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
+      {children}
+    </label>
+  );
+}
+
+function Typewriter({ words }: { words: string[] }) {
+  const [index,    setIndex]    = useState(0);
+  const [text,     setText]     = useState("");
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const current = words[index % words.length];
+    const atFull  = !deleting && text === current;
+    const atEmpty = deleting  && text === "";
+    const delay   = atFull ? 1600 : atEmpty ? 400 : deleting ? 35 : 70;
+
+    const t = setTimeout(() => {
+      if (atFull)  { setDeleting(true); return; }
+      if (atEmpty) { setDeleting(false); setIndex((i) => (i + 1) % words.length); return; }
+      setText((prev) => deleting ? current.slice(0, prev.length - 1) : current.slice(0, prev.length + 1));
+    }, delay);
+
+    return () => clearTimeout(t);
+  }, [text, deleting, index, words]);
+
+  return (
+    <p className="text-base md:text-lg font-medium text-muted-foreground">
+      <span>{text}</span>
+      <span aria-hidden className="ml-0.5 inline-block h-[1em] w-[2px] translate-y-[3px] bg-foreground/70 animate-pulse" />
+    </p>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPONENT — ProfileHero  (3-column terminal layout)
+//   col-1 : photo + name + role + handle
+//   col-2 : system status block
+//   col-3 : Download CV + email + social icons
+// ═══════════════════════════════════════════════════════════
+
+function ProfileHero({ onJourney }: { onJourney: () => void }) {
+  const { theme, toggle } = useTheme();
+
+  return (
+    <section className="relative">
+      <div className="surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
+
+        
+
+        {/* Mobile theme toggle */}
+        <button onClick={toggle}
+          className="absolute top-3 right-3 z-20 md:hidden surface-3 rounded-xl border border-border/60 p-2">
+          {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </button>
+
+        {/* Ambient glow */}
+        <div aria-hidden className="pointer-events-none absolute inset-0" style={{
+          background: "radial-gradient(500px 160px at 0% 50%, color-mix(in oklab, var(--accent-orange) 7%, transparent), transparent 70%)",
+        }} />
+
+        {/* ── 3-column row ── */}
+        <div className="relative flex flex-col gap-5 px-6 py-5 md:flex-row md:items-center md:gap-0 md:px-8 md:py-5">
+
+          {/* ── COL 1 — Photo + name + role + location ── */}
+          <div className="flex items-center gap-4 md:flex-1 md:pr-8 md:border-r md:border-border/50">
+            <div className="group relative shrink-0">
+              <div aria-hidden
+                className="pointer-events-none absolute -inset-0.5 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100"
+                style={{ background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }} />
+              <img src={profileImg} alt="Aditya Shelke"
+                className="relative h-20 w-20 md:h-24 md:w-24 rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 group-hover:ring-[color:var(--accent-orange)]" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight">
+                Aditya <span className="font-light text-muted-foreground">Shelke</span>
+              </h1>
+              <div className="mt-0.5 h-5">
+                <Typewriter words={["DevOps Engineer", "Cloud Architect"]} />
+              </div>
+              
+            </div>
+          </div>
+
+          {/* ── COL 2 — System Status ── */}
+          <div className="md:w-[32%] md:px-8 md:border-r md:border-border/50">
+            
+            <div className="space-y-1.5 font-mono text-sm">
+              <div className="flex items-center gap-3">
+                <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Job Status :</span>
+                <span className="flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]">
+                  <span className="relative inline-flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  </span>
+                  Available
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Time Zone :</span>
+                <span className="text-[13px] text-foreground/70">GMT+5:30</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Location :</span>
+                <span className="text-[13px] text-foreground/70">Pune, India</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── COL 3 — Download CV + email + socials ── */}
+          <div className="flex flex-col gap-3 md:flex-1 md:pl-8 md:items-end">
+            {/* Download CV */}
+            <a href="/Aditya Shelke CV.pdf" download
+              className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 px-4 py-2 text-sm font-semibold text-accent-orange transition-all hover:bg-[color:var(--accent-orange)]/20 hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5">
+              <Download className="h-4 w-4" />
+              Download CV
+            </a>
+
+            {/* Email */}
+            <a href="mailto:work.shelkeaditya@gmail.com"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+              work.shelkeaditya@gmail.com
+            </a>
+
+            {/* Social icons + theme toggle */}
+            <div className="flex items-center gap-1.5">
+              <IconLink href="https://linkedin.com/in/shelkeaditya"  icon={Linkedin}    label="LinkedIn"  />
+              <IconLink href="https://github.com/shelkeaditya"       icon={Github}      label="GitHub"    />
+              <IconLink href="https://instagram.com/shelke__aditya"  icon={Instagram}   label="Instagram" />
+              <IconLink href="https://x.com/shelke__aditya"          icon={TwitterIcon} label="Twitter"   />
+              <IconButton onClick={onJourney} icon={Flag} label="Journey" />
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPONENT — NavPanel (desktop sidebar)
+// ═══════════════════════════════════════════════════════════
+
+function NavPanel({
+  active, setActive, theme, toggleTheme,
+}: {
+  active:      SectionKey;
+  setActive:   (s: SectionKey) => void;
+  theme:       "dark" | "light";
   toggleTheme: () => void;
 }) {
   return (
@@ -369,53 +439,36 @@ function NavPanel({
         {NAV.map(({ key, label, icon: Icon }) => {
           const isActive = active === key;
           return (
-            <button
-              key={key}
-              onClick={() => setActive(key)}
+            <button key={key} onClick={() => setActive(key)}
               className={cn(
-               "group relative flex items-center gap-2 rounded-2xl px-4 py-3.5 transition-all duration-300 ease-out",
-               isActive
-                 ? "bg-violet-500/10 text-violet-500 border-l-2 border-violet-500 shadow-[0_0_20px_rgba(124,58,237,0.25)]"
-                 : "text-muted-foreground hover:bg-foreground/8 hover:translate-x-1"
-)}
+                "group relative flex items-center gap-2 rounded-2xl px-4 py-3.5 transition-all duration-300 ease-out",
+                isActive
+                  ? "bg-violet-500/10 text-violet-500 border-l-2 border-violet-500 shadow-[0_0_20px_rgba(124,58,237,0.25)]"
+                  : "text-muted-foreground hover:bg-foreground/8 hover:translate-x-1",
+              )}
             >
-              <span
-                className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
-                  isActive
-                    ? "bg-violet-500/15 text-violet-300"
-                    : "bg-transparent text-muted-foreground group-hover:bg-foreground/5",
-                )}
-              >
+              <span className={cn(
+                "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
+                isActive ? "bg-violet-500/15 text-violet-300" : "bg-transparent text-muted-foreground group-hover:bg-foreground/5",
+              )}>
                 <Icon className="h-4 w-4" />
               </span>
               <span className="flex-1 text-left">{label}</span>
-              {isActive && (
-                <span className="h-5 w-1 rounded-full bg-violet-500" aria-hidden />
-              )}
+              {isActive && <span className="h-5 w-1 rounded-full bg-violet-500" aria-hidden />}
             </button>
           );
         })}
       </nav>
+
       <div className="my-3 h-px bg-border/60" />
-      <button
-        onClick={toggleTheme}
-        aria-label="Toggle theme"
-        className="surface-3 group flex w-full items-center gap-3 rounded-lg border border-border/60 px-3 py-2.5 text-sm text-muted-foreground transition-all hover:text-foreground"
-      >
+
+      <button onClick={toggleTheme} aria-label="Toggle theme"
+        className="surface-3 group flex w-full items-center gap-3 rounded-lg border border-border/60 px-3 py-2.5 text-sm text-muted-foreground transition-all hover:text-foreground">
         <span className="relative flex h-7 w-7 items-center justify-center rounded-md bg-foreground/5">
-          <Sun
-            className={cn(
-              "h-4 w-4 absolute transition-all duration-500",
-              theme === "dark" ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100",
-            )}
-          />
-          <Moon
-            className={cn(
-              "h-4 w-4 absolute transition-all duration-500",
-              theme === "dark" ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0",
-            )}
-          />
+          <Sun className={cn("h-4 w-4 absolute transition-all duration-500",
+            theme === "dark" ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100")} />
+          <Moon className={cn("h-4 w-4 absolute transition-all duration-500",
+            theme === "dark" ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0")} />
         </span>
         <span className="flex-1 text-left">{theme === "dark" ? "Dark Mode" : "Light Mode"}</span>
       </button>
@@ -423,23 +476,32 @@ function NavPanel({
   );
 }
 
+// ═══════════════════════════════════════════════════════════
+// SECTION — About
+// ═══════════════════════════════════════════════════════════
+
 function About() {
   return (
     <div>
       <SectionHeading title="About Me." />
       <p className="max-w-5xl text-[15px] leading-relaxed text-muted-foreground">
-       I’m Aditya Shelke, a graduate in Cloud Technology and Information Security with a strong interest in Cloud Computing, DevOps, Linux, Networking, and Cybersecurity. I enjoy working with AWS services, automation tools, Linux environments, and container technologies while continuously exploring scalable and secure systems. Over time, I’ve worked on academic and self-learning projects involving cloud deployments, virtualization, CI/CD workflows, and infrastructure fundamentals. I’m currently focused on building my expertise in Cloud Engineering, DevOps practices, and Security while improving my practical skills through continuous learning and hands-on projects.
+        I'm Aditya Shelke, a graduate in Cloud Technology and Information Security with a strong
+        interest in Cloud Computing, DevOps, Linux, Networking, and Cybersecurity. I enjoy working
+        with AWS services, automation tools, Linux environments, and container technologies while
+        continuously exploring scalable and secure systems. Over time, I've worked on academic and
+        self-learning projects involving cloud deployments, virtualization, CI/CD workflows, and
+        infrastructure fundamentals. I'm currently focused on building my expertise in Cloud
+        Engineering, DevOps practices, and Security while improving my practical skills through
+        continuous learning and hands-on projects.
       </p>
       <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {[
-          { icon: Cloud, label: "Cloud", value: "AWS • GCP • Azure" },
-          { icon: Container, label: "DevOps", value: "Docker • Kubernetes • CI/CD" },
-          { icon: Lock, label: "Security", value: "Linux • Networking • VAPT" },
+          { icon: Cloud,     label: "Cloud",    value: "AWS • GCP • Azure"           },
+          { icon: Container, label: "DevOps",   value: "Docker • Kubernetes • CI/CD" },
+          { icon: Lock,      label: "Security", value: "Linux • Networking • VAPT"   },
         ].map(({ icon: Icon, label, value }) => (
-          <div
-            key={label}
-            className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/25"
-          >
+          <div key={label}
+            className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/25">
             <div className="flex items-center gap-2 mb-1">
               <Icon className="h-5 w-5 text-accent-orange" />
               <div className="text-sm font-medium text-foreground">{label}</div>
@@ -452,87 +514,23 @@ function About() {
   );
 }
 
-function Resume() {
-  return (
-    <div>
-      <SectionHeading title="Resume." />
-      <div className="space-y-10">
-        <ResumeBlock 
-        title="Experience" 
-        accent="orange"
-        icon={<Briefcase className="h-5 w-5 text-orange-400" />}
-        >
-          <ResumeItem
-            heading="Hands-on Cloud Labs & Projects"
-            year="2023 – Present" 
-            location="Self Learning"
-            description="Worked on hands-on cloud and DevOps projects involving AWS services, Linux administration, containerization, CI/CD workflows, and virtualization. Built and managed small-scale deployment environments while continuously improving automation, infrastructure, and security fundamentals."
-            
-            points={[
-              "Deployed AWS EC2, S3, IAM, and VPC configurations",
-              "Built CI/CD pipelines using GitHub Actions",
-              "Practiced Terraform ",
-              "Worked with Linux server management",
-              "Learned Docker workflows",
-            ]}
-          />
-        </ResumeBlock>
-
-        <ResumeBlock
-          title="Education"
-          accent="orange"
-          icon={<GraduationCap className="h-5 w-5 text-violet-400" />}
-        >
-          <ResumeItem
-            heading="B.Tech in Cloud Technology & Information Security"
-            college="Ajeenkya DY Patil University"
-            year="2022 – 2026"
-            location="Pune, India"
-            
-          />
-        </ResumeBlock>
-
-        <ResumeBlock 
-        title="Skills" 
-        accent="purple"
-        icon={<Award className="h-5 w-5 text-purple-400" />}
-        >
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <SkillCard icon={Cloud} title="Cloud" items={["AWS", "GCP ", "Azure "]} />
-            <SkillCard icon={Container} title="DevOps" items={["Docker", "GitHub Actions", "CI/CD", "Terraform ", "Kubernetes ", "Jenkins "]} />
-            <SkillCard icon={Terminal} title="Linux" items={["Bash", "Linux CLI", "SSH", "Ubuntu", "Debian", "Kali"]} />
-            <SkillCard icon={ShieldCheck} title="Security" items={["Cybersecurity Fundamentals", "Networking", "TryHackMe", "VAPT"]} />
-            <SkillCard icon={Code2} title="Tools" items={["Git", "VS Code", "Postman", "Nginx", "VMware", "VirtualBox"]} />
-            <SkillCard icon={Code2} title="Languages" items={["Python", "Bash", "Java", " JavaScript"]} />
-          </div>
-        </ResumeBlock>
-      </div>
-    </div>
-  );
-}
+// ═══════════════════════════════════════════════════════════
+// SECTION — Resume (sub-components + section)
+// ═══════════════════════════════════════════════════════════
 
 function ResumeBlock({
-  title,
-  accent,
-  children,
-  icon,
+  title, icon, children,
 }: {
-  title: string;
-  accent: "orange" | "purple";
-  icon?: React.ReactNode;
+  title:    string;
+  accent?:  "orange" | "purple";
+  icon?:    React.ReactNode;
   children: React.ReactNode;
 }) {
-  const color =
-    accent === "orange"
-      ? "var(--accent-orange)"
-      : "var(--accent-purple)";
   return (
     <div>
       <div className="mb-4 flex items-center gap-2">
         {icon}
-         <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-          {title}
-        </h3>
+        <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{title}</h3>
       </div>
       {children}
     </div>
@@ -540,59 +538,46 @@ function ResumeBlock({
 }
 
 function ResumeItem({
-  heading,
-  college,
-  year,
-  location,
-  description,
-  icon,
+  heading, college, year, location, description, points,
 }: {
-  heading: string;
-  college?: string;
-  year: string;
-  location: string;
-  description: string;
-  icon?: React.ReactNode;
+  heading:      string;
+  college?:     string;
+  year:         string;
+  location:     string;
+  description?: string;
+  points?:      string[];
 }) {
   return (
-    <div className="surface-2 rounded-xl border border-border/60 p-5"> 
-        <div className="flex items-start justify-between gap-6">
-  <div className="flex-1">
-    <h4 className="text-xl font-semibold text-foreground">
-      {heading}
-    </h4>
-
-    {college && (
-      <div className="text-base font-medium text-rose-400/50">
-        {college}
+    <div className="surface-2 rounded-xl border border-border/60 p-5">
+      <div className="flex items-start justify-between gap-6">
+        <div className="flex-1">
+          <h4 className="text-xl font-semibold text-foreground">{heading}</h4>
+          {college && <div className="text-base font-medium text-rose-400/50">{college}</div>}
+          {description && <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">{description}</p>}
+          {points && points.length > 0 && (
+            <ul className="mt-3 space-y-1.5">
+              {points.map((p) => (
+                <li key={p} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent-orange" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="shrink-0 text-right">
+          <div className="text-sm text-foreground">{year}</div>
+          <div className="mt-1 text-sm text-muted-foreground">{location}</div>
+        </div>
       </div>
-    )}
-
-    <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-      {description}
-    </p>
-  </div>
-
-  <div className="text-right">
-    <div className="text-sm text-foreground">
-      {year}
     </div>
-
-    <div className="mt-1 text-sm text-muted-foreground">
-      {location}
-    </div>
-  </div>
-</div>
-</div>
   );
 }
 
 function SkillCard({
-  icon: Icon,
-  title,
-  items,
+  icon: Icon, title, items,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon:  React.ComponentType<{ className?: string }>;
   title: string;
   items: string[];
 }) {
@@ -604,203 +589,142 @@ function SkillCard({
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {items.map((i) => (
-          <span
-            key={i}
-            className="surface-3 rounded-md border border-border/60 px-2 py-1 text-xs text-muted-foreground"
-          >
-            {i}
-          </span>
+          <span key={i} className="surface-3 rounded-md border border-border/60 px-2 py-1 text-xs text-muted-foreground">{i}</span>
         ))}
       </div>
     </div>
   );
 }
 
-type PortfolioFilter = "All" | "Projects" | "Certifications" | "Badges";
+function Resume() {
+  return (
+    <div>
+      <SectionHeading title="Resume." />
+      <div className="space-y-10">
 
-const CARDS: {
-  category: Exclude<PortfolioFilter, "All">;
-  icon: React.ReactNode;
-  title: string;
-  subtitle: string;
-  description: string;
-  tech?: string[];
-  buttons: { label: string; href: string }[];
-}[] = [
-  {
-  category: "Certifications",
-  icon: <Award className="h-5 w-5 text-yellow-400" />,
-  title: "AWS Certified Cloud Practitioner",
-  subtitle: "Issued by Amazon Web Services",
-  description:
-    "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and AWS services.",
-  buttons: [
-    {
-      label: "Certificate",
-      href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c",
-    },
-  ],
-},
-  {
-  category: "Projects",
-  icon: <ShieldCheck className="h-5 w-5 text-green-400" />,
-  title: "DevSecOps Flask Platform",
-  subtitle: "Secure CI/CD Application",
-  description:
-    "Flask application integrated with DevSecOps practices including containerization, CI/CD workflows, and security-focused development.",
-  tech: ["Flask", "Docker", "GitHub Actions", "CI/CD"],
-  buttons: [
-    {
-      label: "GitHub",
-      href: "https://github.com/shelkeaditya/devsecops-flask",
-    },
-  ],
-},
+        <ResumeBlock title="Experience" accent="orange" icon={<Briefcase className="h-5 w-5 text-orange-400" />}>
+          <ResumeItem
+            heading="Cloud & DevSecOps Intern"
+            college="E-Sutra Technologies"
+            year="2025 – Present"
+            location="Remote"
+            description="Working on real-world DevOps and cloud tasks including CI/CD pipeline management, infrastructure automation, and security practices in an Agile team environment."
+            points={[
+              "Participating in sprint rituals — planning, stand-ups, retrospectives",
+              "Managing Git branching workflows and PR reviews",
+              "Working with Jira for task tracking and project management",
+              "Applying DevSecOps practices with SonarQube and security scanning",
+            ]}
+          />
+          <div className="mt-4">
+            <ResumeItem
+              heading="Hands-on Cloud Labs & Self Projects"
+              year="2023 – Present"
+              location="Self Learning"
+              description="Built and managed personal cloud and DevOps projects involving AWS services, Linux administration, containerisation, CI/CD workflows, and infrastructure automation."
+              points={[
+                "Deployed AWS EC2, S3, IAM, VPC, ELB, EKS, ECR, CloudWatch configurations",
+                "Built CI/CD pipelines using GitHub Actions and Jenkins",
+                "Practised Terraform for infrastructure-as-code",
+                "Managed Linux servers — Debian, Ubuntu, Kali",
+                "Containerised applications with Docker and orchestrated with Kubernetes",
+              ]}
+            />
+          </div>
+        </ResumeBlock>
 
-{
-  category: "Projects",
-  icon: <Activity className="h-5 w-5 text-blue-400" />,
-  title: "Resilient Server Monitoring Platform",
-  subtitle: "Infrastructure Monitoring",
-  description:
-    "Monitoring platform designed to track server health, performance metrics, and system availability for reliable infrastructure management.",
-  tech: ["Linux", "Monitoring", "Networking", "Python"],
-  buttons: [
-    {
-      label: "GitHub",
-      href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform",
-    },
-  ],
-},
+        <ResumeBlock title="Education" accent="orange" icon={<GraduationCap className="h-5 w-5 text-violet-400" />}>
+          <ResumeItem
+            heading="B.Tech — Cloud Technology & Information Security"
+            college="Ajeenkya DY Patil University"
+            year="2022 – 2026"
+            location="Pune, India"
+          />
+        </ResumeBlock>
 
-{
-  category: "Projects",
-  icon: <Workflow className="h-5 w-5 text-orange-400" />,
-  title: "CI/CD Platform",
-  subtitle: "Automation Pipeline",
-  description:
-    "Implemented automated build, testing, and deployment workflows to streamline software delivery and infrastructure management.",
-  tech: ["GitHub Actions", "Docker", "CI/CD", "Linux"],
-  buttons: [
-    {
-      label: "GitHub",
-      href: "https://github.com/shelkeaditya/CICD-Platform",
-    },
-  ],
-},
+        <ResumeBlock title="Skills" accent="purple" icon={<Award className="h-5 w-5 text-purple-400" />}>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <SkillCard icon={Cloud}       title="Cloud"     items={["AWS", "GCP", "Azure"]}                                                    />
+            <SkillCard icon={Container}   title="DevOps"    items={["Docker", "Kubernetes", "Jenkins", "GitHub Actions", "Terraform", "CI/CD"]} />
+            <SkillCard icon={Terminal}    title="Linux"     items={["Bash", "Linux CLI", "SSH", "Ubuntu", "Debian", "Kali"]}                   />
+            <SkillCard icon={ShieldCheck} title="Security"  items={["Trivy", "SonarQube", "Vault", "Networking", "VAPT"]}                      />
+            <SkillCard icon={Code2}       title="Tools"     items={["Git", "VS Code", "Postman", "Nginx", "Apache", "Cloudflare"]}              />
+            <SkillCard icon={Code2}       title="Languages" items={["Python", "Bash / Shell", "Java", "JavaScript"]}                           />
+          </div>
+        </ResumeBlock>
 
-{
-  category: "Projects",
-  icon: <Bot className="h-5 w-5 text-cyan-400" />,
-  title: "AI-Based Backup Management",
-  subtitle: "Backup Automation",
-  description:
-    "Intelligent backup management solution focused on automation, recovery planning, and efficient data protection workflows.",
-  tech: ["Python", "AI", "Automation", "Linux"],
-  buttons: [
-    {
-      label: "GitHub",
-      href: "https://github.com/shelkeaditya/Ai-based-backup-management",
-    },
-  ],
-},
+      </div>
+    </div>
+  );
+}
 
-{
-  category: "Projects",
-  icon: <Cloud className="h-5 w-5 text-cyan-400" />,
-  title: "Nextcloud on Linux",
-  subtitle: "Private Cloud Storage",
-  description:
-    "Deployed and configured a self-hosted Nextcloud environment on Linux for secure file sharing, storage, and collaboration.",
-  tech: ["Linux", "Nextcloud", "Docker", "Networking"],
-  buttons: [
-    {
-      label: "GitHub",
-      href: "https://github.com/shelkeaditya/Nextcloud-on-Linux",
-    },
-  ],
-},
-  {
-    category: "Badges",
-    icon: <Award className="h-5 w-5 text-purple-400" />,
-    title: "TryHackMe Badge",
-    subtitle: "Cybersecurity Learning",
-    description:
-      "Cybersecurity learning badges focused on Linux, networking, reconnaissance, and penetration testing.",
-    buttons: [
-      { label: "Profile", href: "#" },
-      { label: "Badge", href: "#" },
-    ],
-  },
-];
+// ═══════════════════════════════════════════════════════════
+// SECTION — Portfolio
+// ═══════════════════════════════════════════════════════════
 
-function Portfolio_Section() {
+function PortfolioSection() {
   const [filter, setFilter] = useState<PortfolioFilter>("All");
+
   const filtered = useMemo(
     () => (filter === "All" ? CARDS : CARDS.filter((c) => c.category === filter)),
     [filter],
   );
+
   const filters: PortfolioFilter[] = ["All", "Projects", "Certifications", "Badges"];
+
   return (
     <div>
       <SectionHeading title="Portfolio." />
+
+      {/* Filter tabs */}
       <div className="mb-6 flex flex-wrap gap-2">
         {filters.map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
+          <button key={f} onClick={() => setFilter(f)}
             className={cn(
               "rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors",
               filter === f
                 ? "border-[color:var(--accent-orange)]/50 bg-[color:var(--accent-orange)]/10 text-accent-violet"
                 : "surface-2 border-border/60 text-muted-foreground hover:text-foreground",
-            )}
-          >
+            )}>
             {f}
           </button>
         ))}
       </div>
+
+      {/* Cards grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {filtered.map((c) => (
-          <div
-            key={c.title}
-            className="surface-2 group flex flex-col rounded-xl border border-border/60 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]"
-          >
+          <div key={c.title}
+            className="surface-2 group flex flex-col rounded-xl border border-border/60 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]">
+
+            {/* Card header */}
             <div className="flex items-start justify-between gap-3">
               <div>
-              <div className="flex items-center gap-2">
-                <div className="text-3xl">
-                  {c.icon}
+                <div className="flex items-center gap-2">
+                  <div className="text-3xl">{c.icon}</div>
+                  <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
                 </div>
-                <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
-                </div>
-
-  <div className="mt-1 text-xs text-muted-foreground">
-    {c.subtitle}
-  </div>
-</div>
-              <span className="surface-3 rounded-md border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <div className="mt-1 text-xs text-muted-foreground">{c.subtitle}</div>
+              </div>
+              <span className="surface-3 shrink-0 rounded-md border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
                 {c.category}
               </span>
             </div>
+
+            {/* Description */}
             <p className="mt-3 text-sm text-muted-foreground">{c.description}</p>
-            {c.tech && (
+
+            {/* Tech stack */}
+            {c.tech.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
-                {c.tech.map((t) => (
-                  <span
-                    key={t}
-                    className="surface-3 rounded-md border border-border/60 px-2 py-0.5 text-[11px] text-muted-foreground"
-                  >
-                    {t}
-                  </span>
-                ))}
+                {c.tech.map((t) => <TechBadge key={t} label={t} />)}
               </div>
             )}
-            <div className="mt-5 flex flex-wrap gap-2">
+
+            {/* Action buttons */}
+            <div className="mt-auto pt-5 flex flex-wrap gap-2">
               {c.buttons.map((b, i) => (
-                <a
-                  key={b.label}
-                  href={b.href}
+                <a key={b.label} href={b.href}
                   target={b.href.startsWith("http") ? "_blank" : undefined}
                   rel="noreferrer"
                   className={cn(
@@ -808,8 +732,7 @@ function Portfolio_Section() {
                     i === 0
                       ? "border-[color:var(--accent-orange)]/50 bg-[color:var(--accent-orange)]/10 text-accent-orange hover:bg-[color:var(--accent-orange)]/15"
                       : "surface-3 border-border/60 text-foreground hover:border-border",
-                  )}
-                >
+                  )}>
                   {b.label}
                   <ExternalLink className="h-3 w-3" />
                 </a>
@@ -822,6 +745,10 @@ function Portfolio_Section() {
   );
 }
 
+// ═══════════════════════════════════════════════════════════
+// SECTION — Blog
+// ═══════════════════════════════════════════════════════════
+
 function Blog() {
   return (
     <div>
@@ -830,174 +757,148 @@ function Blog() {
         <Rss className="mx-auto h-8 w-8 text-accent-purple" />
         <h3 className="mt-3 text-lg font-semibold text-foreground">Coming Soon</h3>
         <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-          I'm working on writing about Cloud, DevOps, Linux, and Cybersecurity. Check back soon!
+          Writing about Cloud, DevOps, Linux, and Cybersecurity. Check back soon!
         </p>
       </div>
     </div>
   );
 }
 
-import emailjs from '@emailjs/browser';
+// ═══════════════════════════════════════════════════════════
+// SECTION — Contact
+// ═══════════════════════════════════════════════════════════
 
 function Contact() {
-  const [sending, setSending] = useState(false);
+  const [sending,  setSending]  = useState(false);
   const [cooldown, setCooldown] = useState(false);
+  const [msgCount, setMsgCount] = useState(0);
+  const [time,     setTime]     = useState("");
+
+  // Live IST clock
+  useEffect(() => {
+    const update = () => setTime(
+      new Date().toLocaleTimeString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        hour:     "2-digit",
+        minute:   "2-digit",
+        second:   "2-digit",
+        hour12:   true,
+      }),
+    );
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, []);
+
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-  e.preventDefault();
-  setSending(true);
+    e.preventDefault();
+    setSending(true);
+    emailjs
+      .sendForm("service_fdq7bwf", "template_jpawssn", e.target as HTMLFormElement, "X7cczgqlSFWmadFLE")
+      .then(() => {
+        setSending(false);
+        const next = msgCount + 1;
+        setMsgCount(next);
+        if (next >= 2) {
+          setCooldown(true);
+          setTimeout(() => { setCooldown(false); setMsgCount(0); }, 60_000);
+          toast.warning("Message sent! Please wait 60 seconds before sending again.");
+        } else {
+          toast.success("Message sent! I'll get back to you shortly.");
+        }
+      })
+      .catch(() => { setSending(false); toast.error("Something went wrong. Please try again."); });
+  }
 
-  const form = e.target as HTMLFormElement;
-
-  emailjs.sendForm(
-    'service_fdq7bwf',
-    'template_jpawssn',
-    form,
-    'X7cczgqlSFWmadFLE'
-  )
-  .then(() => {
-    setSending(false);
-    setCooldown(true);
-    setTimeout(() => setCooldown(false), 60000);
-    toast.success("Message sent — I'll get back to you shortly.");
-    form.reset();
-  })
-  .catch(() => {
-    setSending(false);
-    toast.error("Something went wrong. Please try again.");
-  });
-}
   return (
-   <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-
-  {/* Left column */}
-  <div>
-
-    <SectionHeading title="Let's Connect." />
-
-    <p className="text-muted-foreground max-w-2xl mb-6">
-    Have an opportunity, project, or question? Feel free to reach out via email
-    or connect with me on LinkedIn. I'm currently open to cloud, DevOps and
-    security related opportunities.
-  </p>
-
-  <form
-    onSubmit={onSubmit}
-    className="surface-2 grid max-w-xl gap-4 rounded-2xl border border-border/60 p-6"
-  >
-    <Field label="Name">
-      <Input
-        required
-        name="name"
-        placeholder="Your name"
-        className="surface-3 h-10"
-      />
-    </Field>
-
-    <Field label="Email">
-      <Input
-        required
-        type="email"
-        name="email"
-        placeholder="you@example.com"
-        className="surface-3 h-10"
-      />
-    </Field>
-
-    <Field label="Message">
-      <Textarea
-        required
-        name="message"
-        placeholder="What's on your mind?"
-        rows={5}
-        className="surface-3"
-      />
-    </Field>
-
     <div>
-      <Button
-        type="submit"
-        disabled={sending || cooldown}
-        className="gap-2"
-      >
-        <Send className="h-4 w-4" />
-        {sending ? "Sending..." : cooldown ? "Please wait..." : "Send Message"}
-      </Button>
-    </div>
-  </form>
-</div>
+      <SectionHeading title="Let's Connect." />
+      <p className="text-muted-foreground max-w-2xl mb-6 text-justify">
+        Whether it's a job opportunity, a project or just a tech conversation — I'd love to hear from you.
+      </p>
 
+      {/* Two-column layout: wide form + narrow info panel */}
+      <div className="flex flex-col gap-6 md:flex-row md:items-start">
 
-  {/* Right column - Quick Info */}
-  <div className="surface-2 rounded-2xl border border-border/60 p-6 h-fit mt-48">
-  <h3 className="text-lg font-semibold mb-5">Quick Info</h3>
+        {/* ── Left: contact form (takes all available width) ── */}
+        <form onSubmit={onSubmit}
+          className="surface-2 flex-1 grid gap-4 rounded-2xl border border-border/60 p-6">
+          <Field label="Name">
+            <Input required name="name" placeholder="Your name" className="surface-3 h-10 w-full" />
+          </Field>
+          <Field label="Email">
+            <Input required type="email" name="email" placeholder="you@example.com" className="surface-3 h-10 w-full" />
+          </Field>
+          <Field label="Message">
+            <Textarea required name="message" placeholder="What's on your mind?" rows={2} className="surface-3 w-full resize-none overflow-hidden" />
+          </Field>
+          <div>
+            <Button type="submit" disabled={sending || cooldown} className="gap-2">
+              <Send className="h-4 w-4" />
+              {sending ? "Sending…" : cooldown ? "Please wait…" : "Send Message"}
+            </Button>
+          </div>
+        </form>
 
-  <div className="space-y-5">
+        {/* ── Right: compact info panel ── */}
+        <div className="w-full md:w-72 shrink-0 space-y-3">
 
-    <div className="flex items-start gap-3">
-      <MapPin className="h-5 w-5 text-orange-400 mt-0.5" />
-      <div>
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">
-          Location
-        </p>
-        <p>Pune, India</p>
+          {/* Quick info card */}
+          <div className="surface-2 rounded-xl border border-border/60 p-5 space-y-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60">Get In Touch</p>
+
+            {/* Email row */}
+            <div className="flex items-center gap-3">
+              <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="text-sm text-foreground truncate">work.shelkeaditya@gmail.com</span>
+            </div>
+
+            {/* Location row */}
+            <div className="flex items-center gap-3">
+              <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="text-sm text-foreground">Pune, India</span>
+            </div>
+
+            {/* Find me on */}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50 mb-3">Find me on</p>
+              <div className="flex items-center gap-2">
+                <a href="https://linkedin.com/in/shelkeaditya" target="_blank" rel="noreferrer" aria-label="LinkedIn"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors">
+                  <Linkedin className="h-4 w-4" />
+                </a>
+                <a href="https://x.com/shelke__aditya" target="_blank" rel="noreferrer" aria-label="Twitter"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors">
+                  <TwitterIcon className="h-4 w-4" />
+                </a>
+                <a href="https://instagram.com/shelke__aditya" target="_blank" rel="noreferrer" aria-label="Instagram"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors">
+                  <Instagram className="h-4 w-4" />
+                </a>
+                <a href="https://github.com/shelkeaditya" target="_blank" rel="noreferrer" aria-label="GitHub"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors">
+                  <Github className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+
+            {/* Response time */}
+            <div className="flex items-center gap-2.5 text-xs text-muted-foreground/60 pt-4 border-t border-border/60 ">
+              <Send className="h-3.5 w-3.5 shrink-0" />
+              <span>Usually responds within 24 hours</span>
+            </div>
+
+          </div>  
+
+        </div>
       </div>
-    </div>
-
-    <div className="flex items-start gap-3">
-      <Clock3 className="h-5 w-5 text-blue-400 mt-0.5" />
-      <div>
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">
-          Response Time
-        </p>
-        <p>Usually within 24 hours</p>
-      </div>
-    </div>
-
-    <div className="flex items-start gap-3">
-      <Briefcase className="h-5 w-5 text-violet-400 mt-0.5" />
-      <div>
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">
-          Availability
-        </p>
-        <p>Open to Cloud & DevOps Roles</p>
-      </div>
-    </div>
-
-    <div className="flex items-start gap-3">
-      <CircleCheck className="h-5 w-5 text-green-400 mt-0.5" />
-      <div>
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">
-          Status
-        </p>
-        <p className="text-green-400">Open to Work</p>
-      </div>
-    </div>
-
-    </div>
-    </div>
     </div>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <div className="mb-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        {label}
-      </div>
-      {children}
-    </label>
-  );
-}
-
-const JOURNEY = [
-  { year: "2022", title: "Start of a new jounrey taking addmission in B.Tech", desc: "Cloud Technology & Information Security" },
-  { year: "2022", title: "Linux & Networking", desc: "Learned the fundamentals of operating systems and networks" },
-  { year: "2023", title: "AWS & DevOps", desc: "Began deep diving into cloud and automation tooling" },
-  { year: "2024", title: "AWS Certified", desc: "AWS Certified Cloud Practitioner" },
-  { year: "2025", title: "Containers & Orchestration", desc: "Exploring Docker & Kubernetes" },
-  { year: "Now", title: "Cloud Engineer", desc: "Working toward becoming a full-time Cloud Engineer" },
-];
+// ═══════════════════════════════════════════════════════════
+// SECTION — Journey
+// ═══════════════════════════════════════════════════════════
 
 function Journey() {
   return (
@@ -1006,18 +907,14 @@ function Journey() {
       <ol className="relative ml-3 border-l border-border/70 pl-6">
         {JOURNEY.map((j, i) => (
           <li key={i} className="group relative pb-7 last:pb-0">
-            <span
-              className="absolute -left-[33px] top-1 grid h-5 w-5 place-items-center rounded-full border border-border/80 bg-card shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent-orange)_18%,transparent)]"
-              aria-hidden
-            >
+            <span aria-hidden
+              className="absolute -left-[33px] top-1 grid h-5 w-5 place-items-center rounded-full border border-border/80 bg-card shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent-orange)_18%,transparent)]">
               <span className="h-1.5 w-1.5 rounded-full bg-accent-orange transition-all group-hover:scale-150" />
             </span>
             <div className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-orange)]/25">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="rounded-md border border-border/60 px-1.5 py-0.5 text-[10px] uppercase tracking-wider">
-                  {j.year}
-                </span>
-              </div>
+              <span className="rounded-md border border-border/60 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                {j.year}
+              </span>
               <div className="mt-1 text-base font-medium text-foreground">{j.title}</div>
               <div className="text-sm text-muted-foreground">{j.desc}</div>
             </div>
@@ -1028,14 +925,18 @@ function Journey() {
   );
 }
 
+// ═══════════════════════════════════════════════════════════
+// ROUTER — Section switcher
+// ═══════════════════════════════════════════════════════════
+
 function SectionRenderer({ active }: { active: SectionKey }) {
   const map: Record<SectionKey, React.ReactNode> = {
-    about: <About />,
-    resume: <Resume />,
-    portfolio: <Portfolio_Section />,
-    blog: <Blog />,
-    contact: <Contact />,
-    journey: <Journey />,
+    about:     <About />,
+    resume:    <Resume />,
+    portfolio: <PortfolioSection />,
+    blog:      <Blog />,
+    contact:   <Contact />,
+    journey:   <Journey />,
   };
   return (
     <div key={active} className="animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
@@ -1044,61 +945,66 @@ function SectionRenderer({ active }: { active: SectionKey }) {
   );
 }
 
+// ═══════════════════════════════════════════════════════════
+// ROOT — Portfolio page
+// ═══════════════════════════════════════════════════════════
+
 export default function Portfolio() {
   const [active, setActive] = useState<SectionKey>("about");
-  const { theme, toggle } = useTheme();
+  const { theme, toggle }   = useTheme();
 
   return (
     <div className="ambient-bg relative min-h-screen text-foreground">
       <div aria-hidden className="pointer-events-none absolute inset-0 grid-texture opacity-40" />
       <Toaster />
-      
-      {/* poly-bg triangles stay the same */}
+
+      {/* ── Decorative corner triangles ── */}
       <div className="poly-bg-left">
-  <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="0,0 165,0 0,165"            fill="#7C3AED" opacity="0.80"/>
-    <polygon points="165,0 215,0 0,215 0,165"    fill="#BE123C" opacity="0.65"/>
-    <polygon points="215,0 260,0 0,260 0,215"    fill="#7C3AED" opacity="0.32"/>
-    <polygon points="260,0 300,0 0,300 0,260"    fill="#BE123C" opacity="0.16"/>
-    <polygon points="300,0 335,0 0,335 0,300"    fill="#7C3AED" opacity="0.08"/>
-    <defs>
-      <linearGradient id="fxL" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="40%" stopColor="var(--background)" stopOpacity="0"/>
-        <stop offset="100%" stopColor="var(--background)" stopOpacity="1"/>
-      </linearGradient>
-      <linearGradient id="fyL" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="40%" stopColor="var(--background)" stopOpacity="0"/>
-        <stop offset="100%" stopColor="var(--background)" stopOpacity="1"/>
-      </linearGradient>
-    </defs>
-    <rect width="420" height="420" fill="url(#fxL)"/>
-    <rect width="420" height="420" fill="url(#fyL)"/>
-  </svg>
-</div>
+        <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="0,0 165,0 0,165"         fill="#7C3AED" opacity="0.80" />
+          <polygon points="165,0 215,0 0,215 0,165" fill="#BE123C" opacity="0.65" />
+          <polygon points="215,0 260,0 0,260 0,215" fill="#7C3AED" opacity="0.32" />
+          <polygon points="260,0 300,0 0,300 0,260" fill="#BE123C" opacity="0.16" />
+          <polygon points="300,0 335,0 0,335 0,300" fill="#7C3AED" opacity="0.08" />
+          <defs>
+            <linearGradient id="fxL" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="40%" stopColor="var(--background)" stopOpacity="0" />
+              <stop offset="100%" stopColor="var(--background)" stopOpacity="1" />
+            </linearGradient>
+            <linearGradient id="fyL" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="40%" stopColor="var(--background)" stopOpacity="0" />
+              <stop offset="100%" stopColor="var(--background)" stopOpacity="1" />
+            </linearGradient>
+          </defs>
+          <rect width="420" height="420" fill="url(#fxL)" />
+          <rect width="420" height="420" fill="url(#fyL)" />
+        </svg>
+      </div>
 
-<div className="poly-bg-right">
-  <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
-    <polygon points="420,420 255,420 420,255"         fill="#7C3AED" opacity="0.70"/>
-    <polygon points="255,420 205,420 420,205 420,255" fill="#5B21B6" opacity="0.55"/>
-    <polygon points="205,420 162,420 420,162 420,205" fill="#7C3AED" opacity="0.28"/>
-    <polygon points="162,420 124,420 420,124 420,162" fill="#5B21B6" opacity="0.14"/>
-    <polygon points="124,420 90,420  420,90  420,124" fill="#7C3AED" opacity="0.07"/>
-    <defs>
-      <linearGradient id="fxR" x1="1" y1="0" x2="0" y2="0">
-        <stop offset="40%" stopColor="var(--background)" stopOpacity="0"/>
-        <stop offset="100%" stopColor="var(--background)" stopOpacity="1"/>
-      </linearGradient>
-      <linearGradient id="fyR" x1="0" y1="1" x2="0" y2="0">
-        <stop offset="40%" stopColor="var(--background)" stopOpacity="0"/>
-        <stop offset="100%" stopColor="var(--background)" stopOpacity="1"/>
-      </linearGradient>
-    </defs>
-    <rect width="420" height="420" fill="url(#fxR)"/>
-    <rect width="420" height="420" fill="url(#fyR)"/>
-  </svg>
-</div>
+      <div className="poly-bg-right">
+        <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="420,420 255,420 420,255"          fill="#7C3AED" opacity="0.70" />
+          <polygon points="255,420 205,420 420,205 420,255"  fill="#5B21B6" opacity="0.55" />
+          <polygon points="205,420 162,420 420,162 420,205"  fill="#7C3AED" opacity="0.28" />
+          <polygon points="162,420 124,420 420,124 420,162"  fill="#5B21B6" opacity="0.14" />
+          <polygon points="124,420 90,420  420,90  420,124"  fill="#7C3AED" opacity="0.07" />
+          <defs>
+            <linearGradient id="fxR" x1="1" y1="0" x2="0" y2="0">
+              <stop offset="40%" stopColor="var(--background)" stopOpacity="0" />
+              <stop offset="100%" stopColor="var(--background)" stopOpacity="1" />
+            </linearGradient>
+            <linearGradient id="fyR" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="40%" stopColor="var(--background)" stopOpacity="0" />
+              <stop offset="100%" stopColor="var(--background)" stopOpacity="1" />
+            </linearGradient>
+          </defs>
+          <rect width="420" height="420" fill="url(#fxR)" />
+          <rect width="420" height="420" fill="url(#fyR)" />
+        </svg>
+      </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-12">
+      {/* ── Main layout ── */}
+      <div className="relative mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12">
         <ProfileHero onJourney={() => setActive("journey")} />
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]">
@@ -1106,33 +1012,27 @@ export default function Portfolio() {
             <SectionRenderer active={active} />
           </main>
 
-          {/* Side nav — desktop only */}
           <div className="hidden md:block">
             <NavPanel active={active} setActive={setActive} theme={theme} toggleTheme={toggle} />
           </div>
         </div>
 
-        <footer className="mt-12 border-t border-border/60 pt-6 pb-2 text-center text-xs text-muted-foreground hidden md:block">
+        <footer className="mt-12 pt-4 pb-2 text-center text-xs text-muted-foreground hidden md:block">
           © 2026 Aditya Rajendra Shelke
         </footer>
       </div>
 
-      {/* Bottom nav — mobile only */}
+      {/* ── Mobile bottom nav ── */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 md:hidden">
         <div className="surface-1 flex items-center gap-0 rounded-2xl border border-border/60 px-2 py-2 shadow-[0_8px_32px_-8px_rgba(0,0,0,0.6)]">
           {NAV.map(({ key, label, icon: Icon }) => {
             const isActive = active === key;
             return (
-              <button
-                key={key}
-                onClick={() => setActive(key)}
+              <button key={key} onClick={() => setActive(key)}
                 className={cn(
                   "flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200",
-                  isActive
-                    ? "bg-violet-500/15 text-violet-400"
-                    : "text-muted-foreground hover:bg-foreground/8 hover:text-foreground"
-                )}
-              >
+                  isActive ? "bg-violet-500/15 text-violet-400" : "text-muted-foreground hover:bg-foreground/8 hover:text-foreground",
+                )}>
                 <Icon className="h-5 w-5" />
                 <span className="text-[10px] font-medium uppercase tracking-wider">{label}</span>
               </button>
