@@ -54,7 +54,7 @@ type SectionKey      = "about" | "resume" | "portfolio" | "blog" | "contact" | "
 type PortfolioFilter = "All" | "Projects" | "Certifications" | "Badges";
 
 // ═══════════════════════════════════════════════════════════
-// CONSTANTS — Navigation
+// CONSTANTS - Navigation
 // ═══════════════════════════════════════════════════════════
 
 const NAV: {
@@ -70,20 +70,20 @@ const NAV: {
 ];
 
 // ═══════════════════════════════════════════════════════════
-// CONSTANTS — Journey timeline
+// CONSTANTS - Journey timeline
 // ═══════════════════════════════════════════════════════════
 
 const JOURNEY = [
-  { year: "2022", title: "B.Tech Admission",              desc: "Cloud Technology & Information Security — Ajeenkya DY Patil University" },
+  { year: "2022", title: "B.Tech Admission",              desc: "Cloud Technology & Information Security - Ajeenkya DY Patil University" },
   { year: "2022", title: "Linux & Networking",            desc: "Learned OS fundamentals, TCP/IP, subnetting, and server administration"  },
   { year: "2023", title: "AWS & DevOps",                  desc: "Deep dive into cloud services, automation tooling and CI/CD workflows"   },
   { year: "2024", title: "AWS Certified",                 desc: "Passed AWS Certified Cloud Practitioner (CLF-C02)"                       },
   { year: "2025", title: "Containers & Orchestration",    desc: "Hands-on with Docker, Kubernetes, Helm and container security"           },
-  { year: "Now",  title: "Cloud & DevSecOps Intern",      desc: "Interning at E-Sutra Technologies — building real-world DevOps skills"   },
+  { year: "Now",  title: "Cloud & DevSecOps Intern",      desc: "Interning at E-Sutra Technologies - building real-world DevOps skills"   },
 ];
 
 // ═══════════════════════════════════════════════════════════
-// CONSTANTS — Portfolio cards
+// CONSTANTS - Portfolio cards
 // ═══════════════════════════════════════════════════════════
 
 const CARDS: {
@@ -112,7 +112,7 @@ const CARDS: {
     icon:        <ShieldCheck className="h-5 w-5 text-green-400" />,
     title:       "DevSecOps Flask Platform",
     subtitle:    "Secure CI/CD Application",
-    description: "Flask application with integrated DevSecOps practices — containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
+    description: "Flask application with integrated DevSecOps practices - containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
     tech:        ["Python", "Flask", "Docker", "GitHub Actions", "Trivy", "SonarQube"],
     buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }],
   },
@@ -169,7 +169,7 @@ const CARDS: {
 ];
 
 // ═══════════════════════════════════════════════════════════
-// HOOK — Theme
+// HOOK - Theme
 // ═══════════════════════════════════════════════════════════
 
 function useTheme() {
@@ -193,7 +193,7 @@ function useTheme() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// PRIMITIVES — Shared UI building blocks
+// PRIMITIVES - Shared UI building blocks
 // ═══════════════════════════════════════════════════════════
 
 function SectionHeading({ title }: { title: string }) {
@@ -286,36 +286,42 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-function Typewriter({ words }: { words: string[] }) {
-  const [index,    setIndex]    = useState(0);
-  const [text,     setText]     = useState("");
-  const [deleting, setDeleting] = useState(false);
+function VerticalSlide({ words }: { words: string[] }) {
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const current = words[index % words.length];
-    const atFull  = !deleting && text === current;
-    const atEmpty = deleting  && text === "";
-    const delay   = atFull ? 1600 : atEmpty ? 400 : deleting ? 35 : 70;
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % words.length);
+    }, 2500);
 
-    const t = setTimeout(() => {
-      if (atFull)  { setDeleting(true); return; }
-      if (atEmpty) { setDeleting(false); setIndex((i) => (i + 1) % words.length); return; }
-      setText((prev) => deleting ? current.slice(0, prev.length - 1) : current.slice(0, prev.length + 1));
-    }, delay);
-
-    return () => clearTimeout(t);
-  }, [text, deleting, index, words]);
+    return () => clearInterval(id);
+  }, [words.length]);
 
   return (
-    <p className="text-base md:text-lg font-medium text-muted-foreground">
-      <span>{text}</span>
-      <span aria-hidden className="ml-0.5 inline-block h-[1em] w-[2px] translate-y-[3px] bg-foreground/70 animate-pulse" />
-    </p>
+    <div className="relative h-7 overflow-hidden">
+      {words.map((word, i) => (
+        <div
+          key={word}
+          className="absolute inset-0 flex items-center transition-all duration-700 ease-in-out text-base md:text-lg font-medium text-muted-foreground"
+          style={{
+            transform:
+              i === index
+                ? "translateY(0)"
+                : i < index
+                ? "translateY(-100%)"
+                : "translateY(100%)",
+            opacity: i === index ? 1 : 0,
+          }}
+        >
+          {word}
+        </div>
+      ))}
+    </div>
   );
 }
 
 // ═══════════════════════════════════════════════════════════
-// COMPONENT — ProfileHero  (3-column terminal layout)
+// COMPONENT - ProfileHero  (3-column terminal layout)
 //   col-1 : photo + name + role + handle
 //   col-2 : system status block
 //   col-3 : Download CV + email + social icons
@@ -344,7 +350,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
         {/* ── 3-column row ── */}
         <div className="relative flex flex-col gap-5 px-6 py-5 md:flex-row md:items-center md:gap-0 md:px-8 md:py-5">
 
-          {/* ── COL 1 — Photo + name + role + location ── */}
+          {/* ── COL 1 - Photo + name + role + location ── */}
           <div className="flex items-center gap-4 md:flex-1 md:pr-8 md:border-r md:border-border/50">
             <div className="group relative shrink-0">
               <div aria-hidden
@@ -358,13 +364,14 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
                 Aditya <span className="font-light text-muted-foreground">Shelke</span>
               </h1>
               <div className="mt-0.5 h-5">
-                <Typewriter words={["DevOps Engineer", "Cloud Architect"]} />
+                <VerticalSlide 
+                words={["DevOps Engineer", "Cloud Architect"]} />
               </div>
               
             </div>
           </div>
 
-          {/* ── COL 2 — System Status ── */}
+          {/* ── COL 2 - System Status ── */}
           <div className="md:w-[32%] md:px-8 md:border-r md:border-border/50">
             
             <div className="space-y-1.5 font-mono text-sm">
@@ -389,7 +396,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
             </div>
           </div>
 
-          {/* ── COL 3 — Download CV + email + socials ── */}
+          {/* ── COL 3 - Download CV + email + socials ── */}
           <div className="flex flex-col gap-3 md:flex-1 md:pl-8 md:items-end">
             {/* Download CV */}
             <a href="/Aditya Shelke CV.pdf" download
@@ -422,7 +429,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// COMPONENT — NavPanel (desktop sidebar)
+// COMPONENT - NavPanel (desktop sidebar)
 // ═══════════════════════════════════════════════════════════
 
 function NavPanel({
@@ -477,7 +484,7 @@ function NavPanel({
 }
 
 // ═══════════════════════════════════════════════════════════
-// SECTION — About
+// SECTION - About
 // ═══════════════════════════════════════════════════════════
 
 function About() {
@@ -515,7 +522,7 @@ function About() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// SECTION — Resume (sub-components + section)
+// SECTION - Resume (sub-components + section)
 // ═══════════════════════════════════════════════════════════
 
 function ResumeBlock({
@@ -610,7 +617,7 @@ function Resume() {
             location="Remote"
             description="Working on real-world DevOps and cloud tasks including CI/CD pipeline management, infrastructure automation, and security practices in an Agile team environment."
             points={[
-              "Participating in sprint rituals — planning, stand-ups, retrospectives",
+              "Participating in sprint rituals - planning, stand-ups, retrospectives",
               "Managing Git branching workflows and PR reviews",
               "Working with Jira for task tracking and project management",
               "Applying DevSecOps practices with SonarQube and security scanning",
@@ -626,7 +633,7 @@ function Resume() {
                 "Deployed AWS EC2, S3, IAM, VPC, ELB, EKS, ECR, CloudWatch configurations",
                 "Built CI/CD pipelines using GitHub Actions and Jenkins",
                 "Practised Terraform for infrastructure-as-code",
-                "Managed Linux servers — Debian, Ubuntu, Kali",
+                "Managed Linux servers - Debian, Ubuntu, Kali",
                 "Containerised applications with Docker and orchestrated with Kubernetes",
               ]}
             />
@@ -635,7 +642,7 @@ function Resume() {
 
         <ResumeBlock title="Education" accent="orange" icon={<GraduationCap className="h-5 w-5 text-violet-400" />}>
           <ResumeItem
-            heading="B.Tech — Cloud Technology & Information Security"
+            heading="B.Tech - Cloud Technology & Information Security"
             college="Ajeenkya DY Patil University"
             year="2022 – 2026"
             location="Pune, India"
@@ -659,7 +666,7 @@ function Resume() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// SECTION — Portfolio
+// SECTION - Portfolio
 // ═══════════════════════════════════════════════════════════
 
 function PortfolioSection() {
@@ -746,7 +753,7 @@ function PortfolioSection() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// SECTION — Blog
+// SECTION - Blog
 // ═══════════════════════════════════════════════════════════
 
 function Blog() {
@@ -765,7 +772,7 @@ function Blog() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// SECTION — Contact
+// SECTION - Contact
 // ═══════════════════════════════════════════════════════════
 
 function Contact() {
@@ -814,7 +821,7 @@ function Contact() {
     <div>
       <SectionHeading title="Let's Connect." />
       <p className="text-muted-foreground max-w-2xl mb-6 text-justify">
-        Whether it's a job opportunity, a project or just a tech conversation — I'd love to hear from you.
+        Whether it's a job opportunity, a project or just a tech conversation - I'd love to hear from you.
       </p>
 
       {/* Two-column layout: wide form + narrow info panel */}
@@ -897,7 +904,7 @@ function Contact() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// SECTION — Journey
+// SECTION - Journey
 // ═══════════════════════════════════════════════════════════
 
 function Journey() {
@@ -926,7 +933,7 @@ function Journey() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ROUTER — Section switcher
+// ROUTER - Section switcher
 // ═══════════════════════════════════════════════════════════
 
 function SectionRenderer({ active }: { active: SectionKey }) {
@@ -946,7 +953,7 @@ function SectionRenderer({ active }: { active: SectionKey }) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// ROOT — Portfolio page
+// ROOT - Portfolio page
 // ═══════════════════════════════════════════════════════════
 
 export default function Portfolio() {

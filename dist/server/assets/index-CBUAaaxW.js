@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-8AUG8sS8.js";
-import { R as ReactDOM } from "./router-oBnsA7Zn.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-Djhib4iT.js";
+import { R as ReactDOM } from "./router-BxhF14gB.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5057,12 +5057,12 @@ const NAV = [
   { key: "contact", label: "Contact", icon: Send }
 ];
 const JOURNEY = [
-  { year: "2022", title: "B.Tech Admission", desc: "Cloud Technology & Information Security — Ajeenkya DY Patil University" },
+  { year: "2022", title: "B.Tech Admission", desc: "Cloud Technology & Information Security - Ajeenkya DY Patil University" },
   { year: "2022", title: "Linux & Networking", desc: "Learned OS fundamentals, TCP/IP, subnetting, and server administration" },
   { year: "2023", title: "AWS & DevOps", desc: "Deep dive into cloud services, automation tooling and CI/CD workflows" },
   { year: "2024", title: "AWS Certified", desc: "Passed AWS Certified Cloud Practitioner (CLF-C02)" },
   { year: "2025", title: "Containers & Orchestration", desc: "Hands-on with Docker, Kubernetes, Helm and container security" },
-  { year: "Now", title: "Cloud & DevSecOps Intern", desc: "Interning at E-Sutra Technologies — building real-world DevOps skills" }
+  { year: "Now", title: "Cloud & DevSecOps Intern", desc: "Interning at E-Sutra Technologies - building real-world DevOps skills" }
 ];
 const CARDS = [
   // ── Certifications ──────────────────────────────────────
@@ -5081,7 +5081,7 @@ const CARDS = [
     icon: /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "h-5 w-5 text-green-400" }),
     title: "DevSecOps Flask Platform",
     subtitle: "Secure CI/CD Application",
-    description: "Flask application with integrated DevSecOps practices — containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
+    description: "Flask application with integrated DevSecOps practices - containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
     tech: ["Python", "Flask", "Docker", "GitHub Actions", "Trivy", "SonarQube"],
     buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }]
   },
@@ -5228,33 +5228,38 @@ function Field({ label, children }) {
     children
   ] });
 }
-function Typewriter({ words }) {
+const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+function HackerText({
+  words
+}) {
   const [index, setIndex] = reactExports.useState(0);
-  const [text, setText] = reactExports.useState("");
-  const [deleting, setDeleting] = reactExports.useState(false);
+  const [display, setDisplay] = reactExports.useState(words[0]);
   reactExports.useEffect(() => {
-    const current = words[index % words.length];
-    const atFull = !deleting && text === current;
-    const atEmpty = deleting && text === "";
-    const delay = atFull ? 1600 : atEmpty ? 400 : deleting ? 35 : 70;
-    const t = setTimeout(() => {
-      if (atFull) {
-        setDeleting(true);
-        return;
-      }
-      if (atEmpty) {
-        setDeleting(false);
-        setIndex((i) => (i + 1) % words.length);
-        return;
-      }
-      setText((prev) => deleting ? current.slice(0, prev.length - 1) : current.slice(0, prev.length + 1));
-    }, delay);
-    return () => clearTimeout(t);
-  }, [text, deleting, index, words]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-base md:text-lg font-medium text-muted-foreground", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: text }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": true, className: "ml-0.5 inline-block h-[1em] w-[2px] translate-y-[3px] bg-foreground/70 animate-pulse" })
-  ] });
+    let iteration = 0;
+    words[index];
+    const next = words[(index + 1) % words.length];
+    const hold = setTimeout(() => {
+      const interval = setInterval(() => {
+        const output = next.split("").map((char, i) => {
+          if (char === " ") return " ";
+          if (i < iteration) {
+            return next[i];
+          }
+          return CHARS[Math.floor(Math.random() * CHARS.length)];
+        }).join("");
+        setDisplay(output);
+        iteration += 1 / 3;
+        if (iteration >= next.length) {
+          clearInterval(interval);
+          setDisplay(next);
+          setIndex((prev) => (prev + 1) % words.length);
+        }
+      }, 30);
+      return () => clearInterval(interval);
+    }, 2500);
+    return () => clearTimeout(hold);
+  }, [index, words]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-base md:text-lg font-medium text-muted-foreground font-mono tracking-wide", children: display });
 }
 function ProfileHero({ onJourney }) {
   const { theme, toggle } = useTheme();
@@ -5295,7 +5300,7 @@ function ProfileHero({ onJourney }) {
             "Aditya ",
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-light text-muted-foreground", children: "Shelke" })
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-0.5 h-5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Typewriter, { words: ["DevOps Engineer", "Cloud Architect"] }) })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-0.5 h-5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(HackerText, { words: ["DevOps Engineer", "Cloud Architect"] }) })
         ] })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "md:w-[32%] md:px-8 md:border-r md:border-border/50", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5 font-mono text-sm", children: [
@@ -5306,7 +5311,7 @@ function ProfileHero({ onJourney }) {
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" })
             ] }),
-            "available"
+            "Available"
           ] })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
@@ -5494,7 +5499,7 @@ function Resume() {
             location: "Remote",
             description: "Working on real-world DevOps and cloud tasks including CI/CD pipeline management, infrastructure automation, and security practices in an Agile team environment.",
             points: [
-              "Participating in sprint rituals — planning, stand-ups, retrospectives",
+              "Participating in sprint rituals - planning, stand-ups, retrospectives",
               "Managing Git branching workflows and PR reviews",
               "Working with Jira for task tracking and project management",
               "Applying DevSecOps practices with SonarQube and security scanning"
@@ -5512,7 +5517,7 @@ function Resume() {
               "Deployed AWS EC2, S3, IAM, VPC, ELB, EKS, ECR, CloudWatch configurations",
               "Built CI/CD pipelines using GitHub Actions and Jenkins",
               "Practised Terraform for infrastructure-as-code",
-              "Managed Linux servers — Debian, Ubuntu, Kali",
+              "Managed Linux servers - Debian, Ubuntu, Kali",
               "Containerised applications with Docker and orchestrated with Kubernetes"
             ]
           }
@@ -5521,7 +5526,7 @@ function Resume() {
       /* @__PURE__ */ jsxRuntimeExports.jsx(ResumeBlock, { title: "Education", accent: "orange", icon: /* @__PURE__ */ jsxRuntimeExports.jsx(GraduationCap, { className: "h-5 w-5 text-violet-400" }), children: /* @__PURE__ */ jsxRuntimeExports.jsx(
         ResumeItem,
         {
-          heading: "B.Tech — Cloud Technology & Information Security",
+          heading: "B.Tech - Cloud Technology & Information Security",
           college: "Ajeenkya DY Patil University",
           year: "2022 – 2026",
           location: "Pune, India"
@@ -5652,7 +5657,7 @@ function Contact() {
   }
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Let's Connect." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-muted-foreground max-w-2xl mb-6", children: "Whether it's a job opportunity, a project or just a tech conversation — I'd love to hear from you." }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-muted-foreground max-w-2xl mb-6 text-justify", children: "Whether it's a job opportunity, a project or just a tech conversation - I'd love to hear from you." }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-6 md:flex-row md:items-start", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "form",
@@ -5670,13 +5675,14 @@ function Contact() {
           ]
         }
       ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full md:w-64 shrink-0 space-y-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 rounded-xl border border-border/60 p-5 space-y-4", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full md:w-72 shrink-0 space-y-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 rounded-xl border border-border/60 p-5 space-y-4", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60", children: "Get In Touch" }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg surface-3 border border-border/60", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-4 w-4 text-muted-foreground" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-4 w-4 text-muted-foreground shrink-0" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-foreground truncate", children: "work.shelkeaditya@gmail.com" })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg surface-3 border border-border/60", children: /* @__PURE__ */ jsxRuntimeExports.jsx(MapPin, { className: "h-4 w-4 text-muted-foreground" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(MapPin, { className: "h-4 w-4 text-muted-foreground shrink-0" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-foreground", children: "Pune, India" })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
@@ -5689,7 +5695,7 @@ function Contact() {
                 target: "_blank",
                 rel: "noreferrer",
                 "aria-label": "LinkedIn",
-                className: "flex h-8 w-8 items-center justify-center rounded-lg surface-3 border border-border/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors",
+                className: "flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors",
                 children: /* @__PURE__ */ jsxRuntimeExports.jsx(Linkedin, { className: "h-4 w-4" })
               }
             ),
@@ -5700,7 +5706,7 @@ function Contact() {
                 target: "_blank",
                 rel: "noreferrer",
                 "aria-label": "Twitter",
-                className: "flex h-8 w-8 items-center justify-center rounded-lg surface-3 border border-border/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors",
+                className: "flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors",
                 children: /* @__PURE__ */ jsxRuntimeExports.jsx(Twitter, { className: "h-4 w-4" })
               }
             ),
@@ -5711,7 +5717,7 @@ function Contact() {
                 target: "_blank",
                 rel: "noreferrer",
                 "aria-label": "Instagram",
-                className: "flex h-8 w-8 items-center justify-center rounded-lg surface-3 border border-border/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors",
+                className: "flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors",
                 children: /* @__PURE__ */ jsxRuntimeExports.jsx(Instagram, { className: "h-4 w-4" })
               }
             ),
@@ -5722,13 +5728,13 @@ function Contact() {
                 target: "_blank",
                 rel: "noreferrer",
                 "aria-label": "GitHub",
-                className: "flex h-8 w-8 items-center justify-center rounded-lg surface-3 border border-border/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors",
+                className: "flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-muted-foreground hover:text-foreground hover:bg-white/10 transition-colors",
                 children: /* @__PURE__ */ jsxRuntimeExports.jsx(Github, { className: "h-4 w-4" })
               }
             )
           ] })
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 text-xs text-muted-foreground/60 pt-1 border-t border-border/60", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2.5 text-xs text-muted-foreground/60 pt-4 border-t border-border/60 ", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "h-3.5 w-3.5 shrink-0" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Usually responds within 24 hours" })
         ] })
