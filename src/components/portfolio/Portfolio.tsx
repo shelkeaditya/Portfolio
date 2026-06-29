@@ -372,7 +372,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
           </div>
 
           {/* ── COL 2 - System Status ── */}
-          <div className="md:w-[32%] md:px-8 md:border-r md:border-border/50">
+          <div className="md:w-[32%] md:px-19 md:border-r md:border-border/50">
             
             <div className="space-y-1.5 font-mono text-sm">
               <div className="flex items-center gap-3">

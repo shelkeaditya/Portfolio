@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-Djhib4iT.js";
-import { R as ReactDOM } from "./router-BxhF14gB.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-pElJ4ZWC.js";
+import { R as ReactDOM } from "./router-DRJZ95lD.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5228,38 +5228,26 @@ function Field({ label, children }) {
     children
   ] });
 }
-const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
-function HackerText({
-  words
-}) {
+function VerticalSlide({ words }) {
   const [index, setIndex] = reactExports.useState(0);
-  const [display, setDisplay] = reactExports.useState(words[0]);
   reactExports.useEffect(() => {
-    let iteration = 0;
-    words[index];
-    const next = words[(index + 1) % words.length];
-    const hold = setTimeout(() => {
-      const interval = setInterval(() => {
-        const output = next.split("").map((char, i) => {
-          if (char === " ") return " ";
-          if (i < iteration) {
-            return next[i];
-          }
-          return CHARS[Math.floor(Math.random() * CHARS.length)];
-        }).join("");
-        setDisplay(output);
-        iteration += 1 / 3;
-        if (iteration >= next.length) {
-          clearInterval(interval);
-          setDisplay(next);
-          setIndex((prev) => (prev + 1) % words.length);
-        }
-      }, 30);
-      return () => clearInterval(interval);
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % words.length);
     }, 2500);
-    return () => clearTimeout(hold);
-  }, [index, words]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-base md:text-lg font-medium text-muted-foreground font-mono tracking-wide", children: display });
+    return () => clearInterval(id);
+  }, [words.length]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative h-7 overflow-hidden", children: words.map((word, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      className: "absolute inset-0 flex items-center transition-all duration-700 ease-in-out text-base md:text-lg font-medium text-muted-foreground",
+      style: {
+        transform: i === index ? "translateY(0)" : i < index ? "translateY(-100%)" : "translateY(100%)",
+        opacity: i === index ? 1 : 0
+      },
+      children: word
+    },
+    word
+  )) });
 }
 function ProfileHero({ onJourney }) {
   const { theme, toggle } = useTheme();
@@ -5300,10 +5288,15 @@ function ProfileHero({ onJourney }) {
             "Aditya ",
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-light text-muted-foreground", children: "Shelke" })
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-0.5 h-5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(HackerText, { words: ["DevOps Engineer", "Cloud Architect"] }) })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-0.5 h-5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            VerticalSlide,
+            {
+              words: ["DevOps Engineer", "Cloud Architect"]
+            }
+          ) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "md:w-[32%] md:px-8 md:border-r md:border-border/50", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5 font-mono text-sm", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "md:w-[32%] md:px-19 md:border-r md:border-border/50", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5 font-mono text-sm", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-[72px] shrink-0 text-[11px] text-muted-foreground/50", children: "Job Status :" }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]", children: [
