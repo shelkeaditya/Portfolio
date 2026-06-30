@@ -51,7 +51,7 @@ import profileImg   from "@/assets/profile.jpeg";
 // ═══════════════════════════════════════════════════════════
 
 type SectionKey      = "about" | "resume" | "portfolio" | "blog" | "contact" | "journey";
-type PortfolioFilter = "All" | "Projects" | "Certifications" | "Badges";
+type PortfolioFilter = "All" | "Projects" | "Certifications" | "Publications" | "Badges";
 
 // ═══════════════════════════════════════════════════════════
 // CONSTANTS - Navigation
@@ -106,17 +106,81 @@ const CARDS: {
   tech:        string[];
   buttons:     { label: string; href: string }[];
 }[] = [
+  
   // ── Certifications ──────────────────────────────────────
   {
-    category:    "Certifications",
+    category:    "Certifications", 
     icon:        <Award className="h-5 w-5 text-yellow-400" />,
     title:       "AWS Certified Cloud Practitioner",
     subtitle:    "Amazon Web Services · CLF-C02",
     description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and core AWS services.",
     tech:        ["AWS", "Cloud Concepts", "IAM", "EC2", "S3", "Pricing & Support"],
-    buttons:     [{ label: "View Badge", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" }],
+    buttons:     [{ label: "Credly Badge", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" }],
   },
-
+  {
+    category:    "Certifications",
+    icon:        <Terminal className="h-5 w-5 text-orange-400" />,
+    title:       "The Linux Foundation  LFD-103",
+    subtitle:    "A Beginner's Guide to Linux Kernel Development",
+    description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
+    tech:        ["Linux", "Kernel", "Open Source"],
+    buttons:     [{ label: "Credly Badge", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
+  },
+  {
+    category:    "Certifications",
+    icon:        <Cloud className="h-5 w-5 text-orange-300" />,
+    title:       "AWS Certificate  Udemy",
+    subtitle:    "AWS Fundamentals",
+    description: "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
+    tech:        ["AWS", "Cloud Computing"],
+    buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
+  },
+  {
+    category:    "Certifications",
+    icon:        <ShieldCheck className="h-5 w-5 text-blue-400" />,
+    title:       "Saylor Academy  Information Security",
+    subtitle:    "Information Security Fundamentals",
+    description: "Coursework covering core information security principles, threat models, and security best practices.",
+    tech:        ["Information Security", "Risk Management"],
+    buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
+  },
+  {
+    category:    "Certifications",
+    icon:        <Activity className="h-5 w-5 text-cyan-400" />,
+    title:       "Saylor Academy  Computer Networks",
+    subtitle:    "Networking Fundamentals",
+    description: "Coursework covering networking concepts including protocols, topologies, and network architecture.",
+    tech:        ["Networking", "TCP/IP"],
+    buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
+  },
+  {
+    category:    "Certifications",
+    icon:        <Code2 className="h-5 w-5 text-purple-400" />,
+    title:       "Saylor Academy  Computer Architecture",
+    subtitle:    "Computer Architecture Fundamentals",
+    description: "Coursework covering core computer architecture concepts including processor design and system organization.",
+    tech:        ["Computer Architecture", "Systems"],
+    buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
+  },
+  {
+    category:    "Certifications",
+    icon:        <GraduationCap className="h-5 w-5 text-emerald-400" />,
+    title:       "Great Learning  Leadership and Management",
+    subtitle:    "Leadership & Management Fundamentals",
+    description: "Coursework covering leadership principles, team management, and organizational communication.",
+    tech:        ["Leadership", "Management"],
+    buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
+  },
+  {
+    category:    "Certifications",
+    icon:        <Award className="h-5 w-5 text-rose-400" />,
+    title:       "AutoCAD 3D Professional Certification",
+    subtitle:    "3D Modelling & Design",
+    description: "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
+    tech:        ["AutoCAD", "3D Modelling"],
+    buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
+  },
+  
   // ── Projects ────────────────────────────────────────────
   {
     category:    "Projects",
@@ -166,18 +230,37 @@ const CARDS: {
 
   // ── Badges ──────────────────────────────────────────────
   {
-    category:    "Badges",
-    icon:        <Award className="h-5 w-5 text-purple-400" />,
-    title:       "TryHackMe",
-    subtitle:    "Cybersecurity Learning Platform",
-    description: "Earned badges across Linux fundamentals, networking, web reconnaissance, and hands-on penetration testing rooms.",
-    tech:        ["Linux", "Networking", "Recon", "Web Hacking", "CTF"],
-    buttons:     [
-      { label: "Profile", href: "#" },
-      { label: "Badge",   href: "#" },
-    ],
+    category:    "Badges", 
+    icon:        <Award className="h-5 w-5 text-yellow-400" />,
+    title:       "AWS Certified Cloud Practitioner",
+    subtitle:    "Amazon Web Services · CLF-C02",
+    description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and core AWS services.",
+    tech:        ["AWS", "Cloud Concepts", "IAM", "EC2", "S3", "Pricing & Support"],
+    buttons:     [{ label: "Credly Badge", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" }],
   },
+  {
+    category:    "Badges",
+    icon:        <Terminal className="h-5 w-5 text-orange-400" />,
+    title:       "The Linux Foundation  LFD-103",
+    subtitle:    "A Beginner's Guide to Linux Kernel Development",
+    description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
+    tech:        ["Linux", "Kernel", "Open Source"],
+    buttons:     [{ label: "Credly Badge", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
+  },
+  
+  // ── Publication ──────────────────────────────────────────
+  {
+    category:    "Publications",
+    icon:        <FileText className="h-5 w-5 text-indigo-400" />,
+    title:       "IRJET — Research Paper",
+    subtitle:    "International Research Journal of Engineering and Technology",
+    description: "Co-authored and published a peer-reviewed research paper in IRJET, an established engineering and technology journal.",
+    tech:        ["Research", "Academic Writing"],
+    buttons:     [{ label: "Read Paper", href: "https://drive.google.com/drive/u/0/folders/1m2cEsQOWPS5yQ7gLjM2Bu_xERdB0nE7A" }],
+  },
+
 ];
+
 
 // ═══════════════════════════════════════════════════════════
 // HOOK - Theme
@@ -688,7 +771,7 @@ function PortfolioSection() {
     [filter],
   );
 
-  const filters: PortfolioFilter[] = ["All", "Projects", "Certifications", "Badges"];
+  const filters: PortfolioFilter[] = ["All", "Projects", "Certifications", "Badges", "Publications"];
 
   return (
     <div>

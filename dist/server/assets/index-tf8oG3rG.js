@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-DpOXiMdc.js";
-import { R as ReactDOM } from "./router-Bfk2knpT.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-CQwT60I3.js";
+import { R as ReactDOM } from "./router-scrAYJ8f.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5076,7 +5076,70 @@ const CARDS = [
     subtitle: "Amazon Web Services · CLF-C02",
     description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and core AWS services.",
     tech: ["AWS", "Cloud Concepts", "IAM", "EC2", "S3", "Pricing & Support"],
-    buttons: [{ label: "View Badge", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" }]
+    buttons: [{ label: "Credly Badge", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" }]
+  },
+  {
+    category: "Certifications",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Terminal, { className: "h-5 w-5 text-orange-400" }),
+    title: "The Linux Foundation  LFD-103",
+    subtitle: "A Beginner's Guide to Linux Kernel Development",
+    description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
+    tech: ["Linux", "Kernel", "Open Source"],
+    buttons: [{ label: "Credly Badge", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
+  },
+  {
+    category: "Certifications",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Cloud, { className: "h-5 w-5 text-orange-300" }),
+    title: "AWS Certificate  Udemy",
+    subtitle: "AWS Fundamentals",
+    description: "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
+    tech: ["AWS", "Cloud Computing"],
+    buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
+  },
+  {
+    category: "Certifications",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "h-5 w-5 text-blue-400" }),
+    title: "Saylor Academy  Information Security",
+    subtitle: "Information Security Fundamentals",
+    description: "Coursework covering core information security principles, threat models, and security best practices.",
+    tech: ["Information Security", "Risk Management"],
+    buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
+  },
+  {
+    category: "Certifications",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Activity, { className: "h-5 w-5 text-cyan-400" }),
+    title: "Saylor Academy  Computer Networks",
+    subtitle: "Networking Fundamentals",
+    description: "Coursework covering networking concepts including protocols, topologies, and network architecture.",
+    tech: ["Networking", "TCP/IP"],
+    buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
+  },
+  {
+    category: "Certifications",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(CodeXml, { className: "h-5 w-5 text-purple-400" }),
+    title: "Saylor Academy  Computer Architecture",
+    subtitle: "Computer Architecture Fundamentals",
+    description: "Coursework covering core computer architecture concepts including processor design and system organization.",
+    tech: ["Computer Architecture", "Systems"],
+    buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
+  },
+  {
+    category: "Certifications",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(GraduationCap, { className: "h-5 w-5 text-emerald-400" }),
+    title: "Great Learning  Leadership and Management",
+    subtitle: "Leadership & Management Fundamentals",
+    description: "Coursework covering leadership principles, team management, and organizational communication.",
+    tech: ["Leadership", "Management"],
+    buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
+  },
+  {
+    category: "Certifications",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Award, { className: "h-5 w-5 text-rose-400" }),
+    title: "AutoCAD 3D Professional Certification",
+    subtitle: "3D Modelling & Design",
+    description: "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
+    tech: ["AutoCAD", "3D Modelling"],
+    buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
   },
   // ── Projects ────────────────────────────────────────────
   {
@@ -5127,15 +5190,31 @@ const CARDS = [
   // ── Badges ──────────────────────────────────────────────
   {
     category: "Badges",
-    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Award, { className: "h-5 w-5 text-purple-400" }),
-    title: "TryHackMe",
-    subtitle: "Cybersecurity Learning Platform",
-    description: "Earned badges across Linux fundamentals, networking, web reconnaissance, and hands-on penetration testing rooms.",
-    tech: ["Linux", "Networking", "Recon", "Web Hacking", "CTF"],
-    buttons: [
-      { label: "Profile", href: "#" },
-      { label: "Badge", href: "#" }
-    ]
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Award, { className: "h-5 w-5 text-yellow-400" }),
+    title: "AWS Certified Cloud Practitioner",
+    subtitle: "Amazon Web Services · CLF-C02",
+    description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and core AWS services.",
+    tech: ["AWS", "Cloud Concepts", "IAM", "EC2", "S3", "Pricing & Support"],
+    buttons: [{ label: "Credly Badge", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" }]
+  },
+  {
+    category: "Badges",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Terminal, { className: "h-5 w-5 text-orange-400" }),
+    title: "The Linux Foundation  LFD-103",
+    subtitle: "A Beginner's Guide to Linux Kernel Development",
+    description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
+    tech: ["Linux", "Kernel", "Open Source"],
+    buttons: [{ label: "Credly Badge", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
+  },
+  // ── Publication ──────────────────────────────────────────
+  {
+    category: "Publications",
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-5 w-5 text-indigo-400" }),
+    title: "IRJET — Research Paper",
+    subtitle: "International Research Journal of Engineering and Technology",
+    description: "Co-authored and published a peer-reviewed research paper in IRJET, an established engineering and technology journal.",
+    tech: ["Research", "Academic Writing"],
+    buttons: [{ label: "Read Paper", href: "https://drive.google.com/drive/u/0/folders/1m2cEsQOWPS5yQ7gLjM2Bu_xERdB0nE7A" }]
   }
 ];
 function useTheme() {
@@ -5545,7 +5624,7 @@ function PortfolioSection() {
     () => filter === "All" ? CARDS : CARDS.filter((c) => c.category === filter),
     [filter]
   );
-  const filters = ["All", "Projects", "Certifications", "Badges"];
+  const filters = ["All", "Projects", "Certifications", "Badges", "Publications"];
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Portfolio." }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-6 flex flex-wrap gap-2", children: filters.map((f) => /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -5689,11 +5768,18 @@ function Contact() {
         /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60", children: "Get In Touch" }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-4 w-4 text-muted-foreground shrink-0" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-foreground truncate", children: "work.shelkeaditya@gmail.com" })
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "a",
+            {
+              href: "mailto:work.shelkeaditya@gmail.com",
+              className: "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors",
+              children: "work.shelkeaditya@gmail.com"
+            }
+          )
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(MapPin, { className: "h-4 w-4 text-muted-foreground shrink-0" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-foreground", children: "Pune, India" })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: "Pune, Maharashtra" })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50 mb-3", children: "Find me on" }),
