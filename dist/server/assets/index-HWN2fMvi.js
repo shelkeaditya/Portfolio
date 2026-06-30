@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-J7dZH93r.js";
-import { R as ReactDOM } from "./router-DpJ5o9dp.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-CT2EHv_D.js";
+import { R as ReactDOM } from "./router-NKT8g1QT.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5080,8 +5080,17 @@ const CARDS = [
   },
   {
     category: ["Certifications"],
+    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Award, { className: "h-5 w-5 text-rose-400" }),
+    title: "AutoCAD 3D Professional Certification",
+    subtitle: "3D Modelling & Design",
+    description: "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
+    tech: ["AutoCAD", "3D Modelling"],
+    buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
+  },
+  {
+    category: ["Certifications"],
     icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Cloud, { className: "h-5 w-5 text-orange-300" }),
-    title: "AWS Certificate - Udemy",
+    title: "AWS Certificate: Udemy",
     subtitle: "AWS Fundamentals",
     description: "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
     tech: ["AWS", "Cloud Computing"],
@@ -5102,7 +5111,7 @@ const CARDS = [
   {
     category: ["Certifications"],
     icon: /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "h-5 w-5 text-blue-400" }),
-    title: "Saylor Academy : Information Security",
+    title: "Saylor Academy: Information Security",
     subtitle: "Information Security Fundamentals",
     description: "Coursework covering core information security principles, threat models, and security best practices.",
     tech: ["Information Security", "Risk Management"],
@@ -5111,7 +5120,7 @@ const CARDS = [
   {
     category: ["Certifications"],
     icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Activity, { className: "h-5 w-5 text-cyan-400" }),
-    title: "Saylor Academy : Computer Networks",
+    title: "Saylor Academy: Computer Networks",
     subtitle: "Networking Fundamentals",
     description: "Coursework covering networking concepts including protocols, topologies, and network architecture.",
     tech: ["Networking", "TCP/IP"],
@@ -5120,28 +5129,10 @@ const CARDS = [
   {
     category: ["Certifications"],
     icon: /* @__PURE__ */ jsxRuntimeExports.jsx(CodeXml, { className: "h-5 w-5 text-purple-400" }),
-    title: "Saylor Academy : Computer Architecture",
+    title: "Saylor Academy: Computer Architecture",
     subtitle: "Computer Architecture Fundamentals",
     description: "Coursework covering core computer architecture concepts including processor design and system organization.",
     tech: ["Computer Architecture", "Systems"],
-    buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
-  },
-  {
-    category: ["Certifications"],
-    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(GraduationCap, { className: "h-5 w-5 text-emerald-400" }),
-    title: "Great Learning : Leadership and Management",
-    subtitle: "Leadership & Management Fundamentals",
-    description: "Coursework covering leadership principles, team management, and organizational communication.",
-    tech: ["Leadership", "Management"],
-    buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
-  },
-  {
-    category: ["Certifications"],
-    icon: /* @__PURE__ */ jsxRuntimeExports.jsx(Award, { className: "h-5 w-5 text-rose-400" }),
-    title: "AutoCAD 3D Professional Certification",
-    subtitle: "3D Modelling & Design",
-    description: "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
-    tech: ["AutoCAD", "3D Modelling"],
     buttons: [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }]
   },
   // ── Projects ────────────────────────────────────────────
@@ -5383,18 +5374,30 @@ function ProfileHero({ onJourney }) {
         ] })
       ] }) }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3 md:flex-1 md:pl-8 md:items-end", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "a",
-          {
-            href: "/Aditya Shelke CV.pdf",
-            download: true,
-            className: "inline-flex items-center gap-2 rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 px-4 py-2 text-sm font-semibold text-accent-orange transition-all hover:bg-[color:var(--accent-orange)]/20 hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5",
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4" }),
-              "Download CV"
-            ]
-          }
-        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "inline-flex items-stretch rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 text-accent-orange overflow-hidden transition-all hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "a",
+            {
+              href: "/Aditya Shelke CV.pdf",
+              download: true,
+              "aria-label": "Download CV",
+              className: "flex items-center px-3 hover:bg-[color:var(--accent-orange)]/20 transition-colors",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4" })
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-px bg-[color:var(--accent-orange)]/30" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "a",
+            {
+              href: "https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy",
+              className: "inline-flex items-center gap-2  border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 px-4 py-2 text-sm font-semibold text-accent-orange transition-all hover:bg-[color:var(--accent-orange)]/20 hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-4 w-4" }),
+                "View CV"
+              ]
+            }
+          )
+        ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "a",
           {

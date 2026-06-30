@@ -475,8 +475,8 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
                 <Download className="h-4 w-4" />
               </a>
               <div className="w-px bg-[color:var(--accent-orange)]/30" />
-              <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy?usp=sharing" target="_blank" rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-orange)]/20 transition-colors">
+              <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy" 
+                className="inline-flex items-center gap-2  border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 px-4 py-2 text-sm font-semibold text-accent-orange transition-all hover:bg-[color:var(--accent-orange)]/20 hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5">
                 <FileText className="h-4 w-4" />
                 View CV
               </a>
