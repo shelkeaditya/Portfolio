@@ -119,8 +119,17 @@ const CARDS: {
   },
   {
     category:    ["Certifications"],
+    icon:        <Award className="h-5 w-5 text-rose-400" />,
+    title:       "AutoCAD 3D Professional Certification",
+    subtitle:    "3D Modelling & Design",
+    description: "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
+    tech:        ["AutoCAD", "3D Modelling"],
+    buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
+  },
+  {
+    category:    ["Certifications"],
     icon:        <Cloud className="h-5 w-5 text-orange-300" />,
-    title:       "AWS Certificate - Udemy",
+    title:       "AWS Certificate: Udemy",
     subtitle:    "AWS Fundamentals",
     description: "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
     tech:        ["AWS", "Cloud Computing"],
@@ -129,7 +138,7 @@ const CARDS: {
   {
     category:    ["Certifications", "Badges"],
     icon:        <Terminal className="h-5 w-5 text-orange-400" />,
-    title:       "The Linux Foundation - LFD-103",
+    title:       "The Linux Foundation: LFD-103",
     subtitle:    "A Beginner's Guide to Linux Kernel Development",
     description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
     tech:        ["Linux", "Kernel", "Open Source"],
@@ -141,7 +150,7 @@ const CARDS: {
   {
     category:    ["Certifications"],
     icon:        <ShieldCheck className="h-5 w-5 text-blue-400" />,
-    title:       "Saylor Academy - Information Security",
+    title:       "Saylor Academy: Information Security",
     subtitle:    "Information Security Fundamentals",
     description: "Coursework covering core information security principles, threat models, and security best practices.",
     tech:        ["Information Security", "Risk Management"],
@@ -150,7 +159,7 @@ const CARDS: {
   {
     category:    ["Certifications"],
     icon:        <Activity className="h-5 w-5 text-cyan-400" />,
-    title:       "Saylor Academy - Computer Networks",
+    title:       "Saylor Academy: Computer Networks",
     subtitle:    "Networking Fundamentals",
     description: "Coursework covering networking concepts including protocols, topologies, and network architecture.",
     tech:        ["Networking", "TCP/IP"],
@@ -159,28 +168,10 @@ const CARDS: {
   {
     category:    ["Certifications"],
     icon:        <Code2 className="h-5 w-5 text-purple-400" />,
-    title:       "Saylor Academy - Computer Architecture",
+    title:       "Saylor Academy: Computer Architecture",
     subtitle:    "Computer Architecture Fundamentals",
     description: "Coursework covering core computer architecture concepts including processor design and system organization.",
     tech:        ["Computer Architecture", "Systems"],
-    buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
-  },
-  {
-    category:    ["Certifications"],
-    icon:        <GraduationCap className="h-5 w-5 text-emerald-400" />,
-    title:       "Great Learning - Leadership and Management",
-    subtitle:    "Leadership & Management Fundamentals",
-    description: "Coursework covering leadership principles, team management, and organizational communication.",
-    tech:        ["Leadership", "Management"],
-    buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
-  },
-  {
-    category:    ["Certifications"],
-    icon:        <Award className="h-5 w-5 text-rose-400" />,
-    title:       "AutoCAD 3D Professional Certification",
-    subtitle:    "3D Modelling & Design",
-    description: "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
-    tech:        ["AutoCAD", "3D Modelling"],
     buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
   },
 
@@ -235,7 +226,7 @@ const CARDS: {
   {
     category:    ["Publications"],
     icon:        <FileText className="h-5 w-5 text-indigo-400" />,
-    title:       "IRJET - Research Paper",
+    title:       "IRJET : Research Paper",
     subtitle:    "International Research Journal of Engineering and Technology",
     description: "Co-authored and published a peer-reviewed research paper in IRJET, an established engineering and technology journal.",
     tech:        ["Research", "Academic Writing"],
@@ -475,12 +466,22 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
 
           {/* ── COL 3 - Download CV + email + socials ── */}
           <div className="flex flex-col gap-3 md:flex-1 md:pl-8 md:items-end">
+            
             {/* Download CV */}
-            <a href="/Aditya Shelke CV.pdf" download
-              className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 px-4 py-2 text-sm font-semibold text-accent-orange transition-all hover:bg-[color:var(--accent-orange)]/20 hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5">
-              <Download className="h-4 w-4" />
-              Download CV
-            </a>
+            <div className="inline-flex items-stretch rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 text-accent-orange overflow-hidden transition-all hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5">
+              <a href="/Aditya Shelke CV.pdf" download
+                aria-label="Download CV"
+                className="flex items-center px-3 hover:bg-[color:var(--accent-orange)]/20 transition-colors">
+                <Download className="h-4 w-4" />
+              </a>
+              <div className="w-px bg-[color:var(--accent-orange)]/30" />
+              <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy?usp=sharing" target="_blank" rel="noreferrer"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-orange)]/20 transition-colors">
+                <FileText className="h-4 w-4" />
+                View CV
+              </a>
+            </div>
+
 
             {/* Email */}
             <a href="mailto:work.shelkeaditya@gmail.com"
