@@ -3,12 +3,12 @@
     "file": "assets/styles-Nae_1lAW.css",
     "src": "C:/Portfolio/src/styles.css"
   },
-  "_router-scrAYJ8f.js": {
-    "file": "assets/router-scrAYJ8f.js",
+  "_router-DW5fHeZl.js": {
+    "file": "assets/router-DW5fHeZl.js",
     "name": "router",
     "isDynamicEntry": true,
     "imports": [
-      "_server-CQwT60I3.js"
+      "_server-DgQskLLh.js"
     ],
     "dynamicImports": [
       "src/routes/index.tsx?tsr-split=component"
@@ -17,22 +17,22 @@
       "assets/styles-Nae_1lAW.css"
     ]
   },
-  "_server-CQwT60I3.js": {
-    "file": "assets/server-CQwT60I3.js",
+  "_server-DgQskLLh.js": {
+    "file": "assets/server-DgQskLLh.js",
     "name": "server",
     "isDynamicEntry": true,
     "dynamicImports": [
       "tanstack-start-manifest:v",
-      "_router-scrAYJ8f.js",
+      "_router-DW5fHeZl.js",
       "src/start.ts",
       "node_modules/@tanstack/start-server-core/dist/esm/empty-plugin-adapters.js"
     ]
   },
-  "_worker-entry-BQtvjhOC.js": {
-    "file": "assets/worker-entry-BQtvjhOC.js",
+  "_worker-entry-DykoxWft.js": {
+    "file": "assets/worker-entry-DykoxWft.js",
     "name": "worker-entry",
     "dynamicImports": [
-      "_server-CQwT60I3.js"
+      "_server-DgQskLLh.js"
     ]
   },
   "node_modules/@tanstack/start-server-core/dist/esm/empty-plugin-adapters.js": {
@@ -46,30 +46,30 @@
     "src": "src/assets/profile.jpeg"
   },
   "src/routes/index.tsx?tsr-split=component": {
-    "file": "assets/index-tf8oG3rG.js",
+    "file": "assets/index-BWIBtrrt.js",
     "name": "index",
     "src": "src/routes/index.tsx?tsr-split=component",
     "isDynamicEntry": true,
     "imports": [
-      "_server-CQwT60I3.js",
-      "_router-scrAYJ8f.js"
+      "_server-DgQskLLh.js",
+      "_router-DW5fHeZl.js"
     ],
     "assets": [
       "assets/profile-DYU8eqih.jpeg"
     ]
   },
   "src/start.ts": {
-    "file": "assets/start-Bt48cVZO.js",
+    "file": "assets/start-BGpmUlhm.js",
     "name": "start",
     "src": "src/start.ts",
     "isDynamicEntry": true,
     "imports": [
-      "_server-CQwT60I3.js",
-      "_worker-entry-BQtvjhOC.js"
+      "_server-DgQskLLh.js",
+      "_worker-entry-DykoxWft.js"
     ]
   },
   "tanstack-start-manifest:v": {
-    "file": "assets/_tanstack-start-manifest_v-tifm4sVF.js",
+    "file": "assets/_tanstack-start-manifest_v-DMQangjh.js",
     "name": "_tanstack-start-manifest_v",
     "src": "tanstack-start-manifest:v",
     "isDynamicEntry": true
@@ -80,7 +80,7 @@
     "src": "virtual:cloudflare/worker-entry",
     "isEntry": true,
     "imports": [
-      "_worker-entry-BQtvjhOC.js"
+      "_worker-entry-DykoxWft.js"
     ]
   }
 }

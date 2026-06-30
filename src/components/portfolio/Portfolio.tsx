@@ -51,7 +51,7 @@ import profileImg   from "@/assets/profile.jpeg";
 // ═══════════════════════════════════════════════════════════
 
 type SectionKey      = "about" | "resume" | "portfolio" | "blog" | "contact" | "journey";
-type PortfolioFilter = "All" | "Projects" | "Certifications" | "Publications" | "Badges";
+const filters: PortfolioFilter[] = ["All", "Projects", "Certifications", "Publications", "Badges"];
 
 // ═══════════════════════════════════════════════════════════
 // CONSTANTS - Navigation
@@ -98,7 +98,7 @@ const JOURNEY = [
 // ═══════════════════════════════════════════════════════════
 
 const CARDS: {
-  category:    Exclude<PortfolioFilter, "All">;
+  category:    Exclude<PortfolioFilter, "All">[];
   icon:        React.ReactNode;
   title:       string;
   subtitle:    string;
@@ -106,10 +106,10 @@ const CARDS: {
   tech:        string[];
   buttons:     { label: string; href: string }[];
 }[] = [
-  
+
   // ── Certifications ──────────────────────────────────────
   {
-    category:    "Certifications", 
+    category:    ["Certifications", "Badges"],
     icon:        <Award className="h-5 w-5 text-yellow-400" />,
     title:       "AWS Certified Cloud Practitioner",
     subtitle:    "Amazon Web Services · CLF-C02",
@@ -118,61 +118,64 @@ const CARDS: {
     buttons:     [{ label: "Credly Badge", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" }],
   },
   {
-    category:    "Certifications",
-    icon:        <Terminal className="h-5 w-5 text-orange-400" />,
-    title:       "The Linux Foundation  LFD-103",
-    subtitle:    "A Beginner's Guide to Linux Kernel Development",
-    description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
-    tech:        ["Linux", "Kernel", "Open Source"],
-    buttons:     [{ label: "Credly Badge", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
-  },
-  {
-    category:    "Certifications",
+    category:    ["Certifications"],
     icon:        <Cloud className="h-5 w-5 text-orange-300" />,
-    title:       "AWS Certificate  Udemy",
+    title:       "AWS Certificate — Udemy",
     subtitle:    "AWS Fundamentals",
     description: "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
     tech:        ["AWS", "Cloud Computing"],
     buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
   },
   {
-    category:    "Certifications",
+    category:    ["Certifications", "Badges"],
+    icon:        <Terminal className="h-5 w-5 text-orange-400" />,
+    title:       "The Linux Foundation — LFD-103",
+    subtitle:    "A Beginner's Guide to Linux Kernel Development",
+    description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
+    tech:        ["Linux", "Kernel", "Open Source"],
+    buttons:     [
+      { label: "Certificate",  href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" },
+      { label: "Credly Badge", href: "https://www.credly.com/badges/5f324690-36b9-4b1b-9b6f-4d1e1a97dc5c/public_url" },
+    ],
+  },
+  {
+    category:    ["Certifications"],
     icon:        <ShieldCheck className="h-5 w-5 text-blue-400" />,
-    title:       "Saylor Academy  Information Security",
+    title:       "Saylor Academy — Information Security",
     subtitle:    "Information Security Fundamentals",
     description: "Coursework covering core information security principles, threat models, and security best practices.",
     tech:        ["Information Security", "Risk Management"],
     buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
   },
   {
-    category:    "Certifications",
+    category:    ["Certifications"],
     icon:        <Activity className="h-5 w-5 text-cyan-400" />,
-    title:       "Saylor Academy  Computer Networks",
+    title:       "Saylor Academy — Computer Networks",
     subtitle:    "Networking Fundamentals",
     description: "Coursework covering networking concepts including protocols, topologies, and network architecture.",
     tech:        ["Networking", "TCP/IP"],
     buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
   },
   {
-    category:    "Certifications",
+    category:    ["Certifications"],
     icon:        <Code2 className="h-5 w-5 text-purple-400" />,
-    title:       "Saylor Academy  Computer Architecture",
+    title:       "Saylor Academy — Computer Architecture",
     subtitle:    "Computer Architecture Fundamentals",
     description: "Coursework covering core computer architecture concepts including processor design and system organization.",
     tech:        ["Computer Architecture", "Systems"],
     buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
   },
   {
-    category:    "Certifications",
+    category:    ["Certifications"],
     icon:        <GraduationCap className="h-5 w-5 text-emerald-400" />,
-    title:       "Great Learning  Leadership and Management",
+    title:       "Great Learning — Leadership and Management",
     subtitle:    "Leadership & Management Fundamentals",
     description: "Coursework covering leadership principles, team management, and organizational communication.",
     tech:        ["Leadership", "Management"],
     buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
   },
   {
-    category:    "Certifications",
+    category:    ["Certifications"],
     icon:        <Award className="h-5 w-5 text-rose-400" />,
     title:       "AutoCAD 3D Professional Certification",
     subtitle:    "3D Modelling & Design",
@@ -180,19 +183,19 @@ const CARDS: {
     tech:        ["AutoCAD", "3D Modelling"],
     buttons:     [{ label: "Certificate", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
   },
-  
+
   // ── Projects ────────────────────────────────────────────
   {
-    category:    "Projects",
+    category:    ["Projects"],
     icon:        <ShieldCheck className="h-5 w-5 text-green-400" />,
     title:       "DevSecOps Flask Platform",
     subtitle:    "Secure CI/CD Application",
-    description: "Flask application with integrated DevSecOps practices - containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
+    description: "Flask application with integrated DevSecOps practices — containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
     tech:        ["Python", "Flask", "Docker", "GitHub Actions", "Trivy", "SonarQube"],
     buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }],
   },
   {
-    category:    "Projects",
+    category:    ["Projects"],
     icon:        <Activity className="h-5 w-5 text-blue-400" />,
     title:       "Resilient Server Monitoring Platform",
     subtitle:    "Infrastructure Monitoring",
@@ -201,7 +204,7 @@ const CARDS: {
     buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform" }],
   },
   {
-    category:    "Projects",
+    category:    ["Projects"],
     icon:        <Workflow className="h-5 w-5 text-orange-400" />,
     title:       "CI/CD Platform",
     subtitle:    "Automation Pipeline",
@@ -210,7 +213,7 @@ const CARDS: {
     buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/CICD-Platform" }],
   },
   {
-    category:    "Projects",
+    category:    ["Projects"],
     icon:        <Bot className="h-5 w-5 text-cyan-400" />,
     title:       "AI-Based Backup Management",
     subtitle:    "Intelligent Backup Automation",
@@ -219,7 +222,7 @@ const CARDS: {
     buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/Ai-based-backup-management" }],
   },
   {
-    category:    "Projects",
+    category:    ["Projects"],
     icon:        <Cloud className="h-5 w-5 text-sky-400" />,
     title:       "Nextcloud on Linux",
     subtitle:    "Self-Hosted Private Cloud",
@@ -228,29 +231,9 @@ const CARDS: {
     buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/Nextcloud-on-Linux" }],
   },
 
-  // ── Badges ──────────────────────────────────────────────
+  // ── Publications ─────────────────────────────────────────
   {
-    category:    "Badges", 
-    icon:        <Award className="h-5 w-5 text-yellow-400" />,
-    title:       "AWS Certified Cloud Practitioner",
-    subtitle:    "Amazon Web Services · CLF-C02",
-    description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and core AWS services.",
-    tech:        ["AWS", "Cloud Concepts", "IAM", "EC2", "S3", "Pricing & Support"],
-    buttons:     [{ label: "Credly Badge", href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c" }],
-  },
-  {
-    category:    "Badges",
-    icon:        <Terminal className="h-5 w-5 text-orange-400" />,
-    title:       "The Linux Foundation  LFD-103",
-    subtitle:    "A Beginner's Guide to Linux Kernel Development",
-    description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
-    tech:        ["Linux", "Kernel", "Open Source"],
-    buttons:     [{ label: "Credly Badge", href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing" }],
-  },
-  
-  // ── Publication ──────────────────────────────────────────
-  {
-    category:    "Publications",
+    category:    ["Publications"],
     icon:        <FileText className="h-5 w-5 text-indigo-400" />,
     title:       "IRJET — Research Paper",
     subtitle:    "International Research Journal of Engineering and Technology",
@@ -767,7 +750,7 @@ function PortfolioSection() {
   const [filter, setFilter] = useState<PortfolioFilter>("All");
 
   const filtered = useMemo(
-    () => (filter === "All" ? CARDS : CARDS.filter((c) => c.category === filter)),
+    () => (filter === "All" ? CARDS : CARDS.filter((c) => c.category.includes(filter))),
     [filter],
   );
 
@@ -808,7 +791,7 @@ function PortfolioSection() {
                 <div className="mt-1 text-xs text-muted-foreground">{c.subtitle}</div>
               </div>
               <span className="surface-3 shrink-0 rounded-md border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
-                {c.category}
+                {c.category.join(" / ")}
               </span>
             </div>
 
