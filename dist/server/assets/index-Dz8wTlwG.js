@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-CT2EHv_D.js";
-import { R as ReactDOM } from "./router-NKT8g1QT.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BptNlHUu.js";
+import { R as ReactDOM } from "./router-CIPYa3k4.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5185,8 +5185,8 @@ const CARDS = [
   {
     category: ["Publications"],
     icon: /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-5 w-5 text-indigo-400" }),
-    title: "IRJET : Research Paper",
-    subtitle: "International Research Journal of Engineering and Technology",
+    title: "Connect2Cure: A Telemedine Platform",
+    subtitle: "Published on IRJET",
     description: "Co-authored and published a peer-reviewed research paper in IRJET, an established engineering and technology journal.",
     tech: ["Research", "Academic Writing"],
     buttons: [{ label: "Read Paper", href: "https://drive.google.com/drive/u/0/folders/1m2cEsQOWPS5yQ7gLjM2Bu_xERdB0nE7A" }]

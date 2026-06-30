@@ -226,8 +226,8 @@ const CARDS: {
   {
     category:    ["Publications"],
     icon:        <FileText className="h-5 w-5 text-indigo-400" />,
-    title:       "IRJET : Research Paper",
-    subtitle:    "International Research Journal of Engineering and Technology",
+    title:       "Connect2Cure: A Telemedine Platform",
+    subtitle:    "Published on IRJET",
     description: "Co-authored and published a peer-reviewed research paper in IRJET, an established engineering and technology journal.",
     tech:        ["Research", "Academic Writing"],
     buttons:     [{ label: "Read Paper", href: "https://drive.google.com/drive/u/0/folders/1m2cEsQOWPS5yQ7gLjM2Bu_xERdB0nE7A" }],
