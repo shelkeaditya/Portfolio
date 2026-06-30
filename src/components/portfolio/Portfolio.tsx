@@ -120,7 +120,7 @@ const CARDS: {
   {
     category:    ["Certifications"],
     icon:        <Cloud className="h-5 w-5 text-orange-300" />,
-    title:       "AWS Certificate — Udemy",
+    title:       "AWS Certificate - Udemy",
     subtitle:    "AWS Fundamentals",
     description: "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
     tech:        ["AWS", "Cloud Computing"],
@@ -129,7 +129,7 @@ const CARDS: {
   {
     category:    ["Certifications", "Badges"],
     icon:        <Terminal className="h-5 w-5 text-orange-400" />,
-    title:       "The Linux Foundation — LFD-103",
+    title:       "The Linux Foundation - LFD-103",
     subtitle:    "A Beginner's Guide to Linux Kernel Development",
     description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
     tech:        ["Linux", "Kernel", "Open Source"],
@@ -141,7 +141,7 @@ const CARDS: {
   {
     category:    ["Certifications"],
     icon:        <ShieldCheck className="h-5 w-5 text-blue-400" />,
-    title:       "Saylor Academy — Information Security",
+    title:       "Saylor Academy - Information Security",
     subtitle:    "Information Security Fundamentals",
     description: "Coursework covering core information security principles, threat models, and security best practices.",
     tech:        ["Information Security", "Risk Management"],
@@ -150,7 +150,7 @@ const CARDS: {
   {
     category:    ["Certifications"],
     icon:        <Activity className="h-5 w-5 text-cyan-400" />,
-    title:       "Saylor Academy — Computer Networks",
+    title:       "Saylor Academy - Computer Networks",
     subtitle:    "Networking Fundamentals",
     description: "Coursework covering networking concepts including protocols, topologies, and network architecture.",
     tech:        ["Networking", "TCP/IP"],
@@ -159,7 +159,7 @@ const CARDS: {
   {
     category:    ["Certifications"],
     icon:        <Code2 className="h-5 w-5 text-purple-400" />,
-    title:       "Saylor Academy — Computer Architecture",
+    title:       "Saylor Academy - Computer Architecture",
     subtitle:    "Computer Architecture Fundamentals",
     description: "Coursework covering core computer architecture concepts including processor design and system organization.",
     tech:        ["Computer Architecture", "Systems"],
@@ -168,7 +168,7 @@ const CARDS: {
   {
     category:    ["Certifications"],
     icon:        <GraduationCap className="h-5 w-5 text-emerald-400" />,
-    title:       "Great Learning — Leadership and Management",
+    title:       "Great Learning - Leadership and Management",
     subtitle:    "Leadership & Management Fundamentals",
     description: "Coursework covering leadership principles, team management, and organizational communication.",
     tech:        ["Leadership", "Management"],
@@ -190,7 +190,7 @@ const CARDS: {
     icon:        <ShieldCheck className="h-5 w-5 text-green-400" />,
     title:       "DevSecOps Flask Platform",
     subtitle:    "Secure CI/CD Application",
-    description: "Flask application with integrated DevSecOps practices — containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
+    description: "Flask application with integrated DevSecOps practices - containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
     tech:        ["Python", "Flask", "Docker", "GitHub Actions", "Trivy", "SonarQube"],
     buttons:     [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }],
   },
@@ -235,7 +235,7 @@ const CARDS: {
   {
     category:    ["Publications"],
     icon:        <FileText className="h-5 w-5 text-indigo-400" />,
-    title:       "IRJET — Research Paper",
+    title:       "IRJET - Research Paper",
     subtitle:    "International Research Journal of Engineering and Technology",
     description: "Co-authored and published a peer-reviewed research paper in IRJET, an established engineering and technology journal.",
     tech:        ["Research", "Academic Writing"],
