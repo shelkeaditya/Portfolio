@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BptNlHUu.js";
-import { R as ReactDOM } from "./router-CIPYa3k4.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-D4h_-_FV.js";
+import { R as ReactDOM } from "./router-DB-cO1DL.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5331,6 +5331,7 @@ function ProfileHero({ onJourney }) {
               style: { background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }
             }
           ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("link", { rel: "icon", type: "image/png", href: "/Favicon.png" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             "img",
             {

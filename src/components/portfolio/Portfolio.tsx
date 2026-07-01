@@ -424,6 +424,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
               <div aria-hidden
                 className="pointer-events-none absolute -inset-0.5 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100"
                 style={{ background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }} />
+                <link rel="icon" type="image/png" href="/Favicon.png" />
               <img src={profileImg} alt="Aditya Shelke"
                 className="relative h-20 w-20 md:h-24 md:w-24 rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 group-hover:ring-[color:var(--accent-orange)]" />
             </div>
