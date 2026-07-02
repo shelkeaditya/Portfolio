@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-D4h_-_FV.js";
-import { R as ReactDOM } from "./router-DB-cO1DL.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BOEg3TTd.js";
+import { R as ReactDOM } from "./router-BTlBLQAQ.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5331,7 +5331,6 @@ function ProfileHero({ onJourney }) {
               style: { background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("link", { rel: "icon", type: "image/png", href: "/Favicon.png" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             "img",
             {
@@ -5391,7 +5390,9 @@ function ProfileHero({ onJourney }) {
             "a",
             {
               href: "https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy",
-              className: "inline-flex items-center gap-2  border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 px-4 py-2 text-sm font-semibold text-accent-orange transition-all hover:bg-[color:var(--accent-orange)]/20 hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5",
+              target: "_blank",
+              rel: "noreferrer",
+              className: "inline-flex items-center gap-2 rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 px-4 py-2 text-sm font-semibold text-accent-orange transition-all hover:bg-[color:var(--accent-orange)]/20 hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5",
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-4 w-4" }),
                 "View CV"
@@ -5403,7 +5404,7 @@ function ProfileHero({ onJourney }) {
           "a",
           {
             href: "mailto:work.shelkeaditya@gmail.com",
-            className: "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors",
+            className: "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors",
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-3.5 w-3.5 shrink-0 text-muted-foreground/60" }),
               "work.shelkeaditya@gmail.com"
@@ -5612,10 +5613,10 @@ function PortfolioSection() {
     () => filter === "All" ? CARDS : CARDS.filter((c) => c.category.includes(filter)),
     [filter]
   );
-  const filters2 = ["All", "Projects", "Certifications", "Badges", "Publications"];
+  const filters = ["All", "Projects", "Certifications", "Badges", "Publications"];
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Portfolio." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-6 flex flex-wrap gap-2", children: filters2.map((f) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-6 flex flex-wrap gap-2", children: filters.map((f) => /* @__PURE__ */ jsxRuntimeExports.jsx(
       "button",
       {
         onClick: () => setFilter(f),
@@ -5756,12 +5757,15 @@ function Contact() {
         /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60", children: "Get In Touch" }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-4 w-4 text-muted-foreground shrink-0" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "a",
             {
               href: "mailto:work.shelkeaditya@gmail.com",
-              className: "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors",
-              children: "work.shelkeaditya@gmail.com"
+              className: "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-3.5 w-3.5 shrink-0 text-muted-foreground/60" }),
+                "work.shelkeaditya@gmail.com"
+              ]
             }
           )
         ] }),

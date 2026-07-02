@@ -51,7 +51,7 @@ import profileImg   from "@/assets/profile.jpeg";
 // ═══════════════════════════════════════════════════════════
 
 type SectionKey      = "about" | "resume" | "portfolio" | "blog" | "contact" | "journey";
-const filters: PortfolioFilter[] = ["All", "Projects", "Certifications", "Publications", "Badges"];
+type PortfolioFilter = "All" | "Projects" | "Certifications" | "Publications" | "Badges";
 
 // ═══════════════════════════════════════════════════════════
 // CONSTANTS - Navigation
@@ -278,23 +278,6 @@ function SectionHeading({ title }: { title: string }) {
   );
 }
 
-function MetaRow({
-  icon: Icon, label, children,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <div className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{label}</div>
-      <div className="mt-1.5 flex items-center gap-2 text-sm text-foreground">
-        <Icon className="h-4 w-4 text-muted-foreground" />
-        <span className="truncate">{children}</span>
-      </div>
-    </div>
-  );
-}
 
 function IconLink({
   href, icon: Icon, label,
@@ -423,8 +406,8 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
             <div className="group relative shrink-0">
               <div aria-hidden
                 className="pointer-events-none absolute -inset-0.5 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100"
-                style={{ background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }} />
-                <link rel="icon" type="image/png" href="/Favicon.png" />
+                style={{ background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }} /> 
+                
               <img src={profileImg} alt="Aditya Shelke"
                 className="relative h-20 w-20 md:h-24 md:w-24 rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 group-hover:ring-[color:var(--accent-orange)]" />
             </div>
@@ -472,12 +455,13 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
             <div className="inline-flex items-stretch rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 text-accent-orange overflow-hidden transition-all hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5">
               <a href="/Aditya Shelke CV.pdf" download
                 aria-label="Download CV"
-                className="flex items-center px-3 hover:bg-[color:var(--accent-orange)]/20 transition-colors">
+                className="flex items-center px-3 py-2 hover:bg-[color:var(--accent-orange)]/20 transition-colors">
                 <Download className="h-4 w-4" />
               </a>
               <div className="w-px bg-[color:var(--accent-orange)]/30" />
-              <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy" 
-                className="inline-flex items-center gap-2  border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 px-4 py-2 text-sm font-semibold text-accent-orange transition-all hover:bg-[color:var(--accent-orange)]/20 hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5">
+              <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
+                target="_blank" rel="noreferrer"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-orange)]/20 transition-colors">
                 <FileText className="h-4 w-4" />
                 View CV
               </a>
@@ -486,7 +470,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
 
             {/* Email */}
             <a href="mailto:work.shelkeaditya@gmail.com"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors">
               <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
               work.shelkeaditya@gmail.com
             </a>
@@ -948,7 +932,7 @@ function Contact() {
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
               <a href="mailto:work.shelkeaditya@gmail.com"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors">
               work.shelkeaditya@gmail.com
             </a>
             </div>
