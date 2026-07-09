@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BOEg3TTd.js";
-import { R as ReactDOM } from "./router-BTlBLQAQ.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-DL97E8_a.js";
+import { R as ReactDOM } from "./router-ByzrFpMT.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5381,7 +5381,7 @@ function ProfileHero({ onJourney }) {
               href: "/Aditya Shelke CV.pdf",
               download: true,
               "aria-label": "Download CV",
-              className: "flex items-center px-3 hover:bg-[color:var(--accent-orange)]/20 transition-colors",
+              className: "flex items-center px-3 py-2 hover:bg-[color:var(--accent-orange)]/20 transition-colors",
               children: /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4" })
             }
           ),
@@ -5392,7 +5392,7 @@ function ProfileHero({ onJourney }) {
               href: "https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy",
               target: "_blank",
               rel: "noreferrer",
-              className: "inline-flex items-center gap-2 rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 px-4 py-2 text-sm font-semibold text-accent-orange transition-all hover:bg-[color:var(--accent-orange)]/20 hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5",
+              className: "flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-orange)]/20 transition-colors",
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-4 w-4" }),
                 "View CV"
@@ -5478,7 +5478,7 @@ function NavPanel({
 function About() {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "About Me." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-5xl text-[15px] leading-relaxed text-muted-foreground", children: "I'm Aditya Shelke, a graduate in Cloud Technology and Information Security with a strong interest in Cloud Computing, DevOps, Linux, Networking, and Cybersecurity. I enjoy working with AWS services, automation tools, Linux environments, and container technologies while continuously exploring scalable and secure systems. Over time, I've worked on academic and self-learning projects involving cloud deployments, virtualization, CI/CD workflows, and infrastructure fundamentals. I'm currently focused on building my expertise in Cloud Engineering, DevOps practices, and Security while improving my practical skills through continuous learning and hands-on projects." }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-5xl text-[15px] leading-relaxed text-muted-foreground", children: "I'm currently working as a Cloud & DevOps Engineering Intern while building cloud-native applications and infrastructure-focused projects in my free time. I enjoy applying what I learn to real-world projects and continuously expanding my knowledge of modern cloud technologies. My work revolves around designing cloud infrastructure, automating deployment pipelines, and building scalable systems. I enjoy working with Kubernetes, Docker, CI/CD, Infrastructure as Code, and cloud platforms to create reliable and secure solutions. What excites me most is building the systems behind modern applications. Whether it's provisioning infrastructure, automating deployments, or orchestrating containers, I enjoy solving the engineering challenges that make software reliable, scalable, and secure." }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3", children: [
       { icon: Cloud, label: "Cloud", value: "AWS • GCP • Azure" },
       { icon: Container, label: "DevOps", value: "Docker • Kubernetes • CI/CD" },
@@ -5757,15 +5757,12 @@ function Contact() {
         /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60", children: "Get In Touch" }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-4 w-4 text-muted-foreground shrink-0" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
             "a",
             {
               href: "mailto:work.shelkeaditya@gmail.com",
               className: "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-3.5 w-3.5 shrink-0 text-muted-foreground/60" }),
-                "work.shelkeaditya@gmail.com"
-              ]
+              children: "work.shelkeaditya@gmail.com"
             }
           )
         ] }),

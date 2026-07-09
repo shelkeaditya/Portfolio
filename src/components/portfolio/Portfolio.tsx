@@ -554,16 +554,30 @@ function About() {
   return (
     <div>
       <SectionHeading title="About Me." />
-      <p className="max-w-5xl text-[15px] leading-relaxed text-muted-foreground">
-        I'm Aditya Shelke, a graduate in Cloud Technology and Information Security with a strong
-        interest in Cloud Computing, DevOps, Linux, Networking, and Cybersecurity. I enjoy working
-        with AWS services, automation tools, Linux environments, and container technologies while
-        continuously exploring scalable and secure systems. Over time, I've worked on academic and
-        self-learning projects involving cloud deployments, virtualization, CI/CD workflows, and
-        infrastructure fundamentals. I'm currently focused on building my expertise in Cloud
-        Engineering, DevOps practices, and Security while improving my practical skills through
-        continuous learning and hands-on projects.
-      </p>
+
+      <div className="max-w-5xl space-y-5 text-[15px] leading-relaxed text-muted-foreground">
+        <p>
+          I'm currently working as a Cloud & DevOps Engineering Intern while
+          building cloud-native applications and infrastructure-focused projects
+          in my free time. I enjoy applying what I learn to real-world projects
+          and continuously expanding my knowledge of modern cloud technologies.
+        </p>
+
+        <p>
+          My work revolves around designing cloud infrastructure, automating
+          deployment pipelines, and building scalable systems. I enjoy working
+          with Kubernetes, Docker, CI/CD, Infrastructure as Code, and cloud
+          platforms to create reliable and secure solutions.
+        </p>
+
+        <p>
+          What excites me most is building the systems behind modern
+          applications. Whether it's provisioning infrastructure, automating
+          deployments, or orchestrating containers, I enjoy solving the
+          engineering challenges that make software reliable, scalable, and
+          secure.
+        </p>
+      </div>
       <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {[
           { icon: Cloud,     label: "Cloud",    value: "AWS • GCP • Azure"           },
