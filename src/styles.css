@@ -94,7 +94,7 @@
 }
 
 .dark {
-  --background: #0a0a0c;   /* #16181F */
+  --background: #0d0e12;   /* #16181F */
   --foreground: #E8E6E1;
   --card: oklch(0.13 0 0);         /* #1E1F22 */
   --card-foreground: #E8E6E1;
@@ -116,9 +116,9 @@
   --accent-blue: oklch(0.7 0.14 250);
   --accent-purple: oklch(0.7 0.16 295);
   --accent-orange: #E8820C;
-  --surface-1: oklch(0.12 0 0);
-  --surface-2: oklch(0.15 0 0);
-  --surface-3: oklch(0.18 0 0);
+  --surface-1: #16181f;
+  --surface-2: #16181f;
+  --surface-3: #16181f;
 }
 
 @layer base {

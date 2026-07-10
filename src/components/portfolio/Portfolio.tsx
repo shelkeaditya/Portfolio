@@ -36,6 +36,7 @@ import {
   Workflow,
   Activity,
   Link,
+  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button }   from "@/components/ui/button";
@@ -269,7 +270,7 @@ function SectionHeading({ title }: { title: string }) {
   const base   = hasDot ? title.slice(0, -1) : title;
   return (
     <div className="mb-8">
-      <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+      <h2 className="text-2xl md:text-4xl font-semibold tracking-tight text-foreground">
         {base}
         {hasDot && <span className="text-accent-violet">.</span>}
       </h2>
@@ -349,11 +350,11 @@ function VerticalSlide({ words }: { words: string[] }) {
   }, [words.length]);
 
   return (
-    <div className="relative h-7 overflow-hidden">
+    <div className="relative h-6 md:h-7 overflow-hidden">
       {words.map((word, i) => (
         <div
           key={word}
-          className="absolute inset-0 flex items-center transition-all duration-700 ease-in-out text-base md:text-lg font-medium text-muted-foreground"
+          className="absolute inset-0 flex items-center whitespace-nowrap transition-all duration-700 ease-in-out text-sm md:text-lg font-medium text-muted-foreground"
           style={{
             transform:
               i === index
@@ -380,11 +381,12 @@ function VerticalSlide({ words }: { words: string[] }) {
 
 function ProfileHero({ onJourney }: { onJourney: () => void }) {
   const { theme, toggle } = useTheme();
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <section className="relative">
       <div className="surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
-
+      
         
 
         {/* Mobile theme toggle */}
@@ -399,92 +401,109 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
         }} />
 
         {/* ── 3-column row ── */}
-        <div className="relative flex flex-col gap-5 px-6 py-5 md:flex-row md:items-center md:gap-0 md:px-8 md:py-5">
+        <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-center md:gap-0 md:px-8 md:py-5">
 
-          {/* ── COL 1 - Photo + name + role + location ── */}
-          <div className="flex items-center gap-4 md:flex-1 md:pr-8 md:border-r md:border-border/50">
-            <div className="group relative shrink-0">
-              <div aria-hidden
-                className="pointer-events-none absolute -inset-0.5 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100"
-                style={{ background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }} /> 
+          {/* ── COL 1 - Photo + name + role + mobile chevron ── */}
+          <div className="flex items-center justify-between gap-4 md:flex-1 md:pr-8 md:border-r md:border-border/50">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="group relative shrink-0">
+                <div aria-hidden
+                  className="pointer-events-none absolute -inset-0.5 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100"
+                  style={{ background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }} /> 
+                  
+                <img src={profileImg} alt="Aditya Shelke"
+                  className="relative h-20 w-20 md:h-24 md:w-24 rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 group-hover:ring-[color:var(--accent-orange)]" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight">
+                  Aditya <span className="font-light text-muted-foreground">Shelke</span>
+                </h1>
+                <div className="mt-0.5 h-6 md:h-5">
+                  <VerticalSlide 
+                  words={["DevOps Engineer", "Cloud Architect"]} />
+                </div>
                 
-              <img src={profileImg} alt="Aditya Shelke"
-                className="relative h-20 w-20 md:h-24 md:w-24 rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 group-hover:ring-[color:var(--accent-orange)]" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight">
-                Aditya <span className="font-light text-muted-foreground">Shelke</span>
-              </h1>
-              <div className="mt-0.5 h-5">
-                <VerticalSlide 
-                words={["DevOps Engineer", "Cloud Architect"]} />
               </div>
+            </div>
+
+            {/* Mobile-only expand/collapse chevron */}
+            <button onClick={() => setExpanded((e) => !e)}
+              aria-label={expanded ? "Collapse details" : "Expand details"}
+              aria-expanded={expanded}
+              className="md:hidden shrink-0 surface-3 rounded-lg border border-border/60 p-2 transition-colors hover:border-[color:var(--accent-orange)]/40">
+              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", expanded && "rotate-180")} />
+            </button>
+          </div>
+
+          {/* ── COL 2 + COL 3 - collapsible on mobile, always visible on desktop ── */}
+          <div className={cn(
+            "overflow-hidden transition-all duration-300 ease-in-out md:contents",
+            expanded ? "max-h-[400px] opacity-100 mt-5 md:mt-0" : "max-h-0 opacity-0 md:opacity-100",
+          )}>
+
+            {/* ── COL 2 - System Status ── */}
+            <div className="md:w-[32%] md:px-19 md:border-r md:border-border/50">
               
-            </div>
-          </div>
-
-          {/* ── COL 2 - System Status ── */}
-          <div className="md:w-[32%] md:px-19 md:border-r md:border-border/50">
-            
-            <div className="space-y-1.5 font-mono text-sm">
-              <div className="flex items-center gap-3">
-                <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Job Status :</span>
-                <span className="flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]">
-                  <span className="relative inline-flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <div className="gap-1 font-mono text-sm">
+                <div className="flex items-center gap-3">
+                  <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Job Status :</span>
+                  <span className="flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]">
+                    <span className="relative inline-flex h-1.5 w-1.5">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    </span>
+                    Available
                   </span>
-                  Available
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Time Zone :</span>
-                <span className="text-[13px] text-foreground/70">GMT+5:30</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Location :</span>
-                <span className="text-[13px] text-foreground/70">Pune, India</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Time Zone :</span>
+                  <span className="text-[13px] text-foreground/70">GMT+5:30</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Location :</span>
+                  <span className="text-[13px] text-foreground/70">Pune, India</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* ── COL 3 - Download CV + email + socials ── */}
-          <div className="flex flex-col gap-3 md:flex-1 md:pl-8 md:items-end">
-            
-            {/* Download CV */}
-            <div className="inline-flex items-stretch rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 text-accent-orange overflow-hidden transition-all hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5">
-              <a href="/Aditya Shelke CV.pdf" download
-                aria-label="Download CV"
-                className="flex items-center px-3 py-2 hover:bg-[color:var(--accent-orange)]/20 transition-colors">
-                <Download className="h-4 w-4" />
+            {/* ── COL 3 - Download CV + email + socials ── */}
+            <div className="flex flex-col gap-3 pt-5 md:pt-0 md:flex-1 md:pl-8 md:items-end">
+              
+              {/* Download CV */}
+              <div className="inline-flex items-stretch rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 text-accent-orange overflow-hidden transition-all hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5">
+                <a href="/Aditya Shelke CV.pdf" download
+                  aria-label="Download CV"
+                  className="flex items-center px-3 py-2 hover:bg-[color:var(--accent-orange)]/20 transition-colors">
+                  <Download className="h-4 w-4" />
+                </a>
+                <div className="w-px bg-[color:var(--accent-orange)]/30" />
+                <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
+                  target="_blank" rel="noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-orange)]/20 transition-colors">
+                  <FileText className="h-4 w-4" />
+                  View CV
+                </a>
+              </div>
+
+
+              {/* Email */}
+              <a href="mailto:work.shelkeaditya@gmail.com"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors">
+                <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+                work.shelkeaditya@gmail.com
               </a>
-              <div className="w-px bg-[color:var(--accent-orange)]/30" />
-              <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
-                target="_blank" rel="noreferrer"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-orange)]/20 transition-colors">
-                <FileText className="h-4 w-4" />
-                View CV
-              </a>
+
+              {/* Social icons + theme toggle */}
+              <div className="flex items-center gap-1.5">
+                <IconLink href="https://linkedin.com/in/shelkeaditya"  icon={Linkedin}    label="LinkedIn"  />
+                <IconLink href="https://github.com/shelkeaditya"       icon={Github}      label="GitHub"    />
+                <IconLink href="https://instagram.com/shelke__aditya"  icon={Instagram}   label="Instagram" />
+                <IconLink href="https://x.com/shelke__aditya"          icon={TwitterIcon} label="Twitter"   />
+                <IconButton onClick={onJourney} icon={Flag} label="Journey" />
+              </div>
             </div>
 
-
-            {/* Email */}
-            <a href="mailto:work.shelkeaditya@gmail.com"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors">
-              <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-              work.shelkeaditya@gmail.com
-            </a>
-
-            {/* Social icons + theme toggle */}
-            <div className="flex items-center gap-1.5">
-              <IconLink href="https://linkedin.com/in/shelkeaditya"  icon={Linkedin}    label="LinkedIn"  />
-              <IconLink href="https://github.com/shelkeaditya"       icon={Github}      label="GitHub"    />
-              <IconLink href="https://instagram.com/shelke__aditya"  icon={Instagram}   label="Instagram" />
-              <IconLink href="https://x.com/shelke__aditya"          icon={TwitterIcon} label="Twitter"   />
-              <IconButton onClick={onJourney} icon={Flag} label="Journey" />
-            </div>
           </div>
-
         </div>
       </div>
     </section>

@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-DL97E8_a.js";
-import { R as ReactDOM } from "./router-ByzrFpMT.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BWEm4JCV.js";
+import { R as ReactDOM } from "./router-CYtzjGMF.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5212,7 +5212,7 @@ function SectionHeading({ title }) {
   const hasDot = title.endsWith(".");
   const base = hasDot ? title.slice(0, -1) : title;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-8", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "text-3xl md:text-4xl font-semibold tracking-tight text-foreground", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "text-2xl md:text-4xl font-semibold tracking-tight text-foreground", children: [
       base,
       hasDot && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-accent-violet", children: "." })
     ] }),
@@ -5308,6 +5308,7 @@ function VerticalSlide({ words }) {
 }
 function ProfileHero({ onJourney }) {
   const { theme, toggle } = useTheme();
+  const [expanded, setExpanded] = reactExports.useState(false);
   return /* @__PURE__ */ jsxRuntimeExports.jsx("section", { className: "relative", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       "button",
@@ -5353,7 +5354,7 @@ function ProfileHero({ onJourney }) {
           ) })
         ] })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "md:w-[32%] md:px-19 md:border-r md:border-border/50", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5 font-mono text-sm", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "md:w-[32%] md:px-19 md:border-r md:border-border/50", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "gap-1 font-mono text-sm", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-[72px] shrink-0 text-[11px] text-muted-foreground/50", children: "Job Status :" }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]", children: [
@@ -5478,7 +5479,11 @@ function NavPanel({
 function About() {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "About Me." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-5xl text-[15px] leading-relaxed text-muted-foreground", children: "I'm currently working as a Cloud & DevOps Engineering Intern while building cloud-native applications and infrastructure-focused projects in my free time. I enjoy applying what I learn to real-world projects and continuously expanding my knowledge of modern cloud technologies. My work revolves around designing cloud infrastructure, automating deployment pipelines, and building scalable systems. I enjoy working with Kubernetes, Docker, CI/CD, Infrastructure as Code, and cloud platforms to create reliable and secure solutions. What excites me most is building the systems behind modern applications. Whether it's provisioning infrastructure, automating deployments, or orchestrating containers, I enjoy solving the engineering challenges that make software reliable, scalable, and secure." }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-5xl space-y-5 text-[15px] leading-relaxed text-muted-foreground", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "I'm currently working as a Cloud & DevOps Engineering Intern while building cloud-native applications and infrastructure-focused projects in my free time. I enjoy applying what I learn to real-world projects and continuously expanding my knowledge of modern cloud technologies." }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "My work revolves around designing cloud infrastructure, automating deployment pipelines, and building scalable systems. I enjoy working with Kubernetes, Docker, CI/CD, Infrastructure as Code, and cloud platforms to create reliable and secure solutions." }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "What excites me most is building the systems behind modern applications. Whether it's provisioning infrastructure, automating deployments, or orchestrating containers, I enjoy solving the engineering challenges that make software reliable, scalable, and secure." })
+    ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3", children: [
       { icon: Cloud, label: "Cloud", value: "AWS • GCP • Azure" },
       { icon: Container, label: "DevOps", value: "Docker • Kubernetes • CI/CD" },
