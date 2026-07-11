@@ -281,10 +281,12 @@ function SectionHeading({ title }: { title: string }) {
 
 
 function IconLink({
-  href, icon: Icon, label,
+  href,
+  icon: Icon,
+  label,
 }: {
-  href:  string;
-  icon:  React.ComponentType<{ className?: string }>;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
 }) {
   return (
@@ -294,36 +296,38 @@ function IconLink({
       rel="noreferrer"
       aria-label={label}
       title={label}
-      className="group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/60 hover:text-foreground"
+      className="group inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#1F2430]"
     >
-      <span aria-hidden className="pointer-events-none absolute inset-0 rounded-lg opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-60"
-        style={{ background: "color-mix(in oklab, var(--accent-orange) 25%, transparent)" }} />
-      <Icon className="relative h-4 w-4" />
+      <Icon
+        className="h-4 w-4 text-muted-foreground transition-colors duration-300 group-hover:text-[#4F8CFF]"/>
     </a>
   );
 }
 
 function IconButton({
-  onClick, icon: Icon, label,
+  onClick,
+  icon: Icon,
+  label,
 }: {
   onClick: () => void;
-  icon:    React.ComponentType<{ className?: string }>;
-  label:   string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
 }) {
   return (
-    <button onClick={onClick} aria-label={label} title={label}
-      className="group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/60 hover:text-foreground"
+    <button
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="group inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#1F2430]"
     >
-      <span aria-hidden className="pointer-events-none absolute inset-0 rounded-lg opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-60"
-        style={{ background: "color-mix(in oklab, var(--accent-orange) 25%, transparent)" }} />
-      <Icon className="relative h-4 w-4" />
+      <Icon className="h-4 w-4 text-muted-foreground transition-colors duration-300 group-hover:text-[#4F8CFF]"/>
     </button>
   );
 }
 
 function TechBadge({ label }: { label: string }) {
   return (
-    <span className="surface-3 rounded-md border border-border/60 px-2 py-0.5 text-[11px] text-muted-foreground">
+    <span className="surface-3 rounded-md px-2 py-0.5 text-[11px] text-muted-foreground">
       {label}
     </span>
   );
@@ -387,8 +391,6 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
     <section className="relative">
       <div className="surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
       
-        
-
         {/* Mobile theme toggle */}
         <button onClick={toggle}
           className="absolute top-3 right-3 z-20 md:hidden surface-3 rounded-xl border border-border/60 p-2">
@@ -401,7 +403,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
         }} />
 
         {/* ── 3-column row ── */}
-        <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-center md:gap-0 md:px-8 md:py-5">
+        <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-8 md:py-5">
 
           {/* ── COL 1 - Photo + name + role + mobile chevron ── */}
           <div className="flex flex-col md:flex-1 md:pr-8 md:border-r md:border-border/50">
@@ -473,7 +475,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
             <div className="flex flex-col gap-3 pt-5 md:pt-0 md:flex-1 md:pl-8 md:items-end">
             <span aria-hidden className="h-px w-full bg-border/60 md:hidden" /> 
               {/* Download CV */}
-             <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5">
+              <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5">
                 <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
                   target="_blank" rel="noreferrer"
                   className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors">
@@ -496,7 +498,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
               </a>
 
               {/* Social icons + theme toggle */}
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-0.3">
                 <IconLink href="https://linkedin.com/in/shelkeaditya"  icon={Linkedin}    label="LinkedIn"  />
                 <IconLink href="https://github.com/shelkeaditya"       icon={Github}      label="GitHub"    />
                 <IconLink href="https://instagram.com/shelke__aditya"  icon={Instagram}   label="Instagram" />

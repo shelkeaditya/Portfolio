@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BsZZ0cda.js";
-import { R as ReactDOM } from "./router-B0hFcond.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-DFqZ1DNl.js";
+import { R as ReactDOM } from "./router-CJL0x_G9.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5237,7 +5237,7 @@ function IconLink({
       rel: "noreferrer",
       "aria-label": label,
       title: label,
-      className: "group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/60 hover:text-foreground",
+      className: "group relative inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--surface-3)] text-muted-foreground transition-colors hover:bg-[var(--surface-2)] hover:text-accent-blue",
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "span",
@@ -5257,29 +5257,18 @@ function IconButton({
   icon: Icon2,
   label
 }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
     "button",
     {
       onClick,
       "aria-label": label,
       title: label,
-      className: "group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-orange)]/60 hover:text-foreground",
-      children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "span",
-          {
-            "aria-hidden": true,
-            className: "pointer-events-none absolute inset-0 rounded-lg opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-60",
-            style: { background: "color-mix(in oklab, var(--accent-orange) 25%, transparent)" }
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "relative h-4 w-4" })
-      ]
+      className: "group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-300 hover:text-foreground"
     }
   );
 }
 function TechBadge({ label }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "surface-3 rounded-md border border-border/60 px-2 py-0.5 text-[11px] text-muted-foreground", children: label });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "surface-3 rounded-md px-2 py-0.5 text-[11px] text-muted-foreground", children: label });
 }
 function Field({ label, children }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "block", children: [
@@ -5323,8 +5312,8 @@ function ProfileHero({ onJourney }) {
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "aria-hidden": true, className: "pointer-events-none absolute inset-0", style: {
       background: "radial-gradient(500px 160px at 0% 50%, color-mix(in oklab, var(--accent-orange) 7%, transparent), transparent 70%)"
     } }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex flex-col px-6 py-5 md:flex-row md:items-center md:gap-0 md:px-8 md:py-5", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-4 md:flex-1 md:pr-8 md:border-r md:border-border/50", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex flex-col px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-8 md:py-5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col md:flex-1 md:pr-8 md:border-r md:border-border/50", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4 min-w-0", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "group relative shrink-0", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -5357,20 +5346,23 @@ function ProfileHero({ onJourney }) {
             ) })
           ] })
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "button",
           {
             onClick: () => setExpanded((e) => !e),
             "aria-label": expanded ? "Collapse details" : "Expand details",
             "aria-expanded": expanded,
-            className: "md:hidden shrink-0 surface-3 rounded-lg border border-border/60 p-2 transition-colors hover:border-[color:var(--accent-orange)]/40",
-            children: /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { className: cn$1("h-4 w-4 transition-transform duration-300", expanded && "rotate-180") })
+            className: "md:hidden mt-4 flex w-full items-center gap-3",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": true, className: "h-px flex-1 bg-border/60" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute right-0 flex h-7 w-12 items-center justify-center rounded-lg bg-[var(--surface-2,inherit)] text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { className: cn$1("h-4 w-4 transition-transform duration-10", expanded && "rotate-180") }) })
+            ]
           }
         )
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: cn$1(
-        "overflow-hidden transition-all duration-300 ease-in-out md:contents",
-        expanded ? "max-h-[400px] opacity-100 mt-5 md:mt-0" : "max-h-0 opacity-0 md:opacity-100"
+        "overflow-hidden transition-all duration-10 ease-in-out md:contents",
+        expanded ? "max-h-[400px] opacity-100 mt-3 md:mt-0" : "max-h-0 opacity-0 md:opacity-100"
       ), children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "md:w-[32%] md:px-19 md:border-r md:border-border/50", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "gap-1 font-mono text-sm", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
@@ -5393,7 +5385,8 @@ function ProfileHero({ onJourney }) {
           ] })
         ] }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3 pt-5 md:pt-0 md:flex-1 md:pl-8 md:items-end", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "inline-flex w-40 items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": true, className: "h-px w-full bg-border/60 md:hidden" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "a",
               {
