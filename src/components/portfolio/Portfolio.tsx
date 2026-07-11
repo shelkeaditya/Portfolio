@@ -480,7 +480,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
                 <div className="w-px bg-[color:var(--accent-blue)]/30" />
                 <a href="/Aditya Shelke CV.pdf" download
                   aria-label="Download CV"
-                  className="flex items-center pl-3 pr-3 py-2 border-[color:var(--accent-blue)]/30 hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors">
+                  className="flex items-center pl-3 pr-3 py-2 hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors">
                   <Download className="h-4 w-4" />
                 </a>
               </div>              
