@@ -377,7 +377,7 @@ function VerticalSlide({ words }: { words: string[] }) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// COMPONENT - ProfileHero  (3-column terminal layout)
+// COMPONENT - ProfileHero 
 //   col-1 : photo + name + role + handle
 //   col-2 : system status block
 //   col-3 : Download CV + email + social icons
@@ -397,20 +397,16 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
           {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
         </button>
 
-        {/* Ambient glow */}
-        <div aria-hidden className="pointer-events-none absolute inset-0" style={{
-          background: "radial-gradient(500px 160px at 0% 50%, color-mix(in oklab, var(--accent-orange) 7%, transparent), transparent 70%)",
-        }} />
 
         {/* ── 3-column row ── */}
         <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-8 md:py-5">
 
           {/* ── COL 1 - Photo + name + role + mobile chevron ── */}
-          <div className="flex flex-col md:flex-1 md:pr-8 md:border-r md:border-border/50">
+          <div className="flex flex-col justify-center md:flex-1 md:pr-8 md:border-r md:border-border/50">
             <div className="flex items-center gap-4 min-w-0">
               <div className="group relative shrink-0">
                 <div aria-hidden
-                  className="pointer-events-none absolute -inset-0.5 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100"
+                  className="pointer-events-none absolute inset-0 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100"
                   style={{ background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }} /> 
                   
                 <img src={profileImg} alt="Aditya Shelke"
@@ -443,36 +439,109 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
           {/* ── COL 2 + COL 3 - collapsible on mobile, always visible on desktop ── */}
           <div className={cn(
             "overflow-hidden transition-all duration-10 ease-in-out md:contents",
-            expanded ? "max-h-[400px] opacity-100 mt-3 md:mt-0" : "max-h-0 opacity-0 md:opacity-100",
-          )}>
-
-            {/* ── COL 2 - System Status ── */}
-            <div className="md:w-[32%] md:px-19 md:border-r md:border-border/50">
-              
-              <div className="gap-1 font-mono text-sm">
-                <div className="flex items-center gap-3">
-                  <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Job Status :</span>
-                  <span className="flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]">
-                    <span className="relative inline-flex h-1.5 w-1.5">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
-                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                    </span>
-                    Available
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Time Zone :</span>
-                  <span className="text-[13px] text-foreground/70">GMT+5:30</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">Location :</span>
-                  <span className="text-[13px] text-foreground/70">Pune, India</span>
-                </div>
+            expanded ? "max-h-[400px] opacity-100 mt-3 md:mt-0" : "max-h-0 opacity-0 md:opacity-100",)}>
+            <div className="md:w-[32%] md:px-19 md:pt-7 md:border-r md:border-border/50">
+          
+          {/* Mobile */}
+              <div className="md:hidden space-y-3">
+        
+          <div className="flex items-center justify-between text-[13px]">
+            <div className="flex items-center gap-1">
+              <span className="text-muted-foreground/60"></span>
+        
+              <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                <span className="relative inline-flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                </span>
+                Open to Work
+              </span>
+            </div>
+        
+            <div className="flex items-center gap-1">
+              <span className="text-muted-foreground/60">Location :</span>
+              <span className="text-foreground/70">
+                Pune, India
+              </span>
+            </div>
+          </div>
+        
+          <span className="block h-px bg-border/60" />
+        
+          <a href="mailto:work.shelkeaditya@gmail.com"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+            work.shelkeaditya@gmail.com
+          </a>
+          <div className="flex items-center justify-between">
+          <div className="shrink-0">
+          <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5">
+                <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
+                  target="_blank" rel="noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors">
+                  <FileText className="h-4 w-4" />
+                  CV
+                </a>
+                <div className="w-px bg-[color:var(--accent-blue)]/30" />
+                <a href="/Aditya Shelke CV.pdf" download
+                  aria-label="Download CV"
+                  className="flex items-center pl-3 pr-3 py-2 hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors">
+                  <Download className="h-4 w-4" />
+                </a>
               </div>
             </div>
 
+            <div className="shrink-0">
+              <div className="flex items-center gap-0.3">
+                <IconLink href="https://linkedin.com/in/shelkeaditya"  icon={Linkedin}    label="LinkedIn"  />
+                <IconLink href="https://github.com/shelkeaditya"       icon={Github}      label="GitHub"    />
+                <IconLink href="https://instagram.com/shelke__aditya"  icon={Instagram}   label="Instagram" />
+                <IconLink href="https://x.com/shelke__aditya"          icon={TwitterIcon} label="Twitter"   />
+                <IconButton onClick={onJourney} icon={Flag} label="Journey" />
+              </div>
+              </div>
+          </div>
+        </div>
+          {/* Desktop */}
+          <div className="hidden md:block">
+            <div className="gap-1 font-mono text-sm">
+              <div className="flex items-center gap-3">
+                <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">
+                  Job Status :
+                </span>
+                <span className="flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]">
+                  <span className="relative inline-flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  </span>
+                  Available
+                </span>
+              </div>
+        
+              <div className="flex items-center gap-3">
+                <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">
+                  Time Zone :
+                </span>
+                <span className="text-[13px] text-foreground/70">
+                  GMT+5:30
+                </span>
+              </div>
+        
+              <div className="flex items-center gap-3">
+                <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">
+                  Location :
+                </span>
+                <span className="text-[13px] text-foreground/70">
+                  Pune, India
+                </span>
+              </div>
+            </div>
+          </div>
+        
+        </div>
+
             {/* ── COL 3 - Download CV + email + socials ── */}
-            <div className="flex flex-col gap-3 pt-5 md:pt-0 md:flex-1 md:pl-8 md:items-end">
+            <div className="hidden md:flex flex-col gap-3 pt-0 md:flex-1 md:pl-8 md:items-end">
             <span aria-hidden className="h-px w-full bg-border/60 md:hidden" /> 
               {/* Download CV */}
               <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5">
