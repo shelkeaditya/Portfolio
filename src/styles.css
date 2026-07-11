@@ -152,7 +152,7 @@
     background:
       radial-gradient(1200px 600px at 15% -10%, color-mix(in oklab, var(--accent-blue) 14%, transparent), transparent 60%),
       radial-gradient(900px 500px at 110% 10%, color-mix(in oklab, var(--accent-purple) 12%, transparent), transparent 60%),
-      radial-gradient(700px 400px at 50% 110%, color-mix(in oklab, var(--accent-orange) 8%, transparent), transparent 60%),
+      radial-gradient(700px 400px at 50% 110%, color-mix(in oklab, var(--accent-blue) 8%, transparent), transparent 60%),
       var(--background);
   }
 
@@ -171,8 +171,20 @@
     border-radius: 999px;
     overflow: hidden;
   }
-  .heading-bar > span:first-child { flex: 1; background: var(--accent-orange); }
-  .heading-bar > span:last-child  { flex: 1; background: var(--accent-blue); }
+  .heading-bar > span:first-child { flex: 1; background: var(--accent-blue); }
+  .heading-bar > span:last-child  { flex: 1; background: var(--accent-purple); }
+}
+
+/* ── Prevent browser autofill from forcing a white input background ── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--foreground);
+  box-shadow: 0 0 0px 1000px var(--surface-3) inset;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 /* ── Geometric triangle background decoration ── */
