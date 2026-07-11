@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BWEm4JCV.js";
-import { R as ReactDOM } from "./router-CYtzjGMF.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BYM5BVE1.js";
+import { R as ReactDOM } from "./router-BrmAy-He.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -79,7 +79,7 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$s = [
+const __iconNode$t = [
   [
     "path",
     {
@@ -88,8 +88,8 @@ const __iconNode$s = [
     }
   ]
 ];
-const Activity = createLucideIcon("activity", __iconNode$s);
-const __iconNode$r = [
+const Activity = createLucideIcon("activity", __iconNode$t);
+const __iconNode$s = [
   [
     "path",
     {
@@ -99,8 +99,8 @@ const __iconNode$r = [
   ],
   ["circle", { cx: "12", cy: "8", r: "6", key: "1vp47v" }]
 ];
-const Award = createLucideIcon("award", __iconNode$r);
-const __iconNode$q = [
+const Award = createLucideIcon("award", __iconNode$s);
+const __iconNode$r = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -110,8 +110,8 @@ const __iconNode$q = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$q);
-const __iconNode$p = [
+const BookOpen = createLucideIcon("book-open", __iconNode$r);
+const __iconNode$q = [
   ["path", { d: "M12 8V4H8", key: "hb8ula" }],
   ["rect", { width: "16", height: "12", x: "4", y: "8", rx: "2", key: "enze0r" }],
   ["path", { d: "M2 14h2", key: "vft8re" }],
@@ -119,12 +119,14 @@ const __iconNode$p = [
   ["path", { d: "M15 13v2", key: "1xurst" }],
   ["path", { d: "M9 13v2", key: "rq6x2g" }]
 ];
-const Bot = createLucideIcon("bot", __iconNode$p);
-const __iconNode$o = [
+const Bot = createLucideIcon("bot", __iconNode$q);
+const __iconNode$p = [
   ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
   ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
 ];
-const Briefcase = createLucideIcon("briefcase", __iconNode$o);
+const Briefcase = createLucideIcon("briefcase", __iconNode$p);
+const __iconNode$o = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$o);
 const __iconNode$n = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
@@ -5293,10 +5295,10 @@ function VerticalSlide({ words }) {
     }, 2500);
     return () => clearInterval(id);
   }, [words.length]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative h-7 overflow-hidden", children: words.map((word, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative h-6 md:h-7 overflow-hidden", children: words.map((word, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
     "div",
     {
-      className: "absolute inset-0 flex items-center transition-all duration-700 ease-in-out text-base md:text-lg font-medium text-muted-foreground",
+      className: "absolute inset-0 flex items-center whitespace-nowrap transition-all duration-700 ease-in-out text-sm md:text-lg font-medium text-muted-foreground",
       style: {
         transform: i === index ? "translateY(0)" : i < index ? "translateY(-100%)" : "translateY(100%)",
         opacity: i === index ? 1 : 0
@@ -5321,103 +5323,120 @@ function ProfileHero({ onJourney }) {
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "aria-hidden": true, className: "pointer-events-none absolute inset-0", style: {
       background: "radial-gradient(500px 160px at 0% 50%, color-mix(in oklab, var(--accent-orange) 7%, transparent), transparent 70%)"
     } }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex flex-col gap-5 px-6 py-5 md:flex-row md:items-center md:gap-0 md:px-8 md:py-5", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4 md:flex-1 md:pr-8 md:border-r md:border-border/50", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "group relative shrink-0", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "div",
-            {
-              "aria-hidden": true,
-              className: "pointer-events-none absolute -inset-0.5 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100",
-              style: { background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "img",
-            {
-              src: profileImg,
-              alt: "Aditya Shelke",
-              className: "relative h-20 w-20 md:h-24 md:w-24 rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 group-hover:ring-[color:var(--accent-orange)]"
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("h1", { className: "text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight", children: [
-            "Aditya ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-light text-muted-foreground", children: "Shelke" })
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex flex-col px-6 py-5 md:flex-row md:items-center md:gap-0 md:px-8 md:py-5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-4 md:flex-1 md:pr-8 md:border-r md:border-border/50", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4 min-w-0", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "group relative shrink-0", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "div",
+              {
+                "aria-hidden": true,
+                className: "pointer-events-none absolute -inset-0.5 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100",
+                style: { background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)" }
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "img",
+              {
+                src: profileImg,
+                alt: "Aditya Shelke",
+                className: "relative h-20 w-20 md:h-24 md:w-24 rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 group-hover:ring-[color:var(--accent-orange)]"
+              }
+            )
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-0.5 h-5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-            VerticalSlide,
-            {
-              words: ["DevOps Engineer", "Cloud Architect"]
-            }
-          ) })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "md:w-[32%] md:px-19 md:border-r md:border-border/50", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "gap-1 font-mono text-sm", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-[72px] shrink-0 text-[11px] text-muted-foreground/50", children: "Job Status :" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "relative inline-flex h-1.5 w-1.5", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" })
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("h1", { className: "text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight", children: [
+              "Aditya ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-light text-muted-foreground", children: "Shelke" })
             ] }),
-            "Available"
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-0.5 h-6 md:h-5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              VerticalSlide,
+              {
+                words: ["DevOps Engineer", "Cloud Architect"]
+              }
+            ) })
           ] })
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-[72px] shrink-0 text-[11px] text-muted-foreground/50", children: "Time Zone :" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[13px] text-foreground/70", children: "GMT+5:30" })
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-[72px] shrink-0 text-[11px] text-muted-foreground/50", children: "Location :" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[13px] text-foreground/70", children: "Pune, India" })
-        ] })
-      ] }) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3 md:flex-1 md:pl-8 md:items-end", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "inline-flex items-stretch rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 text-accent-orange overflow-hidden transition-all hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "a",
-            {
-              href: "/Aditya Shelke CV.pdf",
-              download: true,
-              "aria-label": "Download CV",
-              className: "flex items-center px-3 py-2 hover:bg-[color:var(--accent-orange)]/20 transition-colors",
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4" })
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-px bg-[color:var(--accent-orange)]/30" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            onClick: () => setExpanded((e) => !e),
+            "aria-label": expanded ? "Collapse details" : "Expand details",
+            "aria-expanded": expanded,
+            className: "md:hidden shrink-0 surface-3 rounded-lg border border-border/60 p-2 transition-colors hover:border-[color:var(--accent-orange)]/40",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronDown, { className: cn$1("h-4 w-4 transition-transform duration-300", expanded && "rotate-180") })
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: cn$1(
+        "overflow-hidden transition-all duration-300 ease-in-out md:contents",
+        expanded ? "max-h-[400px] opacity-100 mt-5 md:mt-0" : "max-h-0 opacity-0 md:opacity-100"
+      ), children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "md:w-[32%] md:px-19 md:border-r md:border-border/50", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "gap-1 font-mono text-sm", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-[72px] shrink-0 text-[11px] text-muted-foreground/50", children: "Job Status :" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "relative inline-flex h-1.5 w-1.5", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" })
+              ] }),
+              "Available"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-[72px] shrink-0 text-[11px] text-muted-foreground/50", children: "Time Zone :" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[13px] text-foreground/70", children: "GMT+5:30" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-[72px] shrink-0 text-[11px] text-muted-foreground/50", children: "Location :" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[13px] text-foreground/70", children: "Pune, India" })
+          ] })
+        ] }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3 pt-5 md:pt-0 md:flex-1 md:pl-8 md:items-end", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "inline-flex w-40 items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "a",
+              {
+                href: "https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy",
+                target: "_blank",
+                rel: "noreferrer",
+                className: "flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-4 w-4" }),
+                  "View CV"
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-px bg-[color:var(--accent-blue)]/30" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "a",
+              {
+                href: "/Aditya Shelke CV.pdf",
+                download: true,
+                "aria-label": "Download CV",
+                className: "flex items-center pl-3 pr-3 py-2 border-[color:var(--accent-blue)]/30 hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors",
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4" })
+              }
+            )
+          ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "a",
             {
-              href: "https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy",
-              target: "_blank",
-              rel: "noreferrer",
-              className: "flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-orange)]/20 transition-colors",
+              href: "mailto:work.shelkeaditya@gmail.com",
+              className: "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors",
               children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-4 w-4" }),
-                "View CV"
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-3.5 w-3.5 shrink-0 text-muted-foreground/60" }),
+                "work.shelkeaditya@gmail.com"
               ]
             }
-          )
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "a",
-          {
-            href: "mailto:work.shelkeaditya@gmail.com",
-            className: "flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors",
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-3.5 w-3.5 shrink-0 text-muted-foreground/60" }),
-              "work.shelkeaditya@gmail.com"
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://linkedin.com/in/shelkeaditya", icon: Linkedin, label: "LinkedIn" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://github.com/shelkeaditya", icon: Github, label: "GitHub" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://instagram.com/shelke__aditya", icon: Instagram, label: "Instagram" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://x.com/shelke__aditya", icon: Twitter, label: "Twitter" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: onJourney, icon: Flag, label: "Journey" })
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://linkedin.com/in/shelkeaditya", icon: Linkedin, label: "LinkedIn" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://github.com/shelkeaditya", icon: Github, label: "GitHub" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://instagram.com/shelke__aditya", icon: Instagram, label: "Instagram" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://x.com/shelke__aditya", icon: Twitter, label: "Twitter" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(IconButton, { onClick: onJourney, icon: Flag, label: "Journey" })
+          ] })
         ] })
       ] })
     ] })

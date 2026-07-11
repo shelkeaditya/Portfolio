@@ -470,20 +470,20 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
             <div className="flex flex-col gap-3 pt-5 md:pt-0 md:flex-1 md:pl-8 md:items-end">
               
               {/* Download CV */}
-              <div className="inline-flex items-stretch rounded-lg border border-[color:var(--accent-orange)]/60 bg-[color:var(--accent-orange)]/10 text-accent-orange overflow-hidden transition-all hover:border-[color:var(--accent-orange)] hover:-translate-y-0.5">
-                <a href="/Aditya Shelke CV.pdf" download
-                  aria-label="Download CV"
-                  className="flex items-center px-3 py-2 hover:bg-[color:var(--accent-orange)]/20 transition-colors">
-                  <Download className="h-4 w-4" />
-                </a>
-                <div className="w-px bg-[color:var(--accent-orange)]/30" />
+              <div className="inline-flex w-40 items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5">
                 <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
                   target="_blank" rel="noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-orange)]/20 transition-colors">
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors">
                   <FileText className="h-4 w-4" />
                   View CV
                 </a>
-              </div>
+                <div className="w-px bg-[color:var(--accent-blue)]/30" />
+                <a href="/Aditya Shelke CV.pdf" download
+                  aria-label="Download CV"
+                  className="flex items-center pl-3 pr-3 py-2 border-[color:var(--accent-blue)]/30 hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors">
+                  <Download className="h-4 w-4" />
+                </a>
+              </div>              
 
 
               {/* Email */}
