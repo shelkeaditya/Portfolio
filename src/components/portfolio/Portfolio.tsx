@@ -296,7 +296,7 @@ function IconLink({
       rel="noreferrer"
       aria-label={label}
       title={label}
-      className="group inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#1F2430]"
+      className="group inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-foreground/5"
     >
       <Icon
         className="h-4 w-4 text-muted-foreground transition-colors duration-300 group-hover:text-[#4F8CFF]"/>
@@ -318,7 +318,7 @@ function IconButton({
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="group inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#1F2430]"
+      className="group inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-foreground/5"
     >
       <Icon className="h-4 w-4 text-muted-foreground transition-colors duration-300 group-hover:text-[#4F8CFF]"/>
     </button>

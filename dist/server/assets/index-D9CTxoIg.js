@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-DFqZ1DNl.js";
-import { R as ReactDOM } from "./router-CJL0x_G9.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-DcAntebE.js";
+import { R as ReactDOM } from "./router-BBlbzrY-.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5229,7 +5229,7 @@ function IconLink({
   icon: Icon2,
   label
 }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
     "a",
     {
       href,
@@ -5237,18 +5237,13 @@ function IconLink({
       rel: "noreferrer",
       "aria-label": label,
       title: label,
-      className: "group relative inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--surface-3)] text-muted-foreground transition-colors hover:bg-[var(--surface-2)] hover:text-accent-blue",
-      children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "span",
-          {
-            "aria-hidden": true,
-            className: "pointer-events-none absolute inset-0 rounded-lg opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-60",
-            style: { background: "color-mix(in oklab, var(--accent-orange) 25%, transparent)" }
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "relative h-4 w-4" })
-      ]
+      className: "group inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-foreground/5",
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Icon2,
+        {
+          className: "h-4 w-4 text-muted-foreground transition-colors duration-300 group-hover:text-[#4F8CFF]"
+        }
+      )
     }
   );
 }
@@ -5263,7 +5258,8 @@ function IconButton({
       onClick,
       "aria-label": label,
       title: label,
-      className: "group surface-3 relative inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-300 hover:text-foreground"
+      className: "group inline-flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-foreground/5",
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-4 w-4 text-muted-foreground transition-colors duration-300 group-hover:text-[#4F8CFF]" })
     }
   );
 }
@@ -5423,7 +5419,7 @@ function ProfileHero({ onJourney }) {
               ]
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-0.3", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://linkedin.com/in/shelkeaditya", icon: Linkedin, label: "LinkedIn" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://github.com/shelkeaditya", icon: Github, label: "GitHub" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(IconLink, { href: "https://instagram.com/shelke__aditya", icon: Instagram, label: "Instagram" }),
