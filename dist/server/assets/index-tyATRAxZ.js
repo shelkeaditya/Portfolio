@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BIzQPomD.js";
-import { R as ReactDOM } from "./router-DoUF1xek.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BsZZ0cda.js";
+import { R as ReactDOM } from "./router-B0hFcond.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5414,7 +5414,7 @@ function ProfileHero({ onJourney }) {
                 href: "/Aditya Shelke CV.pdf",
                 download: true,
                 "aria-label": "Download CV",
-                className: "flex items-center pl-3 pr-3 py-2 boarder-l border-[color:var(--accent-blue)]/30 hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors",
+                className: "flex items-center pl-3 pr-3 py-2 hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors",
                 children: /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4" })
               }
             )

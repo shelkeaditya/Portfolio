@@ -404,7 +404,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
         <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-center md:gap-0 md:px-8 md:py-5">
 
           {/* ── COL 1 - Photo + name + role + mobile chevron ── */}
-          <div className="flex items-center justify-between gap-4 md:flex-1 md:pr-8 md:border-r md:border-border/50">
+          <div className="flex flex-col md:flex-1 md:pr-8 md:border-r md:border-border/50">
             <div className="flex items-center gap-4 min-w-0">
               <div className="group relative shrink-0">
                 <div aria-hidden
@@ -426,19 +426,22 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
               </div>
             </div>
 
-            {/* Mobile-only expand/collapse chevron */}
+            {/* Mobile-only horizontal line + expand/collapse chevron */}
             <button onClick={() => setExpanded((e) => !e)}
               aria-label={expanded ? "Collapse details" : "Expand details"}
               aria-expanded={expanded}
-              className="md:hidden shrink-0 surface-3 rounded-lg border border-border/60 p-2 transition-colors hover:border-[color:var(--accent-orange)]/40">
-              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", expanded && "rotate-180")} />
+              className="md:hidden mt-4 flex w-full items-center gap-3">
+              <span aria-hidden className="h-px flex-1 bg-border/60" />
+              <span className="absolute right-0 flex h-7 w-12 items-center justify-center rounded-lg bg-[var(--surface-2,inherit)] text-muted-foreground">
+                <ChevronDown className={cn("h-4 w-4 transition-transform duration-10", expanded && "rotate-180")} />
+              </span>
             </button>
           </div>
 
           {/* ── COL 2 + COL 3 - collapsible on mobile, always visible on desktop ── */}
           <div className={cn(
-            "overflow-hidden transition-all duration-300 ease-in-out md:contents",
-            expanded ? "max-h-[400px] opacity-100 mt-5 md:mt-0" : "max-h-0 opacity-0 md:opacity-100",
+            "overflow-hidden transition-all duration-10 ease-in-out md:contents",
+            expanded ? "max-h-[400px] opacity-100 mt-3 md:mt-0" : "max-h-0 opacity-0 md:opacity-100",
           )}>
 
             {/* ── COL 2 - System Status ── */}
@@ -468,9 +471,9 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
 
             {/* ── COL 3 - Download CV + email + socials ── */}
             <div className="flex flex-col gap-3 pt-5 md:pt-0 md:flex-1 md:pl-8 md:items-end">
-              
+            <span aria-hidden className="h-px w-full bg-border/60 md:hidden" /> 
               {/* Download CV */}
-              <div className="inline-flex w-40 items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5">
+             <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent text-accent-blue overflow-hidden transition-all hover:-translate-y-0.5">
                 <a href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
                   target="_blank" rel="noreferrer"
                   className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors">
@@ -483,8 +486,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
                   className="flex items-center pl-3 pr-3 py-2 hover:bg-[color:var(--accent-blue)] hover:text-white transition-colors">
                   <Download className="h-4 w-4" />
                 </a>
-              </div>              
-
+              </div>             
 
               {/* Email */}
               <a href="mailto:work.shelkeaditya@gmail.com"
