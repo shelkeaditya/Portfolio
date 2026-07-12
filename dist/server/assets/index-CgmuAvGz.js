@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BoTXcKp3.js";
-import { R as ReactDOM } from "./router-B_-2WZdm.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-CoyxKbBy.js";
+import { R as ReactDOM } from "./router-D8j5JqJ1.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -79,7 +79,7 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$r = [
+const __iconNode$t = [
   [
     "path",
     {
@@ -88,8 +88,8 @@ const __iconNode$r = [
     }
   ]
 ];
-const Activity = createLucideIcon("activity", __iconNode$r);
-const __iconNode$q = [
+const Activity = createLucideIcon("activity", __iconNode$t);
+const __iconNode$s = [
   [
     "path",
     {
@@ -99,8 +99,8 @@ const __iconNode$q = [
   ],
   ["circle", { cx: "12", cy: "8", r: "6", key: "1vp47v" }]
 ];
-const Award = createLucideIcon("award", __iconNode$q);
-const __iconNode$p = [
+const Award = createLucideIcon("award", __iconNode$s);
+const __iconNode$r = [
   ["path", { d: "M12 8V4H8", key: "hb8ula" }],
   ["rect", { width: "16", height: "12", x: "4", y: "8", rx: "2", key: "enze0r" }],
   ["path", { d: "M2 14h2", key: "vft8re" }],
@@ -108,30 +108,30 @@ const __iconNode$p = [
   ["path", { d: "M15 13v2", key: "1xurst" }],
   ["path", { d: "M9 13v2", key: "rq6x2g" }]
 ];
-const Bot = createLucideIcon("bot", __iconNode$p);
-const __iconNode$o = [
+const Bot = createLucideIcon("bot", __iconNode$r);
+const __iconNode$q = [
   ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
   ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
 ];
-const Briefcase = createLucideIcon("briefcase", __iconNode$o);
-const __iconNode$n = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-const ChevronDown = createLucideIcon("chevron-down", __iconNode$n);
-const __iconNode$m = [
+const Briefcase = createLucideIcon("briefcase", __iconNode$q);
+const __iconNode$p = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$p);
+const __iconNode$o = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$m);
-const __iconNode$l = [
+const CircleCheck = createLucideIcon("circle-check", __iconNode$o);
+const __iconNode$n = [
   ["path", { d: "M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z", key: "p7xjir" }]
 ];
-const Cloud = createLucideIcon("cloud", __iconNode$l);
-const __iconNode$k = [
+const Cloud = createLucideIcon("cloud", __iconNode$n);
+const __iconNode$m = [
   ["path", { d: "m18 16 4-4-4-4", key: "1inbqp" }],
   ["path", { d: "m6 8-4 4 4 4", key: "15zrgr" }],
   ["path", { d: "m14.5 4-5 16", key: "e7oirm" }]
 ];
-const CodeXml = createLucideIcon("code-xml", __iconNode$k);
-const __iconNode$j = [
+const CodeXml = createLucideIcon("code-xml", __iconNode$m);
+const __iconNode$l = [
   [
     "path",
     {
@@ -144,20 +144,20 @@ const __iconNode$j = [
   ["path", { d: "M14 19.8v-8.1", key: "159ecu" }],
   ["path", { d: "M18 17.5V9.4", key: "11uown" }]
 ];
-const Container = createLucideIcon("container", __iconNode$j);
-const __iconNode$i = [
+const Container = createLucideIcon("container", __iconNode$l);
+const __iconNode$k = [
   ["path", { d: "M12 15V3", key: "m9g1x1" }],
   ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
   ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
 ];
-const Download = createLucideIcon("download", __iconNode$i);
-const __iconNode$h = [
+const Download = createLucideIcon("download", __iconNode$k);
+const __iconNode$j = [
   ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
   ["path", { d: "M10 14 21 3", key: "gplh6r" }],
   ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
 ];
-const ExternalLink = createLucideIcon("external-link", __iconNode$h);
-const __iconNode$g = [
+const ExternalLink = createLucideIcon("external-link", __iconNode$j);
+const __iconNode$i = [
   [
     "path",
     {
@@ -170,8 +170,8 @@ const __iconNode$g = [
   ["path", { d: "M16 13H8", key: "t4e002" }],
   ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const FileText = createLucideIcon("file-text", __iconNode$g);
-const __iconNode$f = [
+const FileText = createLucideIcon("file-text", __iconNode$i);
+const __iconNode$h = [
   [
     "path",
     {
@@ -180,8 +180,8 @@ const __iconNode$f = [
     }
   ]
 ];
-const Flag = createLucideIcon("flag", __iconNode$f);
-const __iconNode$e = [
+const Flag = createLucideIcon("flag", __iconNode$h);
+const __iconNode$g = [
   [
     "path",
     {
@@ -191,8 +191,14 @@ const __iconNode$e = [
   ],
   ["path", { d: "M9 18c-4.51 2-5-2-7-2", key: "9comsn" }]
 ];
-const Github = createLucideIcon("github", __iconNode$e);
-const __iconNode$d = [
+const Github = createLucideIcon("github", __iconNode$g);
+const __iconNode$f = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20", key: "13o1zl" }],
+  ["path", { d: "M2 12h20", key: "9i4pu4" }]
+];
+const Globe = createLucideIcon("globe", __iconNode$f);
+const __iconNode$e = [
   [
     "path",
     {
@@ -203,14 +209,14 @@ const __iconNode$d = [
   ["path", { d: "M22 10v6", key: "1lu8f3" }],
   ["path", { d: "M6 12.5V16a6 3 0 0 0 12 0v-3.5", key: "1r8lef" }]
 ];
-const GraduationCap = createLucideIcon("graduation-cap", __iconNode$d);
-const __iconNode$c = [
+const GraduationCap = createLucideIcon("graduation-cap", __iconNode$e);
+const __iconNode$d = [
   ["rect", { width: "20", height: "20", x: "2", y: "2", rx: "5", ry: "5", key: "2e1cvw" }],
   ["path", { d: "M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z", key: "9exkf1" }],
   ["line", { x1: "17.5", x2: "17.51", y1: "6.5", y2: "6.5", key: "r4j83e" }]
 ];
-const Instagram = createLucideIcon("instagram", __iconNode$c);
-const __iconNode$b = [
+const Instagram = createLucideIcon("instagram", __iconNode$d);
+const __iconNode$c = [
   [
     "path",
     {
@@ -221,18 +227,18 @@ const __iconNode$b = [
   ["rect", { width: "4", height: "12", x: "2", y: "9", key: "mk3on5" }],
   ["circle", { cx: "4", cy: "4", r: "2", key: "bt5ra8" }]
 ];
-const Linkedin = createLucideIcon("linkedin", __iconNode$b);
-const __iconNode$a = [
+const Linkedin = createLucideIcon("linkedin", __iconNode$c);
+const __iconNode$b = [
   ["rect", { width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2", key: "1w4ew1" }],
   ["path", { d: "M7 11V7a5 5 0 0 1 10 0v4", key: "fwvmzm" }]
 ];
-const Lock = createLucideIcon("lock", __iconNode$a);
-const __iconNode$9 = [
+const Lock = createLucideIcon("lock", __iconNode$b);
+const __iconNode$a = [
   ["path", { d: "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7", key: "132q7q" }],
   ["rect", { x: "2", y: "4", width: "20", height: "16", rx: "2", key: "izxlao" }]
 ];
-const Mail = createLucideIcon("mail", __iconNode$9);
-const __iconNode$8 = [
+const Mail = createLucideIcon("mail", __iconNode$a);
+const __iconNode$9 = [
   [
     "path",
     {
@@ -242,7 +248,13 @@ const __iconNode$8 = [
   ],
   ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }]
 ];
-const MapPin = createLucideIcon("map-pin", __iconNode$8);
+const MapPin = createLucideIcon("map-pin", __iconNode$9);
+const __iconNode$8 = [
+  ["rect", { width: "20", height: "14", x: "2", y: "3", rx: "2", key: "48i651" }],
+  ["line", { x1: "8", x2: "16", y1: "21", y2: "21", key: "1svkeh" }],
+  ["line", { x1: "12", x2: "12", y1: "17", y2: "21", key: "vw1qmm" }]
+];
+const Monitor = createLucideIcon("monitor", __iconNode$8);
 const __iconNode$7 = [
   [
     "path",
@@ -5038,8 +5050,12 @@ const NAV = [
   { key: "about", label: "About", icon: User },
   { key: "resume", label: "Resume", icon: FileText },
   { key: "portfolio", label: "Portfolio", icon: Briefcase },
-  { key: "infra", label: "Infra Build", icon: Workflow },
+  { key: "infra", label: "Build", icon: Workflow },
   { key: "contact", label: "Contact", icon: Send }
+];
+const INFRA_GROUPS = [
+  { id: "build", title: "Build", category: "build", x: 55, y: 205, w: 430, h: 150 },
+  { id: "observability", title: "Observability", category: "observability", x: 840, y: 65, w: 225, h: 425 }
 ];
 const INFRA_NODES = [
   {
@@ -5048,10 +5064,11 @@ const INFRA_NODES = [
     subtitle: "Local Environment",
     meta: "VS Code · React · TS",
     items: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
-    category: "development",
+    category: "build",
     icon: CodeXml,
-    x: 110,
-    y: 260,
+    group: "build",
+    x: 165,
+    y: 290,
     detail: {
       purpose: "Local development environment where the portfolio is written and iterated on before every commit.",
       technologies: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
@@ -5061,6 +5078,7 @@ const INFRA_NODES = [
         "Type safety",
         "Local testing before commit"
       ],
+      relationships: ["Pushes commits to GitHub"],
       configuration: "Vite dev server with hot module reload",
       futureImprovements: "Add Storybook for isolated component development"
     }
@@ -5070,59 +5088,106 @@ const INFRA_NODES = [
     title: "GitHub",
     subtitle: "Source Control",
     meta: "main branch · git push",
-    items: ["Repository", "Version Control", "Main Branch", "Commit History", "Git Push", "Auto Deploy Trigger"],
-    category: "github",
+    items: ["Repository", "Version Control", "Main Branch"],
+    category: "build",
     icon: Github,
-    x: 350,
-    y: 260,
+    group: "build",
+    x: 385,
+    y: 290,
     detail: {
       purpose: "Stores the source code and is the trigger point for every deployment.",
       technologies: ["Git", "GitHub"],
       responsibilities: [
         "Stores source code & commit history",
         "Tracks changes on the main branch",
-        "Triggers a Cloudflare deploy on every push to main"
+        "Fires a webhook to Cloudflare on every push to main"
       ],
+      relationships: ["Receives pushes from Development", "Triggers Cloudflare Workers via webhook"],
       configuration: "main is the only deploy branch — every push ships automatically",
       futureImprovements: "Add branch preview deployments for pull requests"
     }
   },
   {
-    id: "cloudflare",
-    title: "Cloudflare Platform",
-    subtitle: "Build · Runtime · Network · Monitor",
-    meta: "Workers · CDN · DNS · TLS",
-    items: [
-      "Git Integration",
-      "Automatic Deployment",
-      "npm install",
-      "vite build",
-      "Cloudflare Workers",
-      "TanStack Start SSR Runtime",
-      "CDN",
-      "DNS",
-      "HTTPS / TLS",
-      "Custom Domain",
-      "Workers Logs",
-      "Workers Traces"
-    ],
-    category: "cloudflare",
+    id: "workers",
+    title: "Cloudflare Workers",
+    subtitle: "Deployment Runtime",
+    meta: "SSR · Edge Runtime",
+    items: ["SSR Runtime", "Deployment", "Edge Runtime"],
+    category: "runtime",
     icon: Cloud,
     size: "lg",
-    x: 620,
-    y: 260,
+    x: 690,
+    y: 290,
     detail: {
-      purpose: "Builds, deploys, hosts and serves the portfolio globally — one platform covering runtime, networking and monitoring end to end.",
-      technologies: ["Cloudflare Workers", "TanStack Start SSR", "Cloudflare CDN", "Cloudflare DNS"],
+      purpose: "The center of the deployment — receives GitHub's webhook, builds the app, and runs it on Cloudflare's edge network.",
+      technologies: ["Cloudflare Workers", "TanStack Start SSR"],
       responsibilities: [
-        "Runs npm install + vite build on every push",
-        "Serves SSR responses from the nearest edge",
-        "Manages custom domain, HTTPS/TLS and DNS",
-        "Captures Workers logs & traces"
+        "Builds the project on every webhook trigger",
+        "Runs the TanStack Start SSR runtime at the edge",
+        "Serves every request close to the visitor"
       ],
-      buildProcess: "Git-linked build → npm install → vite build → deployed to Workers",
-      runtimeDetails: "TanStack Start SSR runs on Cloudflare Workers at the edge, close to every visitor",
-      futureImprovements: "Add a staging environment with preview URLs before promoting to production"
+      relationships: [
+        "Triggered by GitHub's webhook",
+        "Resolved through Cloudflare DNS",
+        "Reports to Workers Logs & Traces",
+        "Serves the Portfolio application"
+      ],
+      buildProcess: "Webhook → npm install → vite build → deployed to the edge",
+      runtimeDetails: "Sits outside every group — it's the single runtime the whole pipeline depends on"
+    }
+  },
+  {
+    id: "dns",
+    title: "Cloudflare DNS",
+    subtitle: "Domain Routing",
+    meta: "CNAME · HTTPS/TLS",
+    items: ["Custom Domain", "HTTPS / TLS"],
+    category: "observability",
+    icon: Globe,
+    group: "observability",
+    x: 955,
+    y: 290,
+    detail: {
+      purpose: "Resolves the custom domain and routes every request to the right Worker over HTTPS.",
+      technologies: ["Cloudflare DNS", "HTTPS / TLS"],
+      responsibilities: ["Custom domain resolution", "TLS termination", "Routes traffic to Cloudflare Workers"],
+      relationships: ["Two-way link with Cloudflare Workers", "Hands resolved requests through to the Portfolio"]
+    }
+  },
+  {
+    id: "logs",
+    title: "Workers Logs",
+    subtitle: "Observability",
+    meta: "Request logging",
+    items: ["Request Logs"],
+    category: "observability",
+    icon: FileText,
+    group: "observability",
+    x: 955,
+    y: 150,
+    detail: {
+      purpose: "Captures request-level logs emitted by Cloudflare Workers for debugging.",
+      technologies: ["Cloudflare Workers Logs"],
+      responsibilities: ["Streams request logs", "Surfaces runtime errors"],
+      relationships: ["Fed directly by Cloudflare Workers"]
+    }
+  },
+  {
+    id: "traces",
+    title: "Workers Traces",
+    subtitle: "Observability",
+    meta: "Runtime tracing",
+    items: ["Runtime Traces"],
+    category: "observability",
+    icon: Activity,
+    group: "observability",
+    x: 955,
+    y: 430,
+    detail: {
+      purpose: "Traces execution inside Cloudflare Workers to spot latency and runtime issues.",
+      technologies: ["Cloudflare Workers Traces"],
+      responsibilities: ["Captures execution traces", "Helps diagnose slow requests"],
+      relationships: ["Fed directly by Cloudflare Workers"]
     }
   },
   {
@@ -5130,80 +5195,110 @@ const INFRA_NODES = [
     title: "Portfolio",
     subtitle: "The Application",
     meta: "Home · Projects · Contact",
-    items: ["Home", "About", "Projects", "Media", "Resume", "Contact Form"],
-    category: "portfolio",
+    items: ["Home", "About", "Projects", "Media", "Resume", "Contact"],
+    category: "application",
     icon: Briefcase,
-    x: 880,
-    y: 260,
+    x: 1250,
+    y: 290,
     detail: {
       purpose: "The live application visitors actually interact with.",
       technologies: ["React", "TanStack Start", "Tailwind CSS"],
-      responsibilities: [
-        "Renders Home, About, Projects, Media & Resume",
-        "Handles the Contact Form submission"
+      responsibilities: ["Renders Home, About, Projects, Media & Resume", "Handles the Contact Form submission"],
+      relationships: [
+        "Served by Cloudflare DNS / Workers",
+        "Sends Contact Form submissions to Communication",
+        "Loaded by the User Browser"
       ],
       futureImprovements: "Add a blog / MDX-powered writing section"
     }
   },
   {
+    id: "userBrowser",
+    title: "User Browser",
+    subtitle: "Client",
+    meta: "Chrome · Firefox · Safari",
+    items: ["Chrome", "Firefox", "Safari"],
+    category: "client",
+    icon: Monitor,
+    x: 1470,
+    y: 290,
+    detail: {
+      purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
+      technologies: ["Chrome", "Firefox", "Safari"],
+      responsibilities: ["Renders the Portfolio over HTTPS", "Submits the Contact Form when used"],
+      relationships: ["Receives the final response from the Portfolio"]
+    }
+  },
+  {
     id: "communication",
-    title: "Communication",
-    subtitle: "External Service",
-    meta: "EmailJS → Gmail",
-    items: ["EmailJS"],
+    title: "EmailJS",
+    subtitle: "Communication Service",
+    meta: "Contact Form → Gmail",
+    items: ["Contact Form", "Gmail Delivery"],
     category: "communication",
     icon: Mail,
-    x: 880,
-    y: 470,
+    x: 1250,
+    y: 500,
     detail: {
-      purpose: "Delivers Contact Form submissions straight to my inbox — no backend server involved, and isolated from GitHub and Cloudflare entirely.",
+      purpose: "Delivers Contact Form submissions straight to my inbox — a branch off the Portfolio only, with no ties to GitHub or Cloudflare at all.",
       technologies: ["EmailJS", "Gmail"],
       responsibilities: [
         "Receives form data client-side",
         "Relays the message via the EmailJS API",
         "Delivers the email to Gmail"
       ],
+      relationships: ["Only the Portfolio connects to it"],
       configuration: "Client-side only call from the Portfolio — no backend, no queue",
       futureImprovements: "Add a serverless fallback queue for guaranteed delivery"
     }
   }
 ];
 const INFRA_EDGES = [
-  { from: "development", to: "github", label: "git commit + push", style: "thin", category: "development" },
-  { from: "github", to: "cloudflare", label: "push to main → auto deploy", style: "dashed", category: "github" },
-  { from: "cloudflare", to: "portfolio", label: "build → deploy → serve", style: "thick", category: "cloudflare" },
-  { from: "communication", to: "portfolio", label: "Contact Form ⇄ EmailJS → Gmail", style: "thin", category: "communication" }
+  { from: "development", to: "github", label: "git push", style: "dashed", category: "build" },
+  { from: "github", to: "workers", label: "webhook", style: "dashed", category: "build" },
+  { from: "workers", to: "dns", label: "", style: "solid", category: "runtime", bidirectional: true },
+  { from: "workers", to: "logs", label: "", style: "dotted", category: "runtime" },
+  { from: "workers", to: "traces", label: "", style: "dotted", category: "runtime" },
+  { from: "dns", to: "portfolio", label: "serves request", style: "solid", category: "observability" },
+  { from: "portfolio", to: "userBrowser", label: "https", style: "solid", category: "application" },
+  { from: "portfolio", to: "communication", label: "contact form", style: "vertical", category: "communication" }
 ];
 const INFRA_CATEGORY_STYLE = {
-  development: {
+  build: {
     text: "text-orange-400",
     ring: "border-orange-400/40",
     dot: "bg-orange-400",
     stroke: "#fb923c"
   },
-  github: {
-    text: "text-amber-400",
-    ring: "border-amber-400/40",
-    dot: "bg-amber-400",
-    stroke: "#fbbf24"
-  },
-  cloudflare: {
+  runtime: {
     text: "text-emerald-400",
     ring: "border-emerald-400/40",
     dot: "bg-emerald-400",
     stroke: "#34d399"
   },
-  portfolio: {
+  observability: {
+    text: "text-violet-400",
+    ring: "border-violet-400/40",
+    dot: "bg-violet-400",
+    stroke: "#a78bfa"
+  },
+  application: {
     text: "text-blue-400",
     ring: "border-blue-400/40",
     dot: "bg-blue-400",
     stroke: "#60a5fa"
   },
   communication: {
-    text: "text-violet-400",
-    ring: "border-violet-400/40",
-    dot: "bg-violet-400",
-    stroke: "#a78bfa"
+    text: "text-fuchsia-400",
+    ring: "border-fuchsia-400/40",
+    dot: "bg-fuchsia-400",
+    stroke: "#e879f9"
+  },
+  client: {
+    text: "text-slate-300",
+    ring: "border-slate-300/40",
+    dot: "bg-slate-300",
+    stroke: "#cbd5e1"
   }
 };
 const JOURNEY = [
@@ -6113,8 +6208,14 @@ function PortfolioSection() {
     )) })
   ] });
 }
-const INFRA_CANVAS_W = 1300;
-const INFRA_CANVAS_H = 560;
+const INFRA_CANVAS_W = 1597;
+const INFRA_CANVAS_H = 620;
+const INFRA_SUMMARY_CARDS = [
+  { title: "Edge Stack", category: "runtime", items: ["Cloudflare Workers", "Cloudflare DNS", "Edge Runtime", "HTTPS/TLS", "Custom Domain"] },
+  { title: "Monitoring", category: "observability", items: ["Workers Logs", "Workers Traces", "Runtime Monitoring"] },
+  { title: "Build Pipeline", category: "build", items: ["Development", "GitHub", "Git Push", "Webhook", "Automatic Deployment"] },
+  { title: "Communication", category: "communication", items: ["EmailJS", "Gmail Delivery"] }
+];
 function InfraBuild() {
   const [hovered, setHovered] = reactExports.useState(null);
   const [selected, setSelected] = reactExports.useState(null);
@@ -6133,20 +6234,29 @@ function InfraBuild() {
   }, [hovered]);
   const selectedNode = selected ? nodeMap[selected] : null;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Infra Build." }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("style", { children: `
+        .infra-scroll::-webkit-scrollbar { height: 10px; }
+        .infra-scroll::-webkit-scrollbar-track { background: color-mix(in oklab, var(--foreground) 6%, transparent); border-radius: 999px; }
+        .infra-scroll::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--foreground) 22%, transparent); border-radius: 999px; }
+        .infra-scroll::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--foreground) 34%, transparent); }
+        .infra-scroll { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent; }
+        @keyframes infra-flow { to { stroke-dashoffset: -24; } }
+        .infra-edge-live { stroke-dasharray: 5 5; animation: infra-flow 1s linear infinite; }
+      ` }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Infrastructure." }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "-mt-4 mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "relative flex h-2 w-2 shrink-0", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "relative inline-flex h-2 w-2 rounded-full bg-emerald-400" })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Live deployment pipeline — Development → GitHub → Cloudflare Platform → Portfolio" })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Development → GitHub → Cloudflare Workers → Observability → Portfolio → User Browser" })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-4 lg:flex-row", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 min-w-0 flex-1 rounded-2xl border border-border/60 p-3 md:p-4 lg:w-[72%] lg:flex-none", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "div",
           {
-            className: "scrollbar-thin overflow-x-auto overflow-y-hidden rounded-xl",
+            className: "infra-scroll overflow-x-auto overflow-y-hidden rounded-xl",
             style: { WebkitOverflowScrolling: "touch" },
             children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "div",
@@ -6160,11 +6270,33 @@ function InfraBuild() {
                 },
                 onMouseLeave: () => setHovered(null),
                 children: [
+                  INFRA_GROUPS.map((g) => {
+                    const style = INFRA_CATEGORY_STYLE[g.category];
+                    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "div",
+                      {
+                        className: cn$1("absolute rounded-2xl border-2 border-dashed", style.ring),
+                        style: { left: g.x, top: g.y, width: g.w, height: g.h, zIndex: 1 },
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "span",
+                          {
+                            className: cn$1(
+                              "surface-2 absolute -top-3 left-4 rounded px-2 text-[10px] font-semibold uppercase tracking-[0.14em]",
+                              style.text
+                            ),
+                            children: g.title
+                          }
+                        )
+                      },
+                      g.id
+                    );
+                  }),
                   /* @__PURE__ */ jsxRuntimeExports.jsxs(
                     "svg",
                     {
                       viewBox: `0 0 ${INFRA_CANVAS_W} ${INFRA_CANVAS_H}`,
                       className: "absolute inset-0 h-full w-full overflow-visible",
+                      style: { zIndex: 2 },
                       children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx("defs", { children: Object.keys(INFRA_CATEGORY_STYLE).map((cat) => /* @__PURE__ */ jsxRuntimeExports.jsx(
                           "marker",
@@ -6184,21 +6316,22 @@ function InfraBuild() {
                           const from = nodeMap[edge.from];
                           const to = nodeMap[edge.to];
                           const isActive = !hovered || activeIds?.has(edge.from) && activeIds?.has(edge.to);
-                          const dash = edge.style === "dashed" ? "7 6" : edge.style === "dotted" ? "2 7" : void 0;
-                          const width = edge.style === "thick" ? 2.5 : 1.4;
+                          const dash = edge.style === "dashed" ? "7 6" : edge.style === "dotted" ? "2 7" : edge.style === "vertical" ? "10 4 2 4" : void 0;
                           const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
+                          const isLive = edge.style === "solid";
                           return /* @__PURE__ */ jsxRuntimeExports.jsx(
                             "path",
                             {
                               d: `M ${from.x} ${from.y} L ${to.x} ${to.y}`,
                               fill: "none",
                               stroke: color,
-                              strokeWidth: width,
+                              strokeWidth: edge.style === "vertical" ? 1.6 : 1.8,
                               strokeDasharray: dash,
                               strokeLinecap: "round",
                               markerEnd: `url(#infra-arrow-${edge.category})`,
-                              className: "transition-opacity duration-200",
-                              style: { opacity: isActive ? 0.85 : 0.12 }
+                              markerStart: edge.bidirectional ? `url(#infra-arrow-${edge.category})` : void 0,
+                              className: cn$1("transition-opacity duration-200", isLive && "infra-edge-live"),
+                              style: { opacity: isActive ? 0.9 : 0.12 }
                             },
                             i
                           );
@@ -6207,6 +6340,7 @@ function InfraBuild() {
                     }
                   ),
                   INFRA_EDGES.map((edge, i) => {
+                    if (!edge.label) return null;
                     const from = nodeMap[edge.from];
                     const to = nodeMap[edge.to];
                     const isActive = !hovered || activeIds?.has(edge.from) && activeIds?.has(edge.to);
@@ -6216,7 +6350,7 @@ function InfraBuild() {
                       "span",
                       {
                         className: "surface-1 absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded border border-border/50 px-1.5 py-0.5 text-[9px] text-muted-foreground transition-opacity duration-200 md:text-[10px]",
-                        style: { left: midX, top: midY, opacity: isActive ? 1 : 0.15 },
+                        style: { left: midX, top: midY, opacity: isActive ? 1 : 0.15, zIndex: 3 },
                         children: edge.label
                       },
                       i
@@ -6272,11 +6406,87 @@ function InfraBuild() {
             )
           }
         ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 px-1 text-[10px] text-muted-foreground/50 lg:hidden", children: "Scroll horizontally to explore the full pipeline · tap a node for details" })
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-4 grid gap-4 border-t border-border/60 pt-4 sm:grid-cols-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Category" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5 text-xs text-muted-foreground", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-2 w-2 shrink-0 rounded-full bg-orange-400" }),
+                " Build"
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-2 w-2 shrink-0 rounded-full bg-emerald-400" }),
+                " Runtime"
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-2 w-2 shrink-0 rounded-full bg-violet-400" }),
+                " Observability"
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-2 w-2 shrink-0 rounded-full bg-blue-400" }),
+                " Application"
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-2 w-2 shrink-0 rounded-full bg-fuchsia-400" }),
+                " Communication"
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-2 w-2 shrink-0 rounded-full bg-slate-300" }),
+                " Client"
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Edge Style" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5 text-xs text-muted-foreground", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-[2px] w-5 shrink-0 bg-emerald-400" }),
+                " Solid — Runtime Request"
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "span",
+                  {
+                    className: "h-0 w-5 shrink-0 border-t-2",
+                    style: { borderColor: "#fb923c", borderStyle: "dashed" }
+                  }
+                ),
+                "Dashed — Deployment"
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "span",
+                  {
+                    className: "h-0 w-5 shrink-0 border-t-2",
+                    style: { borderColor: "#34d399", borderStyle: "dotted" }
+                  }
+                ),
+                "Dotted — Configuration"
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-4 w-[2px] shrink-0 bg-fuchsia-400" }),
+                " Vertical — External Service"
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "infra-edge-live h-[2px] w-5 shrink-0 bg-emerald-400" }),
+                " Animated — Live Request"
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Dataflow Direction" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5 text-xs text-muted-foreground", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Left → Right — main pipeline" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Vertical — external service branch" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Hover — highlight connected nodes" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Click — open inspector" })
+            ] })
+          ] })
+        ] })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "surface-2 flex flex-col rounded-2xl border border-border/60 p-5 lg:w-[28%]", children: !selectedNode ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-full min-h-[200px] flex-1 flex-col items-center justify-center gap-2 text-center", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(Workflow, { className: "h-6 w-6 text-muted-foreground/40" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Click any node in the graph to inspect its purpose, responsibilities, technologies and configuration." })
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Click any node to inspect its purpose, responsibilities, technologies and configuration." })
       ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -6314,6 +6524,14 @@ function InfraBuild() {
             r2
           ] }, r2)) })
         ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Relationships" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-1 text-xs text-muted-foreground", children: selectedNode.detail.relationships.map((r2) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-1.5", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground/40", children: "•" }),
+            " ",
+            r2
+          ] }, r2)) })
+        ] }),
         (selectedNode.detail.buildProcess || selectedNode.detail.runtimeDetails) && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Workflow" }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1 text-xs text-muted-foreground", children: [
@@ -6331,35 +6549,19 @@ function InfraBuild() {
         ] })
       ] }) })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5", children: INFRA_NODES.map((node) => {
-      const Icon2 = node.icon;
-      const style = INFRA_CATEGORY_STYLE[node.category];
-      return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-        "button",
-        {
-          type: "button",
-          onClick: () => setSelected(node.id),
-          onMouseEnter: () => setHovered(node.id),
-          onMouseLeave: () => setHovered(null),
-          className: cn$1(
-            "surface-2 rounded-xl border p-4 text-left transition-all hover:-translate-y-0.5",
-            selected === node.id ? style.ring : "border-border/60"
-          ),
-          children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-2 flex items-center gap-1.5", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: cn$1("h-3.5 w-3.5 shrink-0", style.text) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold text-foreground", children: node.title })
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-1 text-[11px] text-muted-foreground", children: node.items.map((it) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-1.5", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: cn$1("h-1 w-1 shrink-0 translate-y-1 rounded-full", style.dot) }),
-              it
-            ] }, it)) })
-          ]
-        },
-        node.id
-      );
-    }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-4 text-xs text-muted-foreground", children: "Hover a node to trace its connections · click a node or an info card for full details." })
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4", children: INFRA_SUMMARY_CARDS.map((card) => {
+      const style = INFRA_CATEGORY_STYLE[card.category];
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 rounded-xl border border-border/60 p-4", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-2 flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: cn$1("h-2 w-2 shrink-0 rounded-full", style.dot) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold text-foreground", children: card.title })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-1 text-[11px] text-muted-foreground", children: card.items.map((it) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: cn$1("h-1 w-1 shrink-0 translate-y-1 rounded-full", style.dot) }),
+          it
+        ] }, it)) })
+      ] }, card.title);
+    }) })
   ] });
 }
 function Contact() {

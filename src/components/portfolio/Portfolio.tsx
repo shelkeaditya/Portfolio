@@ -125,7 +125,7 @@ type InfraGroup = {
 
 const INFRA_GROUPS: InfraGroup[] = [
   { id: "build", title: "Build", category: "build", x: 55, y: 205, w: 430, h: 150 },
-  { id: "observability", title: "Observability", category: "observability", x: 700, y: 65, w: 220, h: 425 },
+  { id: "observability", title: "Observability", category: "observability", x: 840, y: 65, w: 225, h: 425 },
 ];
 
 const INFRA_NODES: InfraNode[] = [
@@ -186,9 +186,9 @@ const INFRA_NODES: InfraNode[] = [
     meta: "SSR · Edge Runtime",
     items: ["SSR Runtime", "Deployment", "Edge Runtime"],
     category: "runtime",
-    icon: Zap,
+    icon: Cloud,
     size: "lg",
-    x: 595,
+    x: 690,
     y: 290,
     detail: {
       purpose:
@@ -218,7 +218,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: Globe,
     group: "observability",
-    x: 810,
+    x: 955,
     y: 290,
     detail: {
       purpose: "Resolves the custom domain and routes every request to the right Worker over HTTPS.",
@@ -236,7 +236,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: FileText,
     group: "observability",
-    x: 810,
+    x: 955,
     y: 150,
     detail: {
       purpose: "Captures request-level logs emitted by Cloudflare Workers for debugging.",
@@ -254,7 +254,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: Activity,
     group: "observability",
-    x: 810,
+    x: 955,
     y: 430,
     detail: {
       purpose: "Traces execution inside Cloudflare Workers to spot latency and runtime issues.",
@@ -271,7 +271,7 @@ const INFRA_NODES: InfraNode[] = [
     items: ["Home", "About", "Projects", "Media", "Resume", "Contact"],
     category: "application",
     icon: Briefcase,
-    x: 1080,
+    x: 1250,
     y: 290,
     detail: {
       purpose: "The live application visitors actually interact with.",
@@ -293,7 +293,7 @@ const INFRA_NODES: InfraNode[] = [
     items: ["Chrome", "Firefox", "Safari"],
     category: "client",
     icon: Monitor,
-    x: 1330,
+    x: 1470,
     y: 290,
     detail: {
       purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
@@ -310,7 +310,7 @@ const INFRA_NODES: InfraNode[] = [
     items: ["Contact Form", "Gmail Delivery"],
     category: "communication",
     icon: Mail,
-    x: 1080,
+    x: 1250,
     y: 500,
     detail: {
       purpose:
@@ -1453,7 +1453,7 @@ function PortfolioSection() {
 // SECTION - Infra Build
 // ═══════════════════════════════════════════════════════════
 
-const INFRA_CANVAS_W = 1700;
+const INFRA_CANVAS_W = 1597;
 const INFRA_CANVAS_H = 620;
 
 const INFRA_SUMMARY_CARDS: { title: string; category: InfraCategory; items: string[] }[] = [

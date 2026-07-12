@@ -16503,7 +16503,7 @@ function getResponse() {
 }
 var HEADERS = { TSS_SHELL: "X-TSS_SHELL" };
 async function getStartManifest(matchedRoutes) {
-  const { tsrStartManifest } = await import("./_tanstack-start-manifest_v-DUbolJme.js");
+  const { tsrStartManifest } = await import("./_tanstack-start-manifest_v-Ch9OjPcp.js");
   const startManifest = tsrStartManifest();
   let routes = startManifest.routes;
   routes[rootRouteId];
@@ -17581,8 +17581,8 @@ var getBaseManifest = getProdBaseManifest;
 var createEarlyHintsForRequest = createEarlyHintsCollector;
 async function loadEntries() {
   const [routerEntry, startEntry, pluginAdapters] = await Promise.all([
-    import("./router-B_-2WZdm.js").then((n2) => n2.r),
-    import("./start-2gzq0F0T.js"),
+    import("./router-D8j5JqJ1.js").then((n2) => n2.r),
+    import("./start-CHe-L1xn.js"),
     import("./empty-plugin-adapters-BFgPZ6_d.js")
   ]);
   return {
