@@ -14,19 +14,16 @@ import {
   User,
   FileText,
   Briefcase,
-  Rss,
   Send,
   ExternalLink,
   ShieldCheck,
   Award,
-  Rocket,
   Cloud,
   Container,
   Terminal,
   Lock,
   Code2,
   CheckCircle2,
-  BookOpen,
   GraduationCap,
   CircleCheck,
   Clock3,
@@ -51,7 +48,7 @@ import profileImg from "@/assets/profile.jpeg";
 // TYPES
 // ═══════════════════════════════════════════════════════════
 
-type SectionKey = "about" | "resume" | "portfolio" | "blog" | "contact" | "journey";
+type SectionKey = "about" | "resume" | "portfolio" | "infra" | "contact" | "journey";
 type PortfolioFilter = "All" | "Projects" | "Certifications" | "Publications" | "Badges";
 
 // ═══════════════════════════════════════════════════════════
@@ -66,13 +63,140 @@ const NAV: {
   { key: "about", label: "About", icon: User },
   { key: "resume", label: "Resume", icon: FileText },
   { key: "portfolio", label: "Portfolio", icon: Briefcase },
-  { key: "blog", label: "Blog", icon: BookOpen },
+  { key: "infra", label: "Infra Build", icon: Workflow },
   { key: "contact", label: "Contact", icon: Send },
 ];
 
 // ═══════════════════════════════════════════════════════════
 // CONSTANTS - Journey timeline
 // ═══════════════════════════════════════════════════════════
+
+type InfraCategory = "source" | "compute" | "network" | "integration" | "user";
+
+type InfraNode = {
+  id: string;
+  title: string;
+  subtitle: string;
+  detail: string;
+  meta: string;
+  category: InfraCategory;
+  icon: React.ComponentType<{ className?: string }>;
+  x: number; // 0-1000
+  y: number; // 0-600
+};
+
+type InfraEdgeStyle = "thick" | "thin" | "dashed" | "dotted";
+
+type InfraEdge = {
+  from: string;
+  to: string;
+  label: string;
+  style: InfraEdgeStyle;
+  category: InfraCategory; // colors the edge to match its origin node
+};
+
+const INFRA_NODES: InfraNode[] = [
+  {
+    id: "repo",
+    title: "GitHub Repo",
+    subtitle: "Source",
+    detail:
+      "Holds the React + TypeScript source. A push to main is the trigger for every deploy — Cloudflare picks it up from here directly.",
+    meta: "shelkeaditya/portfolio",
+    category: "source",
+    icon: Github,
+    x: 100,
+    y: 280,
+  },
+  {
+    id: "workers",
+    title: "Cloudflare Workers",
+    subtitle: "Build & Host",
+    detail:
+      "Git-linked to the repo. Every push triggers npm run build inside Cloudflare, and the Worker serves the built output straight from the edge — no GitHub Pages step involved.",
+    meta: "Git-linked · npm run build",
+    category: "compute",
+    icon: Cloud,
+    x: 430,
+    y: 280,
+  },
+  {
+    id: "dns",
+    title: "Cloudflare DNS",
+    subtitle: "Domain Routing",
+    detail:
+      "Routes shelkeaditya.dpdns.org (professional links) and shelkeaditya.qzz.io (social links) to the Worker, with shelkeaditya.dev queued as the long-term destination via Cloudflare Registrar.",
+    meta: "dpdns.org · qzz.io · .dev (planned)",
+    category: "network",
+    icon: Link,
+    x: 760,
+    y: 150,
+  },
+  {
+    id: "emailjs",
+    title: "EmailJS",
+    subtitle: "Contact Delivery",
+    detail:
+      "The contact form on the deployed portfolio calls the EmailJS API directly from the browser — no backend server involved — relaying messages straight to my inbox.",
+    meta: "Client-side API · No backend",
+    category: "integration",
+    icon: Send,
+    x: 760,
+    y: 420,
+  },
+  {
+    id: "user",
+    title: "User Browser",
+    subtitle: "Visitor",
+    detail:
+      "Anyone visiting the site — loads the SPA over HTTPS from the nearest Cloudflare edge and can reach out through the contact form.",
+    meta: "Chrome · Safari · Firefox",
+    category: "user",
+    icon: User,
+    x: 940,
+    y: 280,
+  },
+];
+
+const INFRA_EDGES: InfraEdge[] = [
+  { from: "repo", to: "workers", label: "push → build (npm run build)", style: "dashed", category: "source" },
+  { from: "workers", to: "dns", label: "Worker route", style: "dotted", category: "compute" },
+  { from: "dns", to: "user", label: "HTTPS", style: "thick", category: "network" },
+  { from: "workers", to: "emailjs", label: "contact form → EmailJS API", style: "thin", category: "integration" },
+];
+
+const INFRA_CATEGORY_STYLE: Record<InfraCategory, { text: string; ring: string; dot: string; stroke: string }> = {
+  source: {
+    text: "text-sky-400",
+    ring: "border-sky-400/40",
+    dot: "bg-sky-400",
+    stroke: "#38bdf8",
+  },
+  compute: {
+    text: "text-emerald-400",
+    ring: "border-emerald-400/40",
+    dot: "bg-emerald-400",
+    stroke: "#34d399",
+  },
+  network: {
+    text: "text-violet-400",
+    ring: "border-violet-400/40",
+    dot: "bg-violet-400",
+    stroke: "#a78bfa",
+  },
+  integration: {
+    text: "text-fuchsia-400",
+    ring: "border-fuchsia-400/40",
+    dot: "bg-fuchsia-400",
+    stroke: "#e879f9",
+  },
+  user: {
+    text: "text-rose-400",
+    ring: "border-rose-400/40",
+    dot: "bg-rose-400",
+    stroke: "#fb7185",
+  },
+};
 
 const JOURNEY = [
   {
@@ -1146,19 +1270,216 @@ function PortfolioSection() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// SECTION - Blog
+// SECTION - Infra Build
 // ═══════════════════════════════════════════════════════════
 
-function Blog() {
+function InfraBuild() {
+  const [hovered, setHovered] = useState<string | null>(null);
+
+  const nodeMap = useMemo(
+    () => Object.fromEntries(INFRA_NODES.map((n) => [n.id, n])) as Record<string, InfraNode>,
+    [],
+  );
+
+  const activeIds = useMemo(() => {
+    if (!hovered) return null;
+    const ids = new Set<string>([hovered]);
+    INFRA_EDGES.forEach((e) => {
+      if (e.from === hovered) ids.add(e.to);
+      if (e.to === hovered) ids.add(e.from);
+    });
+    return ids;
+  }, [hovered]);
+
+  const activeNode = hovered ? nodeMap[hovered] : null;
+
   return (
     <div>
-      <SectionHeading title="Blog." />
-      <div className="surface-2 rounded-2xl border border-border/60 p-10 text-center">
-        <Rss className="mx-auto h-8 w-8 text-accent-purple" />
-        <h3 className="mt-3 text-lg font-semibold text-foreground">Coming Soon</h3>
-        <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-          Writing about Cloud, DevOps, Linux, and Cybersecurity. Check back soon!
-        </p>
+      <SectionHeading title="Infra Build." />
+      <div className="-mt-4 mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        <span className="relative flex h-2 w-2 shrink-0">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+        </span>
+        <span>Live infrastructure topology — Cloudflare Workers · Cloudflare DNS · EmailJS</span>
+      </div>
+
+      <div className="surface-2 rounded-2xl border border-border/60 p-4 md:p-6">
+        <div
+          className="relative w-full select-none"
+          style={{ aspectRatio: "5 / 3" }}
+          onMouseLeave={() => setHovered(null)}
+        >
+          <svg viewBox="0 0 1000 600" className="absolute inset-0 h-full w-full overflow-visible">
+            {INFRA_EDGES.map((edge, i) => {
+              const from = nodeMap[edge.from];
+              const to = nodeMap[edge.to];
+              const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
+              const dash =
+                edge.style === "dashed" ? "7 6" : edge.style === "dotted" ? "2 7" : undefined;
+              const width = edge.style === "thick" ? 2.5 : 1.4;
+              const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
+              return (
+                <path
+                  key={i}
+                  d={`M ${from.x} ${from.y} L ${to.x} ${to.y}`}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth={width}
+                  strokeDasharray={dash}
+                  strokeLinecap="round"
+                  className="transition-opacity duration-200"
+                  style={{ opacity: isActive ? 0.85 : 0.12 }}
+                />
+              );
+            })}
+          </svg>
+
+          {INFRA_EDGES.map((edge, i) => {
+            const from = nodeMap[edge.from];
+            const to = nodeMap[edge.to];
+            const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
+            const midX = (from.x + to.x) / 2;
+            const midY = (from.y + to.y) / 2;
+            return (
+              <span
+                key={i}
+                className="surface-1 absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded border border-border/50 px-1.5 py-0.5 text-[9px] text-muted-foreground transition-opacity duration-200 md:text-[10px]"
+                style={{
+                  left: `${(midX / 1000) * 100}%`,
+                  top: `${(midY / 600) * 100}%`,
+                  opacity: isActive ? 1 : 0.15,
+                }}
+              >
+                {edge.label}
+              </span>
+            );
+          })}
+
+          {INFRA_NODES.map((node) => {
+            const Icon = node.icon;
+            const style = INFRA_CATEGORY_STYLE[node.category];
+            const isActive = !hovered || activeIds?.has(node.id);
+            const isHovered = hovered === node.id;
+            const tooltipAbove = node.y > 350;
+            return (
+              <div
+                key={node.id}
+                className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200"
+                style={{
+                  left: `${(node.x / 1000) * 100}%`,
+                  top: `${(node.y / 600) * 100}%`,
+                  opacity: isActive ? 1 : 0.25,
+                  zIndex: isHovered ? 30 : 10,
+                }}
+                onMouseEnter={() => setHovered(node.id)}
+              >
+                <div
+                  className={cn(
+                    "surface-1 flex w-[132px] cursor-default flex-col gap-0.5 rounded-lg border px-3 py-2 shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all sm:w-[150px]",
+                    style.ring,
+                  )}
+                  style={
+                    isHovered
+                      ? { boxShadow: `0 0 0 3px ${style.stroke}30` }
+                      : undefined
+                  }
+                >
+                  <div className="flex items-center gap-1.5">
+                    <Icon className={cn("h-3.5 w-3.5 shrink-0", style.text)} />
+                    <span className="truncate text-xs font-semibold text-foreground">
+                      {node.title}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">{node.subtitle}</span>
+                  <span className="truncate text-[9px] text-muted-foreground/60">{node.meta}</span>
+                </div>
+
+                {isHovered && (
+                  <div
+                    className={cn(
+                      "surface-3 absolute left-1/2 z-30 w-56 -translate-x-1/2 rounded-lg border border-border/60 p-3 text-xs leading-relaxed text-muted-foreground shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)]",
+                      tooltipAbove ? "bottom-full mb-3" : "top-full mt-3",
+                    )}
+                  >
+                    <div className="mb-1 text-[11px] font-semibold text-foreground">
+                      {node.title}
+                    </div>
+                    {node.detail}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Legends */}
+        <div className="mt-6 grid gap-4 border-t border-border/60 pt-5 sm:grid-cols-3">
+          <div>
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+              Category
+            </p>
+            <div className="space-y-1.5 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-sky-400" /> Source — where the
+                code lives
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" /> Compute — builds
+                &amp; runs the site
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-violet-400" /> Network — domain
+                routing
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-fuchsia-400" /> Integration —
+                embedded service
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-rose-400" /> User — the visitor
+              </div>
+            </div>
+          </div>
+          <div>
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+              Edge Style
+            </p>
+            <div className="space-y-1.5 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <span className="h-[2px] w-5 shrink-0 bg-violet-400" /> Solid thick — live request
+                path
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-[1px] w-5 shrink-0 bg-fuchsia-400" /> Solid thin — secondary
+                request
+              </div>
+              <div className="flex items-center gap-2">
+                <span
+                  className="h-0 w-5 shrink-0 border-t-2"
+                  style={{ borderColor: "#38bdf8", borderStyle: "dashed" }}
+                />
+                Dashed — build-time
+              </div>
+              <div className="flex items-center gap-2">
+                <span
+                  className="h-0 w-5 shrink-0 border-t-2"
+                  style={{ borderColor: "#34d399", borderStyle: "dotted" }}
+                />
+                Dotted — config-only
+              </div>
+            </div>
+          </div>
+          <div>
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+              How To Read
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Hover any node to trace its connections and dim the rest.
+              {activeNode ? " Currently tracing " + activeNode.title + "." : ""}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -1376,7 +1697,7 @@ function SectionRenderer({ active }: { active: SectionKey }) {
     about: <About />,
     resume: <Resume />,
     portfolio: <PortfolioSection />,
-    blog: <Blog />,
+    infra: <InfraBuild />,
     contact: <Contact />,
     journey: <Journey />,
   };
