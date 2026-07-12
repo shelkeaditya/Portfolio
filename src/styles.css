@@ -65,6 +65,7 @@
 }
 
 :root {
+  color-scheme: light;
   --radius: 0.75rem;
   --background: oklch(0.965 0.003 250);
   --foreground: oklch(0.18 0.02 265);
@@ -94,6 +95,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: #0d0e12;   /* #16181F */
   --foreground: #E8E6E1;
   --card: oklch(0.13 0 0);         /* #1E1F22 */
@@ -103,7 +105,7 @@
   --primary: #E8820C;
   --primary-foreground: #ffffff;
   --secondary: oklch(0.20 0 0);    /* #2B2D31 */
-  --secondary-foreground: #E8E6E1
+  --secondary-foreground: #E8E6E1;
   --muted: #18181c;
   --muted-foreground: #8B949E;
   --accent: #18181c;
@@ -185,6 +187,26 @@ textarea:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--foreground);
   box-shadow: 0 0 0px 1000px var(--surface-3) inset;
   transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ── Blinking text cursor (caret) should always match the theme's text
+   color, not the browser's default (which reads as black on a dark
+   background when color-scheme isn't set) ── */
+input,
+textarea {
+  caret-color: var(--foreground);
+}
+
+/* ── Text selection highlight (without this, selecting/editing text falls
+   back to the browser default, which renders as black text — invisible
+   against the dark surface colors) ── */
+::selection {
+  background-color: color-mix(in oklab, var(--accent-blue) 45%, transparent);
+  color: var(--foreground);
+}
+::-moz-selection {
+  background-color: color-mix(in oklab, var(--accent-blue) 45%, transparent);
+  color: var(--foreground);
 }
 
 /* ── Geometric triangle background decoration ── */

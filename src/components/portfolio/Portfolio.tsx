@@ -1999,6 +1999,16 @@ function InfraBuild() {
 // SECTION - Contact
 // ═══════════════════════════════════════════════════════════
 
+// Chrome/Edge re-apply their own black-text + colored-background override on
+// autofill separately for the base state, :hover, :focus, and :active — fixing
+// only the bare `:-webkit-autofill` state means it silently reappears the
+// moment the field is focused (e.g. clicking back in to edit a pasted value).
+const AUTOFILL_FIX =
+  "[&:-webkit-autofill]:[-webkit-text-fill-color:var(--foreground)] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s] [&:-webkit-autofill]:shadow-[0_0_0px_1000px_var(--surface-3)_inset] " +
+  "[&:-webkit-autofill:hover]:[-webkit-text-fill-color:var(--foreground)] [&:-webkit-autofill:hover]:shadow-[0_0_0px_1000px_var(--surface-3)_inset] " +
+  "[&:-webkit-autofill:focus]:[-webkit-text-fill-color:var(--foreground)] [&:-webkit-autofill:focus]:shadow-[0_0_0px_1000px_var(--surface-3)_inset] " +
+  "[&:-webkit-autofill:active]:[-webkit-text-fill-color:var(--foreground)] [&:-webkit-autofill:active]:shadow-[0_0_0px_1000px_var(--surface-3)_inset]";
+
 function Contact() {
   const [sending, setSending] = useState(false);
   const [cooldown, setCooldown] = useState(false);
@@ -2073,7 +2083,7 @@ function Contact() {
               required
               name="name"
               placeholder="Your name"
-              className="surface-3 h-10 w-full [&:-webkit-autofill]:[-webkit-text-fill-color:var(--foreground)] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s] [&:-webkit-autofill]:shadow-[0_0_0px_1000px_var(--surface-3)_inset]"
+              className={cn("surface-3 h-10 w-full", AUTOFILL_FIX)}
             />
           </Field>
           <Field label="Email">
@@ -2082,7 +2092,7 @@ function Contact() {
               type="email"
               name="email"
               placeholder="you@example.com"
-              className="surface-3 h-10 w-full [&:-webkit-autofill]:[-webkit-text-fill-color:var(--foreground)] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s] [&:-webkit-autofill]:shadow-[0_0_0px_1000px_var(--surface-3)_inset]"
+              className={cn("surface-3 h-10 w-full", AUTOFILL_FIX)}
             />
           </Field>
           <Field label="Message">
@@ -2091,7 +2101,7 @@ function Contact() {
               name="message"
               placeholder="What's on your mind?"
               rows={2}
-              className="surface-3 w-full resize-none overflow-hidden [&:-webkit-autofill]:[-webkit-text-fill-color:var(--foreground)] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s] [&:-webkit-autofill]:shadow-[0_0_0px_1000px_var(--surface-3)_inset]"
+              className={cn("surface-3 w-full resize-none overflow-hidden", AUTOFILL_FIX)}
               onInput={(e) => {
                 const el = e.currentTarget;
                 el.style.height = "auto";
