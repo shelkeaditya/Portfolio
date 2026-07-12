@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Instagram,
   Linkedin,
@@ -124,8 +124,8 @@ type InfraGroup = {
 };
 
 const INFRA_GROUPS: InfraGroup[] = [
-  { id: "build", title: "Build", category: "build", x: 55, y: 205, w: 430, h: 150 },
-  { id: "observability", title: "Observability", category: "observability", x: 840, y: 65, w: 225, h: 425 },
+  { id: "build", title: "Build", category: "build", x: 55, y: 65, w: 220, h: 290 },
+  { id: "observability", title: "Observability", category: "observability", x: 672, y: 65, w: 225, h: 425 },
 ];
 
 const INFRA_NODES: InfraNode[] = [
@@ -139,7 +139,7 @@ const INFRA_NODES: InfraNode[] = [
     icon: Code2,
     group: "build",
     x: 165,
-    y: 290,
+    y: 150,
     detail: {
       purpose:
         "Local development environment where the portfolio is written and iterated on before every commit.",
@@ -164,7 +164,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "build",
     icon: Github,
     group: "build",
-    x: 385,
+    x: 165,
     y: 290,
     detail: {
       purpose: "Stores the source code and is the trigger point for every deployment.",
@@ -188,7 +188,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "runtime",
     icon: Cloud,
     size: "lg",
-    x: 690,
+    x: 490,
     y: 290,
     detail: {
       purpose:
@@ -218,7 +218,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: Globe,
     group: "observability",
-    x: 955,
+    x: 785,
     y: 290,
     detail: {
       purpose: "Resolves the custom domain and routes every request to the right Worker over HTTPS.",
@@ -236,7 +236,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: FileText,
     group: "observability",
-    x: 955,
+    x: 785,
     y: 150,
     detail: {
       purpose: "Captures request-level logs emitted by Cloudflare Workers for debugging.",
@@ -254,7 +254,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: Activity,
     group: "observability",
-    x: 955,
+    x: 785,
     y: 430,
     detail: {
       purpose: "Traces execution inside Cloudflare Workers to spot latency and runtime issues.",
@@ -271,7 +271,7 @@ const INFRA_NODES: InfraNode[] = [
     items: ["Home", "About", "Projects", "Media", "Resume", "Contact"],
     category: "application",
     icon: Briefcase,
-    x: 1250,
+    x: 1130,
     y: 290,
     detail: {
       purpose: "The live application visitors actually interact with.",
@@ -293,7 +293,7 @@ const INFRA_NODES: InfraNode[] = [
     items: ["Chrome", "Firefox", "Safari"],
     category: "client",
     icon: Monitor,
-    x: 1470,
+    x: 1370,
     y: 290,
     detail: {
       purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
@@ -310,7 +310,7 @@ const INFRA_NODES: InfraNode[] = [
     items: ["Contact Form", "Gmail Delivery"],
     category: "communication",
     icon: Mail,
-    x: 1250,
+    x: 1130,
     y: 500,
     detail: {
       purpose:
@@ -1453,8 +1453,8 @@ function PortfolioSection() {
 // SECTION - Infra Build
 // ═══════════════════════════════════════════════════════════
 
-const INFRA_CANVAS_W = 1597;
-const INFRA_CANVAS_H = 620;
+const INFRA_CANVAS_W = 1515;
+const INFRA_CANVAS_H = 589;
 
 const INFRA_SUMMARY_CARDS: { title: string; category: InfraCategory; items: string[] }[] = [
   { title: "Edge Stack", category: "runtime", items: ["Cloudflare Workers", "Cloudflare DNS", "Edge Runtime", "HTTPS/TLS", "Custom Domain"] },
@@ -1466,6 +1466,9 @@ const INFRA_SUMMARY_CARDS: { title: string; category: InfraCategory; items: stri
 function InfraBuild() {
   const [hovered, setHovered] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef({ isDown: false, startX: 0, startScrollLeft: 0 });
 
   const nodeMap = useMemo(
     () => Object.fromEntries(INFRA_NODES.map((n) => [n.id, n])) as Record<string, InfraNode>,
@@ -1484,6 +1487,44 @@ function InfraBuild() {
 
   const selectedNode = selected ? nodeMap[selected] : null;
 
+  // Hover a node -> immediately drive the inspector; the last hovered node
+  // stays selected even after the cursor leaves the graph entirely.
+  const handleNodeHover = (id: string) => {
+    setHovered(id);
+    setSelected(id);
+  };
+
+  // Grab-to-pan: only starts when the mousedown originates on empty canvas
+  // background (node wrappers call stopPropagation so they never trigger this).
+  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!scrollRef.current) return;
+    dragState.current.isDown = true;
+    dragState.current.startX = e.pageX;
+    dragState.current.startScrollLeft = scrollRef.current.scrollLeft;
+    setIsDragging(true);
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!dragState.current.isDown || !scrollRef.current) return;
+      const dx = e.pageX - dragState.current.startX;
+      scrollRef.current.scrollLeft = dragState.current.startScrollLeft - dx;
+    };
+    const onUp = () => {
+      if (dragState.current.isDown) {
+        dragState.current.isDown = false;
+        setIsDragging(false);
+      }
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, []);
+
   return (
     <div>
       <style>{`
@@ -1494,6 +1535,10 @@ function InfraBuild() {
         .infra-scroll { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent; }
         @keyframes infra-flow { to { stroke-dashoffset: -24; } }
         .infra-edge-live { stroke-dasharray: 5 5; animation: infra-flow 1s linear infinite; }
+        @keyframes infra-inspector-in { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: none; } }
+        .infra-inspector-anim { animation: infra-inspector-in 250ms ease both; }
+        .infra-scroll { cursor: grab; }
+        .infra-scroll.infra-dragging { cursor: grabbing; }
       `}</style>
 
       <SectionHeading title="Infrastructure." />
@@ -1502,15 +1547,21 @@ function InfraBuild() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
         </span>
-        <span>Development → GitHub → Cloudflare Workers → Observability → Portfolio → User Browser</span>
+        <span>Develop. Debug. Deploy.</span>
       </div>
 
       <div className="flex flex-col gap-4 lg:flex-row">
         {/* ── Graph card (canvas + in-graph legend) ── */}
         <div className="surface-2 min-w-0 flex-1 rounded-2xl border border-border/60 p-3 md:p-4 lg:w-[72%] lg:flex-none">
           <div
-            className="infra-scroll overflow-x-auto overflow-y-hidden rounded-xl"
+            ref={scrollRef}
+            className={cn(
+              "infra-scroll select-none overflow-x-auto overflow-y-hidden rounded-xl",
+              isDragging && "infra-dragging",
+            )}
             style={{ WebkitOverflowScrolling: "touch" }}
+            onMouseDown={handleCanvasMouseDown}
+            onDragStart={(e) => e.preventDefault()}
           >
             <div
               className="relative select-none"
@@ -1632,7 +1683,8 @@ function InfraBuild() {
                       opacity: isActive ? 1 : 0.25,
                       zIndex: isHovered || isSelected ? 30 : 10,
                     }}
-                    onMouseEnter={() => setHovered(node.id)}
+                    onMouseEnter={() => handleNodeHover(node.id)}
+                    onMouseDown={(e) => e.stopPropagation()}
                   >
                     <button
                       type="button"
@@ -1730,7 +1782,7 @@ function InfraBuild() {
                 <p>Left → Right — main pipeline</p>
                 <p>Vertical — external service branch</p>
                 <p>Hover — highlight connected nodes</p>
-                <p>Click — open inspector</p>
+                <p>Hover — open inspector</p>
               </div>
             </div>
           </div>
@@ -1738,11 +1790,12 @@ function InfraBuild() {
 
         {/* ── Inspector ── */}
         <div className="surface-2 flex flex-col rounded-2xl border border-border/60 p-5 lg:w-[28%]">
+          <div key={selectedNode ? selectedNode.id : "empty"} className="infra-inspector-anim flex flex-1 flex-col">
           {!selectedNode ? (
             <div className="flex h-full min-h-[200px] flex-1 flex-col items-center justify-center gap-2 text-center">
               <Workflow className="h-6 w-6 text-muted-foreground/40" />
               <p className="text-xs text-muted-foreground">
-                Click any node to inspect its purpose, responsibilities, technologies and configuration.
+                Hover any node to inspect its purpose, responsibilities, technologies and configuration.
               </p>
             </div>
           ) : (
@@ -1842,6 +1895,7 @@ function InfraBuild() {
               )}
             </div>
           )}
+          </div>
         </div>
       </div>
 

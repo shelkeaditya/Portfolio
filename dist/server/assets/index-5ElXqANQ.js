@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-CoyxKbBy.js";
-import { R as ReactDOM } from "./router-D8j5JqJ1.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-Bpqbubh8.js";
+import { R as ReactDOM } from "./router-ClQy2Cu3.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -6249,7 +6249,7 @@ function InfraBuild() {
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "relative inline-flex h-2 w-2 rounded-full bg-emerald-400" })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Development → GitHub → Cloudflare Workers → Observability → Portfolio → User Browser" })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Develop. Debug. Deploy." })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-4 lg:flex-row", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 min-w-0 flex-1 rounded-2xl border border-border/60 p-3 md:p-4 lg:w-[72%] lg:flex-none", children: [
