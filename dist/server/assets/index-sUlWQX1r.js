@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BEWXX79X.js";
-import { R as ReactDOM } from "./router-Da5vbnFq.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BoTXcKp3.js";
+import { R as ReactDOM } from "./router-B_-2WZdm.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -79,7 +79,7 @@ const createLucideIcon = (iconName, iconNode) => {
   Component.displayName = toPascalCase(iconName);
   return Component;
 };
-const __iconNode$t = [
+const __iconNode$r = [
   [
     "path",
     {
@@ -88,8 +88,8 @@ const __iconNode$t = [
     }
   ]
 ];
-const Activity = createLucideIcon("activity", __iconNode$t);
-const __iconNode$s = [
+const Activity = createLucideIcon("activity", __iconNode$r);
+const __iconNode$q = [
   [
     "path",
     {
@@ -99,19 +99,8 @@ const __iconNode$s = [
   ],
   ["circle", { cx: "12", cy: "8", r: "6", key: "1vp47v" }]
 ];
-const Award = createLucideIcon("award", __iconNode$s);
-const __iconNode$r = [
-  ["path", { d: "M12 7v14", key: "1akyts" }],
-  [
-    "path",
-    {
-      d: "M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z",
-      key: "ruj8y"
-    }
-  ]
-];
-const BookOpen = createLucideIcon("book-open", __iconNode$r);
-const __iconNode$q = [
+const Award = createLucideIcon("award", __iconNode$q);
+const __iconNode$p = [
   ["path", { d: "M12 8V4H8", key: "hb8ula" }],
   ["rect", { width: "16", height: "12", x: "4", y: "8", rx: "2", key: "enze0r" }],
   ["path", { d: "M2 14h2", key: "vft8re" }],
@@ -119,30 +108,30 @@ const __iconNode$q = [
   ["path", { d: "M15 13v2", key: "1xurst" }],
   ["path", { d: "M9 13v2", key: "rq6x2g" }]
 ];
-const Bot = createLucideIcon("bot", __iconNode$q);
-const __iconNode$p = [
+const Bot = createLucideIcon("bot", __iconNode$p);
+const __iconNode$o = [
   ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
   ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
 ];
-const Briefcase = createLucideIcon("briefcase", __iconNode$p);
-const __iconNode$o = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-const ChevronDown = createLucideIcon("chevron-down", __iconNode$o);
-const __iconNode$n = [
+const Briefcase = createLucideIcon("briefcase", __iconNode$o);
+const __iconNode$n = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$n);
+const __iconNode$m = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$n);
-const __iconNode$m = [
+const CircleCheck = createLucideIcon("circle-check", __iconNode$m);
+const __iconNode$l = [
   ["path", { d: "M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z", key: "p7xjir" }]
 ];
-const Cloud = createLucideIcon("cloud", __iconNode$m);
-const __iconNode$l = [
+const Cloud = createLucideIcon("cloud", __iconNode$l);
+const __iconNode$k = [
   ["path", { d: "m18 16 4-4-4-4", key: "1inbqp" }],
   ["path", { d: "m6 8-4 4 4 4", key: "15zrgr" }],
   ["path", { d: "m14.5 4-5 16", key: "e7oirm" }]
 ];
-const CodeXml = createLucideIcon("code-xml", __iconNode$l);
-const __iconNode$k = [
+const CodeXml = createLucideIcon("code-xml", __iconNode$k);
+const __iconNode$j = [
   [
     "path",
     {
@@ -155,20 +144,20 @@ const __iconNode$k = [
   ["path", { d: "M14 19.8v-8.1", key: "159ecu" }],
   ["path", { d: "M18 17.5V9.4", key: "11uown" }]
 ];
-const Container = createLucideIcon("container", __iconNode$k);
-const __iconNode$j = [
+const Container = createLucideIcon("container", __iconNode$j);
+const __iconNode$i = [
   ["path", { d: "M12 15V3", key: "m9g1x1" }],
   ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
   ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
 ];
-const Download = createLucideIcon("download", __iconNode$j);
-const __iconNode$i = [
+const Download = createLucideIcon("download", __iconNode$i);
+const __iconNode$h = [
   ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
   ["path", { d: "M10 14 21 3", key: "gplh6r" }],
   ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
 ];
-const ExternalLink = createLucideIcon("external-link", __iconNode$i);
-const __iconNode$h = [
+const ExternalLink = createLucideIcon("external-link", __iconNode$h);
+const __iconNode$g = [
   [
     "path",
     {
@@ -181,8 +170,8 @@ const __iconNode$h = [
   ["path", { d: "M16 13H8", key: "t4e002" }],
   ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const FileText = createLucideIcon("file-text", __iconNode$h);
-const __iconNode$g = [
+const FileText = createLucideIcon("file-text", __iconNode$g);
+const __iconNode$f = [
   [
     "path",
     {
@@ -191,8 +180,8 @@ const __iconNode$g = [
     }
   ]
 ];
-const Flag = createLucideIcon("flag", __iconNode$g);
-const __iconNode$f = [
+const Flag = createLucideIcon("flag", __iconNode$f);
+const __iconNode$e = [
   [
     "path",
     {
@@ -202,8 +191,8 @@ const __iconNode$f = [
   ],
   ["path", { d: "M9 18c-4.51 2-5-2-7-2", key: "9comsn" }]
 ];
-const Github = createLucideIcon("github", __iconNode$f);
-const __iconNode$e = [
+const Github = createLucideIcon("github", __iconNode$e);
+const __iconNode$d = [
   [
     "path",
     {
@@ -214,14 +203,14 @@ const __iconNode$e = [
   ["path", { d: "M22 10v6", key: "1lu8f3" }],
   ["path", { d: "M6 12.5V16a6 3 0 0 0 12 0v-3.5", key: "1r8lef" }]
 ];
-const GraduationCap = createLucideIcon("graduation-cap", __iconNode$e);
-const __iconNode$d = [
+const GraduationCap = createLucideIcon("graduation-cap", __iconNode$d);
+const __iconNode$c = [
   ["rect", { width: "20", height: "20", x: "2", y: "2", rx: "5", ry: "5", key: "2e1cvw" }],
   ["path", { d: "M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z", key: "9exkf1" }],
   ["line", { x1: "17.5", x2: "17.51", y1: "6.5", y2: "6.5", key: "r4j83e" }]
 ];
-const Instagram = createLucideIcon("instagram", __iconNode$d);
-const __iconNode$c = [
+const Instagram = createLucideIcon("instagram", __iconNode$c);
+const __iconNode$b = [
   [
     "path",
     {
@@ -232,18 +221,18 @@ const __iconNode$c = [
   ["rect", { width: "4", height: "12", x: "2", y: "9", key: "mk3on5" }],
   ["circle", { cx: "4", cy: "4", r: "2", key: "bt5ra8" }]
 ];
-const Linkedin = createLucideIcon("linkedin", __iconNode$c);
-const __iconNode$b = [
+const Linkedin = createLucideIcon("linkedin", __iconNode$b);
+const __iconNode$a = [
   ["rect", { width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2", key: "1w4ew1" }],
   ["path", { d: "M7 11V7a5 5 0 0 1 10 0v4", key: "fwvmzm" }]
 ];
-const Lock = createLucideIcon("lock", __iconNode$b);
-const __iconNode$a = [
+const Lock = createLucideIcon("lock", __iconNode$a);
+const __iconNode$9 = [
   ["path", { d: "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7", key: "132q7q" }],
   ["rect", { x: "2", y: "4", width: "20", height: "16", rx: "2", key: "izxlao" }]
 ];
-const Mail = createLucideIcon("mail", __iconNode$a);
-const __iconNode$9 = [
+const Mail = createLucideIcon("mail", __iconNode$9);
+const __iconNode$8 = [
   [
     "path",
     {
@@ -253,8 +242,8 @@ const __iconNode$9 = [
   ],
   ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }]
 ];
-const MapPin = createLucideIcon("map-pin", __iconNode$9);
-const __iconNode$8 = [
+const MapPin = createLucideIcon("map-pin", __iconNode$8);
+const __iconNode$7 = [
   [
     "path",
     {
@@ -263,13 +252,7 @@ const __iconNode$8 = [
     }
   ]
 ];
-const Moon = createLucideIcon("moon", __iconNode$8);
-const __iconNode$7 = [
-  ["path", { d: "M4 11a9 9 0 0 1 9 9", key: "pv89mb" }],
-  ["path", { d: "M4 4a16 16 0 0 1 16 16", key: "k0647b" }],
-  ["circle", { cx: "5", cy: "19", r: "1", key: "bfqh0e" }]
-];
-const Rss = createLucideIcon("rss", __iconNode$7);
+const Moon = createLucideIcon("moon", __iconNode$7);
 const __iconNode$6 = [
   [
     "path",
@@ -5055,9 +5038,174 @@ const NAV = [
   { key: "about", label: "About", icon: User },
   { key: "resume", label: "Resume", icon: FileText },
   { key: "portfolio", label: "Portfolio", icon: Briefcase },
-  { key: "blog", label: "Blog", icon: BookOpen },
+  { key: "infra", label: "Infra Build", icon: Workflow },
   { key: "contact", label: "Contact", icon: Send }
 ];
+const INFRA_NODES = [
+  {
+    id: "development",
+    title: "Development",
+    subtitle: "Local Environment",
+    meta: "VS Code · React · TS",
+    items: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+    category: "development",
+    icon: CodeXml,
+    x: 110,
+    y: 260,
+    detail: {
+      purpose: "Local development environment where the portfolio is written and iterated on before every commit.",
+      technologies: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+      responsibilities: [
+        "Component development",
+        "Styling & layout",
+        "Type safety",
+        "Local testing before commit"
+      ],
+      configuration: "Vite dev server with hot module reload",
+      futureImprovements: "Add Storybook for isolated component development"
+    }
+  },
+  {
+    id: "github",
+    title: "GitHub",
+    subtitle: "Source Control",
+    meta: "main branch · git push",
+    items: ["Repository", "Version Control", "Main Branch", "Commit History", "Git Push", "Auto Deploy Trigger"],
+    category: "github",
+    icon: Github,
+    x: 350,
+    y: 260,
+    detail: {
+      purpose: "Stores the source code and is the trigger point for every deployment.",
+      technologies: ["Git", "GitHub"],
+      responsibilities: [
+        "Stores source code & commit history",
+        "Tracks changes on the main branch",
+        "Triggers a Cloudflare deploy on every push to main"
+      ],
+      configuration: "main is the only deploy branch — every push ships automatically",
+      futureImprovements: "Add branch preview deployments for pull requests"
+    }
+  },
+  {
+    id: "cloudflare",
+    title: "Cloudflare Platform",
+    subtitle: "Build · Runtime · Network · Monitor",
+    meta: "Workers · CDN · DNS · TLS",
+    items: [
+      "Git Integration",
+      "Automatic Deployment",
+      "npm install",
+      "vite build",
+      "Cloudflare Workers",
+      "TanStack Start SSR Runtime",
+      "CDN",
+      "DNS",
+      "HTTPS / TLS",
+      "Custom Domain",
+      "Workers Logs",
+      "Workers Traces"
+    ],
+    category: "cloudflare",
+    icon: Cloud,
+    size: "lg",
+    x: 620,
+    y: 260,
+    detail: {
+      purpose: "Builds, deploys, hosts and serves the portfolio globally — one platform covering runtime, networking and monitoring end to end.",
+      technologies: ["Cloudflare Workers", "TanStack Start SSR", "Cloudflare CDN", "Cloudflare DNS"],
+      responsibilities: [
+        "Runs npm install + vite build on every push",
+        "Serves SSR responses from the nearest edge",
+        "Manages custom domain, HTTPS/TLS and DNS",
+        "Captures Workers logs & traces"
+      ],
+      buildProcess: "Git-linked build → npm install → vite build → deployed to Workers",
+      runtimeDetails: "TanStack Start SSR runs on Cloudflare Workers at the edge, close to every visitor",
+      futureImprovements: "Add a staging environment with preview URLs before promoting to production"
+    }
+  },
+  {
+    id: "portfolio",
+    title: "Portfolio",
+    subtitle: "The Application",
+    meta: "Home · Projects · Contact",
+    items: ["Home", "About", "Projects", "Media", "Resume", "Contact Form"],
+    category: "portfolio",
+    icon: Briefcase,
+    x: 880,
+    y: 260,
+    detail: {
+      purpose: "The live application visitors actually interact with.",
+      technologies: ["React", "TanStack Start", "Tailwind CSS"],
+      responsibilities: [
+        "Renders Home, About, Projects, Media & Resume",
+        "Handles the Contact Form submission"
+      ],
+      futureImprovements: "Add a blog / MDX-powered writing section"
+    }
+  },
+  {
+    id: "communication",
+    title: "Communication",
+    subtitle: "External Service",
+    meta: "EmailJS → Gmail",
+    items: ["EmailJS"],
+    category: "communication",
+    icon: Mail,
+    x: 880,
+    y: 470,
+    detail: {
+      purpose: "Delivers Contact Form submissions straight to my inbox — no backend server involved, and isolated from GitHub and Cloudflare entirely.",
+      technologies: ["EmailJS", "Gmail"],
+      responsibilities: [
+        "Receives form data client-side",
+        "Relays the message via the EmailJS API",
+        "Delivers the email to Gmail"
+      ],
+      configuration: "Client-side only call from the Portfolio — no backend, no queue",
+      futureImprovements: "Add a serverless fallback queue for guaranteed delivery"
+    }
+  }
+];
+const INFRA_EDGES = [
+  { from: "development", to: "github", label: "git commit + push", style: "thin", category: "development" },
+  { from: "github", to: "cloudflare", label: "push to main → auto deploy", style: "dashed", category: "github" },
+  { from: "cloudflare", to: "portfolio", label: "build → deploy → serve", style: "thick", category: "cloudflare" },
+  { from: "communication", to: "portfolio", label: "Contact Form ⇄ EmailJS → Gmail", style: "thin", category: "communication" }
+];
+const INFRA_CATEGORY_STYLE = {
+  development: {
+    text: "text-orange-400",
+    ring: "border-orange-400/40",
+    dot: "bg-orange-400",
+    stroke: "#fb923c"
+  },
+  github: {
+    text: "text-amber-400",
+    ring: "border-amber-400/40",
+    dot: "bg-amber-400",
+    stroke: "#fbbf24"
+  },
+  cloudflare: {
+    text: "text-emerald-400",
+    ring: "border-emerald-400/40",
+    dot: "bg-emerald-400",
+    stroke: "#34d399"
+  },
+  portfolio: {
+    text: "text-blue-400",
+    ring: "border-blue-400/40",
+    dot: "bg-blue-400",
+    stroke: "#60a5fa"
+  },
+  communication: {
+    text: "text-violet-400",
+    ring: "border-violet-400/40",
+    dot: "bg-violet-400",
+    stroke: "#a78bfa"
+  }
+};
 const JOURNEY = [
   {
     year: "Aug 2022",
@@ -5965,14 +6113,253 @@ function PortfolioSection() {
     )) })
   ] });
 }
-function Blog() {
+const INFRA_CANVAS_W = 1300;
+const INFRA_CANVAS_H = 560;
+function InfraBuild() {
+  const [hovered, setHovered] = reactExports.useState(null);
+  const [selected, setSelected] = reactExports.useState(null);
+  const nodeMap = reactExports.useMemo(
+    () => Object.fromEntries(INFRA_NODES.map((n) => [n.id, n])),
+    []
+  );
+  const activeIds = reactExports.useMemo(() => {
+    if (!hovered) return null;
+    const ids = /* @__PURE__ */ new Set([hovered]);
+    INFRA_EDGES.forEach((e) => {
+      if (e.from === hovered) ids.add(e.to);
+      if (e.to === hovered) ids.add(e.from);
+    });
+    return ids;
+  }, [hovered]);
+  const selectedNode = selected ? nodeMap[selected] : null;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Blog." }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 rounded-2xl border border-border/60 p-10 text-center", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(Rss, { className: "mx-auto h-8 w-8 text-accent-purple" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "mt-3 text-lg font-semibold text-foreground", children: "Coming Soon" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto mt-2 max-w-md text-sm text-muted-foreground", children: "Writing about Cloud, DevOps, Linux, and Cybersecurity. Check back soon!" })
-    ] })
+    /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Infra Build." }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "-mt-4 mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "relative flex h-2 w-2 shrink-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "relative inline-flex h-2 w-2 rounded-full bg-emerald-400" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Live deployment pipeline — Development → GitHub → Cloudflare Platform → Portfolio" })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-4 lg:flex-row", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "surface-2 min-w-0 flex-1 rounded-2xl border border-border/60 p-3 md:p-4 lg:w-[72%] lg:flex-none", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "scrollbar-thin overflow-x-auto overflow-y-hidden rounded-xl",
+            style: { WebkitOverflowScrolling: "touch" },
+            children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "relative select-none",
+                style: {
+                  width: INFRA_CANVAS_W,
+                  height: INFRA_CANVAS_H,
+                  backgroundImage: "linear-gradient(to right, color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 1px)",
+                  backgroundSize: "28px 28px"
+                },
+                onMouseLeave: () => setHovered(null),
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "svg",
+                    {
+                      viewBox: `0 0 ${INFRA_CANVAS_W} ${INFRA_CANVAS_H}`,
+                      className: "absolute inset-0 h-full w-full overflow-visible",
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("defs", { children: Object.keys(INFRA_CATEGORY_STYLE).map((cat) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "marker",
+                          {
+                            id: `infra-arrow-${cat}`,
+                            viewBox: "0 0 10 10",
+                            refX: "8",
+                            refY: "5",
+                            markerWidth: "7",
+                            markerHeight: "7",
+                            orient: "auto-start-reverse",
+                            children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M 0 0 L 10 5 L 0 10 z", fill: INFRA_CATEGORY_STYLE[cat].stroke })
+                          },
+                          cat
+                        )) }),
+                        INFRA_EDGES.map((edge, i) => {
+                          const from = nodeMap[edge.from];
+                          const to = nodeMap[edge.to];
+                          const isActive = !hovered || activeIds?.has(edge.from) && activeIds?.has(edge.to);
+                          const dash = edge.style === "dashed" ? "7 6" : edge.style === "dotted" ? "2 7" : void 0;
+                          const width = edge.style === "thick" ? 2.5 : 1.4;
+                          const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
+                          return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            "path",
+                            {
+                              d: `M ${from.x} ${from.y} L ${to.x} ${to.y}`,
+                              fill: "none",
+                              stroke: color,
+                              strokeWidth: width,
+                              strokeDasharray: dash,
+                              strokeLinecap: "round",
+                              markerEnd: `url(#infra-arrow-${edge.category})`,
+                              className: "transition-opacity duration-200",
+                              style: { opacity: isActive ? 0.85 : 0.12 }
+                            },
+                            i
+                          );
+                        })
+                      ]
+                    }
+                  ),
+                  INFRA_EDGES.map((edge, i) => {
+                    const from = nodeMap[edge.from];
+                    const to = nodeMap[edge.to];
+                    const isActive = !hovered || activeIds?.has(edge.from) && activeIds?.has(edge.to);
+                    const midX = (from.x + to.x) / 2;
+                    const midY = (from.y + to.y) / 2;
+                    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "span",
+                      {
+                        className: "surface-1 absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded border border-border/50 px-1.5 py-0.5 text-[9px] text-muted-foreground transition-opacity duration-200 md:text-[10px]",
+                        style: { left: midX, top: midY, opacity: isActive ? 1 : 0.15 },
+                        children: edge.label
+                      },
+                      i
+                    );
+                  }),
+                  INFRA_NODES.map((node) => {
+                    const Icon2 = node.icon;
+                    const style = INFRA_CATEGORY_STYLE[node.category];
+                    const isActive = !hovered || activeIds?.has(node.id);
+                    const isHovered = hovered === node.id;
+                    const isSelected = selected === node.id;
+                    const isLg = node.size === "lg";
+                    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "div",
+                      {
+                        className: "absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200",
+                        style: {
+                          left: node.x,
+                          top: node.y,
+                          opacity: isActive ? 1 : 0.25,
+                          zIndex: isHovered || isSelected ? 30 : 10
+                        },
+                        onMouseEnter: () => setHovered(node.id),
+                        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                          "button",
+                          {
+                            type: "button",
+                            onClick: () => setSelected(node.id),
+                            className: cn$1(
+                              "surface-1 flex flex-col gap-0.5 rounded-lg border px-3 py-2 text-left shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5",
+                              isLg ? "w-[190px] sm:w-[210px]" : "w-[132px] sm:w-[150px]",
+                              style.ring
+                            ),
+                            style: {
+                              boxShadow: isSelected ? `0 0 0 2px ${style.stroke}, 0 0 22px 2px ${style.stroke}55` : isHovered ? `0 0 0 3px ${style.stroke}30` : `0 0 12px -4px ${style.stroke}40`
+                            },
+                            children: [
+                              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
+                                /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: cn$1("h-3.5 w-3.5 shrink-0", style.text) }),
+                                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate text-xs font-semibold text-foreground", children: node.title })
+                              ] }),
+                              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[10px] text-muted-foreground", children: node.subtitle }),
+                              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate text-[9px] text-muted-foreground/60", children: node.meta })
+                            ]
+                          }
+                        )
+                      },
+                      node.id
+                    );
+                  })
+                ]
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 px-1 text-[10px] text-muted-foreground/50 lg:hidden", children: "Scroll horizontally to explore the full pipeline · tap a node for details" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "surface-2 flex flex-col rounded-2xl border border-border/60 p-5 lg:w-[28%]", children: !selectedNode ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-full min-h-[200px] flex-1 flex-col items-center justify-center gap-2 text-center", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Workflow, { className: "h-6 w-6 text-muted-foreground/40" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Click any node in the graph to inspect its purpose, responsibilities, technologies and configuration." })
+      ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            selectedNode.icon,
+            {
+              className: cn$1("h-4 w-4 shrink-0", INFRA_CATEGORY_STYLE[selectedNode.category].text)
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm font-semibold text-foreground", children: selectedNode.title }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-[10px] uppercase tracking-wider text-muted-foreground/60", children: selectedNode.subtitle })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs leading-relaxed text-muted-foreground", children: selectedNode.detail.purpose }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Technologies" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-1.5", children: selectedNode.detail.technologies.map((t) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: cn$1(
+                "rounded-full border px-2 py-0.5 text-[10px]",
+                INFRA_CATEGORY_STYLE[selectedNode.category].ring,
+                INFRA_CATEGORY_STYLE[selectedNode.category].text
+              ),
+              children: t
+            },
+            t
+          )) })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Responsibilities" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-1 text-xs text-muted-foreground", children: selectedNode.detail.responsibilities.map((r2) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-1.5", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-muted-foreground/40", children: "•" }),
+            " ",
+            r2
+          ] }, r2)) })
+        ] }),
+        (selectedNode.detail.buildProcess || selectedNode.detail.runtimeDetails) && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Workflow" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1 text-xs text-muted-foreground", children: [
+            selectedNode.detail.buildProcess && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: selectedNode.detail.buildProcess }),
+            selectedNode.detail.runtimeDetails && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: selectedNode.detail.runtimeDetails })
+          ] })
+        ] }),
+        selectedNode.detail.configuration && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Configuration" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: selectedNode.detail.configuration })
+        ] }),
+        selectedNode.detail.futureImprovements && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "border-t border-border/60 pt-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Future Improvements" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: selectedNode.detail.futureImprovements })
+        ] })
+      ] }) })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5", children: INFRA_NODES.map((node) => {
+      const Icon2 = node.icon;
+      const style = INFRA_CATEGORY_STYLE[node.category];
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          onClick: () => setSelected(node.id),
+          onMouseEnter: () => setHovered(node.id),
+          onMouseLeave: () => setHovered(null),
+          className: cn$1(
+            "surface-2 rounded-xl border p-4 text-left transition-all hover:-translate-y-0.5",
+            selected === node.id ? style.ring : "border-border/60"
+          ),
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-2 flex items-center gap-1.5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: cn$1("h-3.5 w-3.5 shrink-0", style.text) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold text-foreground", children: node.title })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-1 text-[11px] text-muted-foreground", children: node.items.map((it) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-1.5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: cn$1("h-1 w-1 shrink-0 translate-y-1 rounded-full", style.dot) }),
+              it
+            ] }, it)) })
+          ]
+        },
+        node.id
+      );
+    }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-4 text-xs text-muted-foreground", children: "Hover a node to trace its connections · click a node or an info card for full details." })
   ] });
 }
 function Contact() {
@@ -6145,7 +6532,7 @@ function SectionRenderer({ active }) {
     about: /* @__PURE__ */ jsxRuntimeExports.jsx(About, {}),
     resume: /* @__PURE__ */ jsxRuntimeExports.jsx(Resume, {}),
     portfolio: /* @__PURE__ */ jsxRuntimeExports.jsx(PortfolioSection, {}),
-    blog: /* @__PURE__ */ jsxRuntimeExports.jsx(Blog, {}),
+    infra: /* @__PURE__ */ jsxRuntimeExports.jsx(InfraBuild, {}),
     contact: /* @__PURE__ */ jsxRuntimeExports.jsx(Contact, {}),
     journey: /* @__PURE__ */ jsxRuntimeExports.jsx(Journey, {})
   };

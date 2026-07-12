@@ -34,6 +34,9 @@ import {
   Activity,
   Link,
   ChevronDown,
+  Zap,
+  Globe,
+  Monitor,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -63,7 +66,7 @@ const NAV: {
   { key: "about", label: "About", icon: User },
   { key: "resume", label: "Resume", icon: FileText },
   { key: "portfolio", label: "Portfolio", icon: Briefcase },
-  { key: "infra", label: "Infra Build", icon: Workflow },
+  { key: "infra", label: "Build", icon: Workflow },
   { key: "contact", label: "Contact", icon: Send },
 ];
 
@@ -71,130 +74,307 @@ const NAV: {
 // CONSTANTS - Journey timeline
 // ═══════════════════════════════════════════════════════════
 
-type InfraCategory = "source" | "compute" | "network" | "integration" | "user";
+type InfraCategory = "build" | "runtime" | "observability" | "application" | "communication" | "client";
+
+type InfraDetail = {
+  purpose: string;
+  technologies: string[];
+  responsibilities: string[];
+  relationships: string[];
+  configuration?: string;
+  buildProcess?: string;
+  runtimeDetails?: string;
+  futureImprovements?: string;
+};
 
 type InfraNode = {
   id: string;
   title: string;
   subtitle: string;
-  detail: string;
-  meta: string;
+  meta: string; // short preview shown on the card itself
+  items: string[]; // contents shown on the node card
   category: InfraCategory;
   icon: React.ComponentType<{ className?: string }>;
-  x: number; // 0-1000
-  y: number; // 0-600
+  size?: "md" | "lg";
+  group?: "build" | "observability"; // which dashed group outline this node sits inside, if any
+  x: number; // px on the infra canvas
+  y: number; // px on the infra canvas
+  detail: InfraDetail;
 };
 
-type InfraEdgeStyle = "thick" | "thin" | "dashed" | "dotted";
+type InfraEdgeStyle = "solid" | "dashed" | "dotted" | "vertical";
 
 type InfraEdge = {
   from: string;
   to: string;
   label: string;
   style: InfraEdgeStyle;
-  category: InfraCategory; // colors the edge to match its origin node
+  category: InfraCategory; // colors the edge
+  bidirectional?: boolean;
 };
+
+type InfraGroup = {
+  id: "build" | "observability";
+  title: string;
+  category: InfraCategory;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+const INFRA_GROUPS: InfraGroup[] = [
+  { id: "build", title: "Build", category: "build", x: 55, y: 205, w: 430, h: 150 },
+  { id: "observability", title: "Observability", category: "observability", x: 700, y: 65, w: 220, h: 425 },
+];
 
 const INFRA_NODES: InfraNode[] = [
   {
-    id: "repo",
-    title: "GitHub Repo",
-    subtitle: "Source",
-    detail:
-      "Holds the React + TypeScript source. A push to main is the trigger for every deploy — Cloudflare picks it up from here directly.",
-    meta: "shelkeaditya/portfolio",
-    category: "source",
+    id: "development",
+    title: "Development",
+    subtitle: "Local Environment",
+    meta: "VS Code · React · TS",
+    items: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+    category: "build",
+    icon: Code2,
+    group: "build",
+    x: 165,
+    y: 290,
+    detail: {
+      purpose:
+        "Local development environment where the portfolio is written and iterated on before every commit.",
+      technologies: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+      responsibilities: [
+        "Component development",
+        "Styling & layout",
+        "Type safety",
+        "Local testing before commit",
+      ],
+      relationships: ["Pushes commits to GitHub"],
+      configuration: "Vite dev server with hot module reload",
+      futureImprovements: "Add Storybook for isolated component development",
+    },
+  },
+  {
+    id: "github",
+    title: "GitHub",
+    subtitle: "Source Control",
+    meta: "main branch · git push",
+    items: ["Repository", "Version Control", "Main Branch"],
+    category: "build",
     icon: Github,
-    x: 100,
-    y: 280,
+    group: "build",
+    x: 385,
+    y: 290,
+    detail: {
+      purpose: "Stores the source code and is the trigger point for every deployment.",
+      technologies: ["Git", "GitHub"],
+      responsibilities: [
+        "Stores source code & commit history",
+        "Tracks changes on the main branch",
+        "Fires a webhook to Cloudflare on every push to main",
+      ],
+      relationships: ["Receives pushes from Development", "Triggers Cloudflare Workers via webhook"],
+      configuration: "main is the only deploy branch — every push ships automatically",
+      futureImprovements: "Add branch preview deployments for pull requests",
+    },
   },
   {
     id: "workers",
     title: "Cloudflare Workers",
-    subtitle: "Build & Host",
-    detail:
-      "Git-linked to the repo. Every push triggers npm run build inside Cloudflare, and the Worker serves the built output straight from the edge — no GitHub Pages step involved.",
-    meta: "Git-linked · npm run build",
-    category: "compute",
-    icon: Cloud,
-    x: 430,
-    y: 280,
+    subtitle: "Deployment Runtime",
+    meta: "SSR · Edge Runtime",
+    items: ["SSR Runtime", "Deployment", "Edge Runtime"],
+    category: "runtime",
+    icon: Zap,
+    size: "lg",
+    x: 595,
+    y: 290,
+    detail: {
+      purpose:
+        "The center of the deployment — receives GitHub's webhook, builds the app, and runs it on Cloudflare's edge network.",
+      technologies: ["Cloudflare Workers", "TanStack Start SSR"],
+      responsibilities: [
+        "Builds the project on every webhook trigger",
+        "Runs the TanStack Start SSR runtime at the edge",
+        "Serves every request close to the visitor",
+      ],
+      relationships: [
+        "Triggered by GitHub's webhook",
+        "Resolved through Cloudflare DNS",
+        "Reports to Workers Logs & Traces",
+        "Serves the Portfolio application",
+      ],
+      buildProcess: "Webhook → npm install → vite build → deployed to the edge",
+      runtimeDetails: "Sits outside every group — it's the single runtime the whole pipeline depends on",
+    },
   },
   {
     id: "dns",
     title: "Cloudflare DNS",
     subtitle: "Domain Routing",
-    detail:
-      "Routes shelkeaditya.dpdns.org (professional links) and shelkeaditya.qzz.io (social links) to the Worker, with shelkeaditya.dev queued as the long-term destination via Cloudflare Registrar.",
-    meta: "dpdns.org · qzz.io · .dev (planned)",
-    category: "network",
-    icon: Link,
-    x: 760,
+    meta: "CNAME · HTTPS/TLS",
+    items: ["Custom Domain", "HTTPS / TLS"],
+    category: "observability",
+    icon: Globe,
+    group: "observability",
+    x: 810,
+    y: 290,
+    detail: {
+      purpose: "Resolves the custom domain and routes every request to the right Worker over HTTPS.",
+      technologies: ["Cloudflare DNS", "HTTPS / TLS"],
+      responsibilities: ["Custom domain resolution", "TLS termination", "Routes traffic to Cloudflare Workers"],
+      relationships: ["Two-way link with Cloudflare Workers", "Hands resolved requests through to the Portfolio"],
+    },
+  },
+  {
+    id: "logs",
+    title: "Workers Logs",
+    subtitle: "Observability",
+    meta: "Request logging",
+    items: ["Request Logs"],
+    category: "observability",
+    icon: FileText,
+    group: "observability",
+    x: 810,
     y: 150,
+    detail: {
+      purpose: "Captures request-level logs emitted by Cloudflare Workers for debugging.",
+      technologies: ["Cloudflare Workers Logs"],
+      responsibilities: ["Streams request logs", "Surfaces runtime errors"],
+      relationships: ["Fed directly by Cloudflare Workers"],
+    },
   },
   {
-    id: "emailjs",
-    title: "EmailJS",
-    subtitle: "Contact Delivery",
-    detail:
-      "The contact form on the deployed portfolio calls the EmailJS API directly from the browser — no backend server involved — relaying messages straight to my inbox.",
-    meta: "Client-side API · No backend",
-    category: "integration",
-    icon: Send,
-    x: 760,
-    y: 420,
+    id: "traces",
+    title: "Workers Traces",
+    subtitle: "Observability",
+    meta: "Runtime tracing",
+    items: ["Runtime Traces"],
+    category: "observability",
+    icon: Activity,
+    group: "observability",
+    x: 810,
+    y: 430,
+    detail: {
+      purpose: "Traces execution inside Cloudflare Workers to spot latency and runtime issues.",
+      technologies: ["Cloudflare Workers Traces"],
+      responsibilities: ["Captures execution traces", "Helps diagnose slow requests"],
+      relationships: ["Fed directly by Cloudflare Workers"],
+    },
   },
   {
-    id: "user",
+    id: "portfolio",
+    title: "Portfolio",
+    subtitle: "The Application",
+    meta: "Home · Projects · Contact",
+    items: ["Home", "About", "Projects", "Media", "Resume", "Contact"],
+    category: "application",
+    icon: Briefcase,
+    x: 1080,
+    y: 290,
+    detail: {
+      purpose: "The live application visitors actually interact with.",
+      technologies: ["React", "TanStack Start", "Tailwind CSS"],
+      responsibilities: ["Renders Home, About, Projects, Media & Resume", "Handles the Contact Form submission"],
+      relationships: [
+        "Served by Cloudflare DNS / Workers",
+        "Sends Contact Form submissions to Communication",
+        "Loaded by the User Browser",
+      ],
+      futureImprovements: "Add a blog / MDX-powered writing section",
+    },
+  },
+  {
+    id: "userBrowser",
     title: "User Browser",
-    subtitle: "Visitor",
-    detail:
-      "Anyone visiting the site — loads the SPA over HTTPS from the nearest Cloudflare edge and can reach out through the contact form.",
-    meta: "Chrome · Safari · Firefox",
-    category: "user",
-    icon: User,
-    x: 940,
-    y: 280,
+    subtitle: "Client",
+    meta: "Chrome · Firefox · Safari",
+    items: ["Chrome", "Firefox", "Safari"],
+    category: "client",
+    icon: Monitor,
+    x: 1330,
+    y: 290,
+    detail: {
+      purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
+      technologies: ["Chrome", "Firefox", "Safari"],
+      responsibilities: ["Renders the Portfolio over HTTPS", "Submits the Contact Form when used"],
+      relationships: ["Receives the final response from the Portfolio"],
+    },
+  },
+  {
+    id: "communication",
+    title: "EmailJS",
+    subtitle: "Communication Service",
+    meta: "Contact Form → Gmail",
+    items: ["Contact Form", "Gmail Delivery"],
+    category: "communication",
+    icon: Mail,
+    x: 1080,
+    y: 500,
+    detail: {
+      purpose:
+        "Delivers Contact Form submissions straight to my inbox — a branch off the Portfolio only, with no ties to GitHub or Cloudflare at all.",
+      technologies: ["EmailJS", "Gmail"],
+      responsibilities: [
+        "Receives form data client-side",
+        "Relays the message via the EmailJS API",
+        "Delivers the email to Gmail",
+      ],
+      relationships: ["Only the Portfolio connects to it"],
+      configuration: "Client-side only call from the Portfolio — no backend, no queue",
+      futureImprovements: "Add a serverless fallback queue for guaranteed delivery",
+    },
   },
 ];
 
 const INFRA_EDGES: InfraEdge[] = [
-  { from: "repo", to: "workers", label: "push → build (npm run build)", style: "dashed", category: "source" },
-  { from: "workers", to: "dns", label: "Worker route", style: "dotted", category: "compute" },
-  { from: "dns", to: "user", label: "HTTPS", style: "thick", category: "network" },
-  { from: "workers", to: "emailjs", label: "contact form → EmailJS API", style: "thin", category: "integration" },
+  { from: "development", to: "github", label: "git push", style: "dashed", category: "build" },
+  { from: "github", to: "workers", label: "webhook", style: "dashed", category: "build" },
+  { from: "workers", to: "dns", label: "", style: "solid", category: "runtime", bidirectional: true },
+  { from: "workers", to: "logs", label: "", style: "dotted", category: "runtime" },
+  { from: "workers", to: "traces", label: "", style: "dotted", category: "runtime" },
+  { from: "dns", to: "portfolio", label: "serves request", style: "solid", category: "observability" },
+  { from: "portfolio", to: "userBrowser", label: "https", style: "solid", category: "application" },
+  { from: "portfolio", to: "communication", label: "contact form", style: "vertical", category: "communication" },
 ];
 
 const INFRA_CATEGORY_STYLE: Record<InfraCategory, { text: string; ring: string; dot: string; stroke: string }> = {
-  source: {
-    text: "text-sky-400",
-    ring: "border-sky-400/40",
-    dot: "bg-sky-400",
-    stroke: "#38bdf8",
+  build: {
+    text: "text-orange-400",
+    ring: "border-orange-400/40",
+    dot: "bg-orange-400",
+    stroke: "#fb923c",
   },
-  compute: {
+  runtime: {
     text: "text-emerald-400",
     ring: "border-emerald-400/40",
     dot: "bg-emerald-400",
     stroke: "#34d399",
   },
-  network: {
+  observability: {
     text: "text-violet-400",
     ring: "border-violet-400/40",
     dot: "bg-violet-400",
     stroke: "#a78bfa",
   },
-  integration: {
+  application: {
+    text: "text-blue-400",
+    ring: "border-blue-400/40",
+    dot: "bg-blue-400",
+    stroke: "#60a5fa",
+  },
+  communication: {
     text: "text-fuchsia-400",
     ring: "border-fuchsia-400/40",
     dot: "bg-fuchsia-400",
     stroke: "#e879f9",
   },
-  user: {
-    text: "text-rose-400",
-    ring: "border-rose-400/40",
-    dot: "bg-rose-400",
-    stroke: "#fb7185",
+  client: {
+    text: "text-slate-300",
+    ring: "border-slate-300/40",
+    dot: "bg-slate-300",
+    stroke: "#cbd5e1",
   },
 };
 
@@ -1273,8 +1453,19 @@ function PortfolioSection() {
 // SECTION - Infra Build
 // ═══════════════════════════════════════════════════════════
 
+const INFRA_CANVAS_W = 1700;
+const INFRA_CANVAS_H = 620;
+
+const INFRA_SUMMARY_CARDS: { title: string; category: InfraCategory; items: string[] }[] = [
+  { title: "Edge Stack", category: "runtime", items: ["Cloudflare Workers", "Cloudflare DNS", "Edge Runtime", "HTTPS/TLS", "Custom Domain"] },
+  { title: "Monitoring", category: "observability", items: ["Workers Logs", "Workers Traces", "Runtime Monitoring"] },
+  { title: "Build Pipeline", category: "build", items: ["Development", "GitHub", "Git Push", "Webhook", "Automatic Deployment"] },
+  { title: "Communication", category: "communication", items: ["EmailJS", "Gmail Delivery"] },
+];
+
 function InfraBuild() {
   const [hovered, setHovered] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
 
   const nodeMap = useMemo(
     () => Object.fromEntries(INFRA_NODES.map((n) => [n.id, n])) as Record<string, InfraNode>,
@@ -1291,195 +1482,390 @@ function InfraBuild() {
     return ids;
   }, [hovered]);
 
-  const activeNode = hovered ? nodeMap[hovered] : null;
+  const selectedNode = selected ? nodeMap[selected] : null;
 
   return (
     <div>
-      <SectionHeading title="Infra Build." />
+      <style>{`
+        .infra-scroll::-webkit-scrollbar { height: 10px; }
+        .infra-scroll::-webkit-scrollbar-track { background: color-mix(in oklab, var(--foreground) 6%, transparent); border-radius: 999px; }
+        .infra-scroll::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--foreground) 22%, transparent); border-radius: 999px; }
+        .infra-scroll::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--foreground) 34%, transparent); }
+        .infra-scroll { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent; }
+        @keyframes infra-flow { to { stroke-dashoffset: -24; } }
+        .infra-edge-live { stroke-dasharray: 5 5; animation: infra-flow 1s linear infinite; }
+      `}</style>
+
+      <SectionHeading title="Infrastructure." />
       <div className="-mt-4 mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <span className="relative flex h-2 w-2 shrink-0">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
         </span>
-        <span>Live infrastructure topology — Cloudflare Workers · Cloudflare DNS · EmailJS</span>
+        <span>Development → GitHub → Cloudflare Workers → Observability → Portfolio → User Browser</span>
       </div>
 
-      <div className="surface-2 rounded-2xl border border-border/60 p-4 md:p-6">
-        <div
-          className="relative w-full select-none"
-          style={{ aspectRatio: "5 / 3" }}
-          onMouseLeave={() => setHovered(null)}
-        >
-          <svg viewBox="0 0 1000 600" className="absolute inset-0 h-full w-full overflow-visible">
-            {INFRA_EDGES.map((edge, i) => {
-              const from = nodeMap[edge.from];
-              const to = nodeMap[edge.to];
-              const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
-              const dash =
-                edge.style === "dashed" ? "7 6" : edge.style === "dotted" ? "2 7" : undefined;
-              const width = edge.style === "thick" ? 2.5 : 1.4;
-              const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
-              return (
-                <path
-                  key={i}
-                  d={`M ${from.x} ${from.y} L ${to.x} ${to.y}`}
-                  fill="none"
-                  stroke={color}
-                  strokeWidth={width}
-                  strokeDasharray={dash}
-                  strokeLinecap="round"
-                  className="transition-opacity duration-200"
-                  style={{ opacity: isActive ? 0.85 : 0.12 }}
-                />
-              );
-            })}
-          </svg>
-
-          {INFRA_EDGES.map((edge, i) => {
-            const from = nodeMap[edge.from];
-            const to = nodeMap[edge.to];
-            const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
-            const midX = (from.x + to.x) / 2;
-            const midY = (from.y + to.y) / 2;
-            return (
-              <span
-                key={i}
-                className="surface-1 absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded border border-border/50 px-1.5 py-0.5 text-[9px] text-muted-foreground transition-opacity duration-200 md:text-[10px]"
-                style={{
-                  left: `${(midX / 1000) * 100}%`,
-                  top: `${(midY / 600) * 100}%`,
-                  opacity: isActive ? 1 : 0.15,
-                }}
-              >
-                {edge.label}
-              </span>
-            );
-          })}
-
-          {INFRA_NODES.map((node) => {
-            const Icon = node.icon;
-            const style = INFRA_CATEGORY_STYLE[node.category];
-            const isActive = !hovered || activeIds?.has(node.id);
-            const isHovered = hovered === node.id;
-            const tooltipAbove = node.y > 350;
-            return (
-              <div
-                key={node.id}
-                className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200"
-                style={{
-                  left: `${(node.x / 1000) * 100}%`,
-                  top: `${(node.y / 600) * 100}%`,
-                  opacity: isActive ? 1 : 0.25,
-                  zIndex: isHovered ? 30 : 10,
-                }}
-                onMouseEnter={() => setHovered(node.id)}
-              >
-                <div
-                  className={cn(
-                    "surface-1 flex w-[132px] cursor-default flex-col gap-0.5 rounded-lg border px-3 py-2 shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all sm:w-[150px]",
-                    style.ring,
-                  )}
-                  style={
-                    isHovered
-                      ? { boxShadow: `0 0 0 3px ${style.stroke}30` }
-                      : undefined
-                  }
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Icon className={cn("h-3.5 w-3.5 shrink-0", style.text)} />
-                    <span className="truncate text-xs font-semibold text-foreground">
-                      {node.title}
+      <div className="flex flex-col gap-4 lg:flex-row">
+        {/* ── Graph card (canvas + in-graph legend) ── */}
+        <div className="surface-2 min-w-0 flex-1 rounded-2xl border border-border/60 p-3 md:p-4 lg:w-[72%] lg:flex-none">
+          <div
+            className="infra-scroll overflow-x-auto overflow-y-hidden rounded-xl"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
+            <div
+              className="relative select-none"
+              style={{
+                width: INFRA_CANVAS_W,
+                height: INFRA_CANVAS_H,
+                backgroundImage:
+                  "linear-gradient(to right, color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 1px)",
+                backgroundSize: "28px 28px",
+              }}
+              onMouseLeave={() => setHovered(null)}
+            >
+              {/* Group outlines (Build / Observability) */}
+              {INFRA_GROUPS.map((g) => {
+                const style = INFRA_CATEGORY_STYLE[g.category];
+                return (
+                  <div
+                    key={g.id}
+                    className={cn("absolute rounded-2xl border-2 border-dashed", style.ring)}
+                    style={{ left: g.x, top: g.y, width: g.w, height: g.h, zIndex: 1 }}
+                  >
+                    <span
+                      className={cn(
+                        "surface-2 absolute -top-3 left-4 rounded px-2 text-[10px] font-semibold uppercase tracking-[0.14em]",
+                        style.text,
+                      )}
+                    >
+                      {g.title}
                     </span>
                   </div>
-                  <span className="text-[10px] text-muted-foreground">{node.subtitle}</span>
-                  <span className="truncate text-[9px] text-muted-foreground/60">{node.meta}</span>
-                </div>
+                );
+              })}
 
-                {isHovered && (
-                  <div
-                    className={cn(
-                      "surface-3 absolute left-1/2 z-30 w-56 -translate-x-1/2 rounded-lg border border-border/60 p-3 text-xs leading-relaxed text-muted-foreground shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)]",
-                      tooltipAbove ? "bottom-full mb-3" : "top-full mt-3",
-                    )}
+              <svg
+                viewBox={`0 0 ${INFRA_CANVAS_W} ${INFRA_CANVAS_H}`}
+                className="absolute inset-0 h-full w-full overflow-visible"
+                style={{ zIndex: 2 }}
+              >
+                <defs>
+                  {(Object.keys(INFRA_CATEGORY_STYLE) as InfraCategory[]).map((cat) => (
+                    <marker
+                      key={cat}
+                      id={`infra-arrow-${cat}`}
+                      viewBox="0 0 10 10"
+                      refX="8"
+                      refY="5"
+                      markerWidth="7"
+                      markerHeight="7"
+                      orient="auto-start-reverse"
+                    >
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill={INFRA_CATEGORY_STYLE[cat].stroke} />
+                    </marker>
+                  ))}
+                </defs>
+                {INFRA_EDGES.map((edge, i) => {
+                  const from = nodeMap[edge.from];
+                  const to = nodeMap[edge.to];
+                  const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
+                  const dash =
+                    edge.style === "dashed"
+                      ? "7 6"
+                      : edge.style === "dotted"
+                        ? "2 7"
+                        : edge.style === "vertical"
+                          ? "10 4 2 4"
+                          : undefined;
+                  const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
+                  const isLive = edge.style === "solid";
+                  return (
+                    <path
+                      key={i}
+                      d={`M ${from.x} ${from.y} L ${to.x} ${to.y}`}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth={edge.style === "vertical" ? 1.6 : 1.8}
+                      strokeDasharray={dash}
+                      strokeLinecap="round"
+                      markerEnd={`url(#infra-arrow-${edge.category})`}
+                      markerStart={edge.bidirectional ? `url(#infra-arrow-${edge.category})` : undefined}
+                      className={cn("transition-opacity duration-200", isLive && "infra-edge-live")}
+                      style={{ opacity: isActive ? 0.9 : 0.12 }}
+                    />
+                  );
+                })}
+              </svg>
+
+              {INFRA_EDGES.map((edge, i) => {
+                if (!edge.label) return null;
+                const from = nodeMap[edge.from];
+                const to = nodeMap[edge.to];
+                const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
+                const midX = (from.x + to.x) / 2;
+                const midY = (from.y + to.y) / 2;
+                return (
+                  <span
+                    key={i}
+                    className="surface-1 absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded border border-border/50 px-1.5 py-0.5 text-[9px] text-muted-foreground transition-opacity duration-200 md:text-[10px]"
+                    style={{ left: midX, top: midY, opacity: isActive ? 1 : 0.15, zIndex: 3 }}
                   >
-                    <div className="mb-1 text-[11px] font-semibold text-foreground">
-                      {node.title}
-                    </div>
-                    {node.detail}
+                    {edge.label}
+                  </span>
+                );
+              })}
+
+              {INFRA_NODES.map((node) => {
+                const Icon = node.icon;
+                const style = INFRA_CATEGORY_STYLE[node.category];
+                const isActive = !hovered || activeIds?.has(node.id);
+                const isHovered = hovered === node.id;
+                const isSelected = selected === node.id;
+                const isLg = node.size === "lg";
+                return (
+                  <div
+                    key={node.id}
+                    className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200"
+                    style={{
+                      left: node.x,
+                      top: node.y,
+                      opacity: isActive ? 1 : 0.25,
+                      zIndex: isHovered || isSelected ? 30 : 10,
+                    }}
+                    onMouseEnter={() => setHovered(node.id)}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setSelected(node.id)}
+                      className={cn(
+                        "surface-1 flex flex-col gap-0.5 rounded-lg border px-3 py-2 text-left shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5",
+                        isLg ? "w-[190px] sm:w-[210px]" : "w-[132px] sm:w-[150px]",
+                        style.ring,
+                      )}
+                      style={{
+                        boxShadow: isSelected
+                          ? `0 0 0 2px ${style.stroke}, 0 0 22px 2px ${style.stroke}55`
+                          : isHovered
+                            ? `0 0 0 3px ${style.stroke}30`
+                            : `0 0 12px -4px ${style.stroke}40`,
+                      }}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <Icon className={cn("h-3.5 w-3.5 shrink-0", style.text)} />
+                        <span className="truncate text-xs font-semibold text-foreground">
+                          {node.title}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">{node.subtitle}</span>
+                      <span className="truncate text-[9px] text-muted-foreground/60">{node.meta}</span>
+                    </button>
                   </div>
-                )}
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── In-graph legend ── */}
+          <div className="mt-4 grid gap-4 border-t border-border/60 pt-4 sm:grid-cols-3">
+            <div>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                Category
+              </p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-orange-400" /> Build
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" /> Runtime
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-violet-400" /> Observability
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-blue-400" /> Application
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-fuchsia-400" /> Communication
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-slate-300" /> Client
+                </div>
               </div>
-            );
-          })}
+            </div>
+            <div>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                Edge Style
+              </p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <span className="h-[2px] w-5 shrink-0 bg-emerald-400" /> Solid — Runtime Request
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="h-0 w-5 shrink-0 border-t-2"
+                    style={{ borderColor: "#fb923c", borderStyle: "dashed" }}
+                  />
+                  Dashed — Deployment
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="h-0 w-5 shrink-0 border-t-2"
+                    style={{ borderColor: "#34d399", borderStyle: "dotted" }}
+                  />
+                  Dotted — Configuration
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="h-4 w-[2px] shrink-0 bg-fuchsia-400" /> Vertical — External Service
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="infra-edge-live h-[2px] w-5 shrink-0 bg-emerald-400" /> Animated — Live Request
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                Dataflow Direction
+              </p>
+              <div className="space-y-1.5 text-xs text-muted-foreground">
+                <p>Left → Right — main pipeline</p>
+                <p>Vertical — external service branch</p>
+                <p>Hover — highlight connected nodes</p>
+                <p>Click — open inspector</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Legends */}
-        <div className="mt-6 grid gap-4 border-t border-border/60 pt-5 sm:grid-cols-3">
-          <div>
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-              Category
-            </p>
-            <div className="space-y-1.5 text-xs text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-sky-400" /> Source — where the
-                code lives
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" /> Compute — builds
-                &amp; runs the site
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-violet-400" /> Network — domain
-                routing
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-fuchsia-400" /> Integration —
-                embedded service
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-rose-400" /> User — the visitor
-              </div>
+        {/* ── Inspector ── */}
+        <div className="surface-2 flex flex-col rounded-2xl border border-border/60 p-5 lg:w-[28%]">
+          {!selectedNode ? (
+            <div className="flex h-full min-h-[200px] flex-1 flex-col items-center justify-center gap-2 text-center">
+              <Workflow className="h-6 w-6 text-muted-foreground/40" />
+              <p className="text-xs text-muted-foreground">
+                Click any node to inspect its purpose, responsibilities, technologies and configuration.
+              </p>
             </div>
-          </div>
-          <div>
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-              Edge Style
-            </p>
-            <div className="space-y-1.5 text-xs text-muted-foreground">
+          ) : (
+            <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="h-[2px] w-5 shrink-0 bg-violet-400" /> Solid thick — live request
-                path
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="h-[1px] w-5 shrink-0 bg-fuchsia-400" /> Solid thin — secondary
-                request
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className="h-0 w-5 shrink-0 border-t-2"
-                  style={{ borderColor: "#38bdf8", borderStyle: "dashed" }}
+                <selectedNode.icon
+                  className={cn("h-4 w-4 shrink-0", INFRA_CATEGORY_STYLE[selectedNode.category].text)}
                 />
-                Dashed — build-time
+                <div>
+                  <div className="text-sm font-semibold text-foreground">{selectedNode.title}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground/60">
+                    {selectedNode.subtitle}
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className="h-0 w-5 shrink-0 border-t-2"
-                  style={{ borderColor: "#34d399", borderStyle: "dotted" }}
-                />
-                Dotted — config-only
+
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                {selectedNode.detail.purpose}
+              </p>
+
+              <div>
+                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                  Technologies
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedNode.detail.technologies.map((t) => (
+                    <span
+                      key={t}
+                      className={cn(
+                        "rounded-full border px-2 py-0.5 text-[10px]",
+                        INFRA_CATEGORY_STYLE[selectedNode.category].ring,
+                        INFRA_CATEGORY_STYLE[selectedNode.category].text,
+                      )}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
               </div>
+
+              <div>
+                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                  Responsibilities
+                </p>
+                <ul className="space-y-1 text-xs text-muted-foreground">
+                  {selectedNode.detail.responsibilities.map((r) => (
+                    <li key={r} className="flex gap-1.5">
+                      <span className="text-muted-foreground/40">•</span> {r}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                  Relationships
+                </p>
+                <ul className="space-y-1 text-xs text-muted-foreground">
+                  {selectedNode.detail.relationships.map((r) => (
+                    <li key={r} className="flex gap-1.5">
+                      <span className="text-muted-foreground/40">•</span> {r}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {(selectedNode.detail.buildProcess || selectedNode.detail.runtimeDetails) && (
+                <div>
+                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                    Workflow
+                  </p>
+                  <div className="space-y-1 text-xs text-muted-foreground">
+                    {selectedNode.detail.buildProcess && <p>{selectedNode.detail.buildProcess}</p>}
+                    {selectedNode.detail.runtimeDetails && <p>{selectedNode.detail.runtimeDetails}</p>}
+                  </div>
+                </div>
+              )}
+
+              {selectedNode.detail.configuration && (
+                <div>
+                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                    Configuration
+                  </p>
+                  <p className="text-xs text-muted-foreground">{selectedNode.detail.configuration}</p>
+                </div>
+              )}
+
+              {selectedNode.detail.futureImprovements && (
+                <div className="border-t border-border/60 pt-3">
+                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                    Future Improvements
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedNode.detail.futureImprovements}
+                  </p>
+                </div>
+              )}
             </div>
-          </div>
-          <div>
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-              How To Read
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Hover any node to trace its connections and dim the rest.
-              {activeNode ? " Currently tracing " + activeNode.title + "." : ""}
-            </p>
-          </div>
+          )}
         </div>
+      </div>
+
+      {/* ── Summary cards: Edge Stack · Monitoring · Build Pipeline · Communication ── */}
+      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {INFRA_SUMMARY_CARDS.map((card) => {
+          const style = INFRA_CATEGORY_STYLE[card.category];
+          return (
+            <div key={card.title} className="surface-2 rounded-xl border border-border/60 p-4">
+              <div className="mb-2 flex items-center gap-1.5">
+                <span className={cn("h-2 w-2 shrink-0 rounded-full", style.dot)} />
+                <span className="text-xs font-semibold text-foreground">{card.title}</span>
+              </div>
+              <ul className="space-y-1 text-[11px] text-muted-foreground">
+                {card.items.map((it) => (
+                  <li key={it} className="flex gap-1.5">
+                    <span className={cn("h-1 w-1 shrink-0 translate-y-1 rounded-full", style.dot)} />
+                    {it}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
