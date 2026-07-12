@@ -1456,6 +1456,38 @@ function PortfolioSection() {
 const INFRA_CANVAS_W = 1515;
 const INFRA_CANVAS_H = 589;
 
+// Approximate rendered half-width/half-height of each node card (at the sm+ breakpoint),
+// used to trim connector lines so they stop at the node's edge instead of its center.
+function infraNodeHalfDims(node: InfraNode) {
+  return node.size === "lg" ? { hw: 105, hh: 34 } : { hw: 75, hh: 34 };
+}
+
+// Given a node's center, its half-width/half-height, and a direction vector pointing
+// away from that center (toward the other node), returns the point where that ray
+// exits the node's rectangle, pushed outward by `gap` extra pixels.
+function infraTrimToBox(
+  cx: number,
+  cy: number,
+  hw: number,
+  hh: number,
+  dx: number,
+  dy: number,
+  gap: number,
+) {
+  const adx = Math.abs(dx);
+  const ady = Math.abs(dy);
+  if (adx < 0.0001 && ady < 0.0001) return { x: cx, y: cy };
+  const scale = Math.min(adx > 0 ? hw / adx : Infinity, ady > 0 ? hh / ady : Infinity);
+  const bx = cx + dx * scale;
+  const by = cy + dy * scale;
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  return { x: bx + ux * gap, y: by + uy * gap };
+}
+
+const INFRA_EDGE_GAP = 12; // px between the arrowhead/line end and the node border
+
 const INFRA_SUMMARY_CARDS: { title: string; category: InfraCategory; items: string[] }[] = [
   { title: "Edge Stack", category: "runtime", items: ["Cloudflare Workers", "Cloudflare DNS", "Edge Runtime", "HTTPS/TLS", "Custom Domain"] },
   { title: "Monitoring", category: "observability", items: ["Workers Logs", "Workers Traces", "Runtime Monitoring"] },
@@ -1630,10 +1662,34 @@ function InfraBuild() {
                           : undefined;
                   const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
                   const isLive = edge.style === "solid";
+
+                  const dx = to.x - from.x;
+                  const dy = to.y - from.y;
+                  const fromDims = infraNodeHalfDims(from);
+                  const toDims = infraNodeHalfDims(to);
+                  const start = infraTrimToBox(
+                    from.x,
+                    from.y,
+                    fromDims.hw,
+                    fromDims.hh,
+                    dx,
+                    dy,
+                    edge.bidirectional ? INFRA_EDGE_GAP : 0,
+                  );
+                  const end = infraTrimToBox(
+                    to.x,
+                    to.y,
+                    toDims.hw,
+                    toDims.hh,
+                    -dx,
+                    -dy,
+                    INFRA_EDGE_GAP,
+                  );
+
                   return (
                     <path
                       key={i}
-                      d={`M ${from.x} ${from.y} L ${to.x} ${to.y}`}
+                      d={`M ${start.x} ${start.y} L ${end.x} ${end.y}`}
                       fill="none"
                       stroke={color}
                       strokeWidth={edge.style === "vertical" ? 1.6 : 1.8}
@@ -1653,8 +1709,22 @@ function InfraBuild() {
                 const from = nodeMap[edge.from];
                 const to = nodeMap[edge.to];
                 const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
-                const midX = (from.x + to.x) / 2;
-                const midY = (from.y + to.y) / 2;
+                const dx = to.x - from.x;
+                const dy = to.y - from.y;
+                const fromDims = infraNodeHalfDims(from);
+                const toDims = infraNodeHalfDims(to);
+                const start = infraTrimToBox(
+                  from.x,
+                  from.y,
+                  fromDims.hw,
+                  fromDims.hh,
+                  dx,
+                  dy,
+                  edge.bidirectional ? INFRA_EDGE_GAP : 0,
+                );
+                const end = infraTrimToBox(to.x, to.y, toDims.hw, toDims.hh, -dx, -dy, INFRA_EDGE_GAP);
+                const midX = (start.x + end.x) / 2;
+                const midY = (start.y + end.y) / 2;
                 return (
                   <span
                     key={i}

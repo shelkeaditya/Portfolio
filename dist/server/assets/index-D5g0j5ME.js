@@ -1,5 +1,5 @@
-import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-Bpqbubh8.js";
-import { R as ReactDOM } from "./router-ClQy2Cu3.js";
+import { r as reactExports, W as jsxRuntimeExports, a4 as React, V as React$1 } from "./server-BF7_tBwK.js";
+import { R as ReactDOM } from "./router-CzkN_fqF.js";
 import "node:async_hooks";
 import "node:stream/web";
 import "node:stream";
@@ -5054,8 +5054,8 @@ const NAV = [
   { key: "contact", label: "Contact", icon: Send }
 ];
 const INFRA_GROUPS = [
-  { id: "build", title: "Build", category: "build", x: 55, y: 205, w: 430, h: 150 },
-  { id: "observability", title: "Observability", category: "observability", x: 840, y: 65, w: 225, h: 425 }
+  { id: "build", title: "Build", category: "build", x: 55, y: 65, w: 220, h: 290 },
+  { id: "observability", title: "Observability", category: "observability", x: 672, y: 65, w: 225, h: 425 }
 ];
 const INFRA_NODES = [
   {
@@ -5068,7 +5068,7 @@ const INFRA_NODES = [
     icon: CodeXml,
     group: "build",
     x: 165,
-    y: 290,
+    y: 150,
     detail: {
       purpose: "Local development environment where the portfolio is written and iterated on before every commit.",
       technologies: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
@@ -5092,7 +5092,7 @@ const INFRA_NODES = [
     category: "build",
     icon: Github,
     group: "build",
-    x: 385,
+    x: 165,
     y: 290,
     detail: {
       purpose: "Stores the source code and is the trigger point for every deployment.",
@@ -5116,7 +5116,7 @@ const INFRA_NODES = [
     category: "runtime",
     icon: Cloud,
     size: "lg",
-    x: 690,
+    x: 490,
     y: 290,
     detail: {
       purpose: "The center of the deployment — receives GitHub's webhook, builds the app, and runs it on Cloudflare's edge network.",
@@ -5145,7 +5145,7 @@ const INFRA_NODES = [
     category: "observability",
     icon: Globe,
     group: "observability",
-    x: 955,
+    x: 785,
     y: 290,
     detail: {
       purpose: "Resolves the custom domain and routes every request to the right Worker over HTTPS.",
@@ -5163,7 +5163,7 @@ const INFRA_NODES = [
     category: "observability",
     icon: FileText,
     group: "observability",
-    x: 955,
+    x: 785,
     y: 150,
     detail: {
       purpose: "Captures request-level logs emitted by Cloudflare Workers for debugging.",
@@ -5181,7 +5181,7 @@ const INFRA_NODES = [
     category: "observability",
     icon: Activity,
     group: "observability",
-    x: 955,
+    x: 785,
     y: 430,
     detail: {
       purpose: "Traces execution inside Cloudflare Workers to spot latency and runtime issues.",
@@ -5198,7 +5198,7 @@ const INFRA_NODES = [
     items: ["Home", "About", "Projects", "Media", "Resume", "Contact"],
     category: "application",
     icon: Briefcase,
-    x: 1250,
+    x: 1130,
     y: 290,
     detail: {
       purpose: "The live application visitors actually interact with.",
@@ -5220,7 +5220,7 @@ const INFRA_NODES = [
     items: ["Chrome", "Firefox", "Safari"],
     category: "client",
     icon: Monitor,
-    x: 1470,
+    x: 1370,
     y: 290,
     detail: {
       purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
@@ -5237,7 +5237,7 @@ const INFRA_NODES = [
     items: ["Contact Form", "Gmail Delivery"],
     category: "communication",
     icon: Mail,
-    x: 1250,
+    x: 1130,
     y: 500,
     detail: {
       purpose: "Delivers Contact Form submissions straight to my inbox — a branch off the Portfolio only, with no ties to GitHub or Cloudflare at all.",
@@ -6208,8 +6208,24 @@ function PortfolioSection() {
     )) })
   ] });
 }
-const INFRA_CANVAS_W = 1597;
-const INFRA_CANVAS_H = 620;
+const INFRA_CANVAS_W = 1515;
+const INFRA_CANVAS_H = 589;
+function infraNodeHalfDims(node) {
+  return node.size === "lg" ? { hw: 105, hh: 34 } : { hw: 75, hh: 34 };
+}
+function infraTrimToBox(cx2, cy, hw, hh, dx, dy, gap) {
+  const adx = Math.abs(dx);
+  const ady = Math.abs(dy);
+  if (adx < 1e-4 && ady < 1e-4) return { x: cx2, y: cy };
+  const scale = Math.min(adx > 0 ? hw / adx : Infinity, ady > 0 ? hh / ady : Infinity);
+  const bx = cx2 + dx * scale;
+  const by = cy + dy * scale;
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  return { x: bx + ux * gap, y: by + uy * gap };
+}
+const INFRA_EDGE_GAP = 12;
 const INFRA_SUMMARY_CARDS = [
   { title: "Edge Stack", category: "runtime", items: ["Cloudflare Workers", "Cloudflare DNS", "Edge Runtime", "HTTPS/TLS", "Custom Domain"] },
   { title: "Monitoring", category: "observability", items: ["Workers Logs", "Workers Traces", "Runtime Monitoring"] },
@@ -6219,6 +6235,9 @@ const INFRA_SUMMARY_CARDS = [
 function InfraBuild() {
   const [hovered, setHovered] = reactExports.useState(null);
   const [selected, setSelected] = reactExports.useState(null);
+  const [isDragging, setIsDragging] = reactExports.useState(false);
+  const scrollRef = reactExports.useRef(null);
+  const dragState = reactExports.useRef({ isDown: false, startX: 0, startScrollLeft: 0 });
   const nodeMap = reactExports.useMemo(
     () => Object.fromEntries(INFRA_NODES.map((n) => [n.id, n])),
     []
@@ -6233,6 +6252,37 @@ function InfraBuild() {
     return ids;
   }, [hovered]);
   const selectedNode = selected ? nodeMap[selected] : null;
+  const handleNodeHover = (id) => {
+    setHovered(id);
+    setSelected(id);
+  };
+  const handleCanvasMouseDown = (e) => {
+    if (!scrollRef.current) return;
+    dragState.current.isDown = true;
+    dragState.current.startX = e.pageX;
+    dragState.current.startScrollLeft = scrollRef.current.scrollLeft;
+    setIsDragging(true);
+    e.preventDefault();
+  };
+  reactExports.useEffect(() => {
+    const onMove = (e) => {
+      if (!dragState.current.isDown || !scrollRef.current) return;
+      const dx = e.pageX - dragState.current.startX;
+      scrollRef.current.scrollLeft = dragState.current.startScrollLeft - dx;
+    };
+    const onUp = () => {
+      if (dragState.current.isDown) {
+        dragState.current.isDown = false;
+        setIsDragging(false);
+      }
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, []);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("style", { children: `
         .infra-scroll::-webkit-scrollbar { height: 10px; }
@@ -6242,6 +6292,10 @@ function InfraBuild() {
         .infra-scroll { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent; }
         @keyframes infra-flow { to { stroke-dashoffset: -24; } }
         .infra-edge-live { stroke-dasharray: 5 5; animation: infra-flow 1s linear infinite; }
+        @keyframes infra-inspector-in { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: none; } }
+        .infra-inspector-anim { animation: infra-inspector-in 250ms ease both; }
+        .infra-scroll { cursor: grab; }
+        .infra-scroll.infra-dragging { cursor: grabbing; }
       ` }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeading, { title: "Infrastructure." }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "-mt-4 mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground", children: [
@@ -6256,8 +6310,14 @@ function InfraBuild() {
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "div",
           {
-            className: "infra-scroll overflow-x-auto overflow-y-hidden rounded-xl",
+            ref: scrollRef,
+            className: cn$1(
+              "infra-scroll select-none overflow-x-auto overflow-y-hidden rounded-xl",
+              isDragging && "infra-dragging"
+            ),
             style: { WebkitOverflowScrolling: "touch" },
+            onMouseDown: handleCanvasMouseDown,
+            onDragStart: (e) => e.preventDefault(),
             children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "div",
               {
@@ -6319,10 +6379,32 @@ function InfraBuild() {
                           const dash = edge.style === "dashed" ? "7 6" : edge.style === "dotted" ? "2 7" : edge.style === "vertical" ? "10 4 2 4" : void 0;
                           const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
                           const isLive = edge.style === "solid";
+                          const dx = to.x - from.x;
+                          const dy = to.y - from.y;
+                          const fromDims = infraNodeHalfDims(from);
+                          const toDims = infraNodeHalfDims(to);
+                          const start = infraTrimToBox(
+                            from.x,
+                            from.y,
+                            fromDims.hw,
+                            fromDims.hh,
+                            dx,
+                            dy,
+                            edge.bidirectional ? INFRA_EDGE_GAP : 0
+                          );
+                          const end = infraTrimToBox(
+                            to.x,
+                            to.y,
+                            toDims.hw,
+                            toDims.hh,
+                            -dx,
+                            -dy,
+                            INFRA_EDGE_GAP
+                          );
                           return /* @__PURE__ */ jsxRuntimeExports.jsx(
                             "path",
                             {
-                              d: `M ${from.x} ${from.y} L ${to.x} ${to.y}`,
+                              d: `M ${start.x} ${start.y} L ${end.x} ${end.y}`,
                               fill: "none",
                               stroke: color,
                               strokeWidth: edge.style === "vertical" ? 1.6 : 1.8,
@@ -6344,8 +6426,22 @@ function InfraBuild() {
                     const from = nodeMap[edge.from];
                     const to = nodeMap[edge.to];
                     const isActive = !hovered || activeIds?.has(edge.from) && activeIds?.has(edge.to);
-                    const midX = (from.x + to.x) / 2;
-                    const midY = (from.y + to.y) / 2;
+                    const dx = to.x - from.x;
+                    const dy = to.y - from.y;
+                    const fromDims = infraNodeHalfDims(from);
+                    const toDims = infraNodeHalfDims(to);
+                    const start = infraTrimToBox(
+                      from.x,
+                      from.y,
+                      fromDims.hw,
+                      fromDims.hh,
+                      dx,
+                      dy,
+                      edge.bidirectional ? INFRA_EDGE_GAP : 0
+                    );
+                    const end = infraTrimToBox(to.x, to.y, toDims.hw, toDims.hh, -dx, -dy, INFRA_EDGE_GAP);
+                    const midX = (start.x + end.x) / 2;
+                    const midY = (start.y + end.y) / 2;
                     return /* @__PURE__ */ jsxRuntimeExports.jsx(
                       "span",
                       {
@@ -6373,7 +6469,8 @@ function InfraBuild() {
                           opacity: isActive ? 1 : 0.25,
                           zIndex: isHovered || isSelected ? 30 : 10
                         },
-                        onMouseEnter: () => setHovered(node.id),
+                        onMouseEnter: () => handleNodeHover(node.id),
+                        onMouseDown: (e) => e.stopPropagation(),
                         children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
                           "button",
                           {
@@ -6479,14 +6576,14 @@ function InfraBuild() {
               /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Left → Right — main pipeline" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Vertical — external service branch" }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Hover — highlight connected nodes" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Click — open inspector" })
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Hover — open inspector" })
             ] })
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "surface-2 flex flex-col rounded-2xl border border-border/60 p-5 lg:w-[28%]", children: !selectedNode ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-full min-h-[200px] flex-1 flex-col items-center justify-center gap-2 text-center", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "surface-2 flex flex-col rounded-2xl border border-border/60 p-5 lg:w-[28%]", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "infra-inspector-anim flex flex-1 flex-col", children: !selectedNode ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-full min-h-[200px] flex-1 flex-col items-center justify-center gap-2 text-center", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(Workflow, { className: "h-6 w-6 text-muted-foreground/40" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Click any node to inspect its purpose, responsibilities, technologies and configuration." })
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: "Hover any node to inspect its purpose, responsibilities, technologies and configuration." })
       ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -6547,7 +6644,7 @@ function InfraBuild() {
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50", children: "Future Improvements" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: selectedNode.detail.futureImprovements })
         ] })
-      ] }) })
+      ] }) }, selectedNode ? selectedNode.id : "empty") })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4", children: INFRA_SUMMARY_CARDS.map((card) => {
       const style = INFRA_CATEGORY_STYLE[card.category];
