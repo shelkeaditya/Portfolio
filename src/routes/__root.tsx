@@ -72,10 +72,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Aditya Shelke | Cloud and Devops Portfoilo" },
+      { title: "Aditya Shelke | Cloud and DevOps Engineer " },
       { name: "description", content: "Aditya Shelke - AWS Certified Cloud Practitioner. Cloud, DevOps, Linux and Cybersecurity portfolio." },
       { name: "author", content: "Aditya Shelke" },
-      { property: "og:title", content: "Aditya Shelke | Cloud and Devops Portfoilo" },
+      { property: "og:title", content: "Aditya Shelke | Cloud and DevOps Engineer " },
       { property: "og:description", content: "Cloud, DevOps, Linux and Cybersecurity portfolio." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
