@@ -1208,7 +1208,7 @@ const INFRA_NODES: InfraNode[] = [
     title: "Development",
     subtitle: "Local Environment",
     meta: "VS Code · React · TS",
-    items: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+    items: ["VS Code", "React", "Vite", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
     category: "build",
     icon: Code2,
     group: "build",
@@ -1216,8 +1216,8 @@ const INFRA_NODES: InfraNode[] = [
     y: 150,
     detail: {
       purpose:
-        "Local development environment where the portfolio is written and iterated on before every commit.",
-      technologies: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+        "Local development environment where the portfolio is written and iterated on before every commit. `vite dev` runs through TanStack Start, so SSR renders live locally too — not just in production.",
+      technologies: ["VS Code", "React", "Vite", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
       responsibilities: [
         "Component development",
         "Styling & layout",
@@ -1266,11 +1266,13 @@ const INFRA_NODES: InfraNode[] = [
     y: 290,
     detail: {
       purpose:
-        "The center of the deployment — receives GitHub's webhook, builds the app, and runs it on Cloudflare's edge network.",
-      technologies: ["Cloudflare Workers", "TanStack Start SSR"],
+        "The center of the deployment — receives GitHub's webhook, builds the app, and runs live server-side rendering on Cloudflare's edge network for every single request.",
+      technologies: ["Cloudflare Workers", "TanStack Start SSR", "TanStack Router"],
       responsibilities: [
         "Builds the project on every webhook trigger",
-        "Runs the TanStack Start SSR runtime at the edge",
+        "TanStack Router resolves the matched route before rendering",
+        "Runs src/server.ts to render the page server-side on every request",
+        "error-capture.ts / error-page.ts wrap the SSR pipeline for graceful error handling",
         "Serves every request close to the visitor",
       ],
       relationships: [
@@ -1279,8 +1281,9 @@ const INFRA_NODES: InfraNode[] = [
         "Reports to Workers Logs & Traces",
         "Serves the Portfolio application",
       ],
-      buildProcess: "Webhook → npm install → vite build → deployed to the edge",
-      runtimeDetails: "Sits outside every group — it's the single runtime the whole pipeline depends on",
+      buildProcess: "Webhook → npm install → vite build (client + server bundles) → deployed as a Worker",
+      runtimeDetails:
+        "wrangler.jsonc sets \"main\": \"src/server.ts\" and \"compatibility_flags\": [\"nodejs_compat\"] — the Worker genuinely executes this file per request; it's not serving pre-built static files",
     },
   },
   {
@@ -1317,6 +1320,7 @@ const INFRA_NODES: InfraNode[] = [
       technologies: ["Cloudflare Workers Logs"],
       responsibilities: ["Streams request logs", "Surfaces runtime errors"],
       relationships: ["Fed directly by Cloudflare Workers"],
+      configuration: "wrangler.jsonc → observability.logs: { enabled: true, invocation_logs: true }",
     },
   },
   {
@@ -1335,6 +1339,7 @@ const INFRA_NODES: InfraNode[] = [
       technologies: ["Cloudflare Workers Traces"],
       responsibilities: ["Captures execution traces", "Helps diagnose slow requests"],
       relationships: ["Fed directly by Cloudflare Workers"],
+      configuration: "wrangler.jsonc → observability.traces: { enabled: true }",
     },
   },
   {
@@ -1349,7 +1354,7 @@ const INFRA_NODES: InfraNode[] = [
     y: 290,
     detail: {
       purpose: "The live application visitors actually interact with.",
-      technologies: ["React", "TanStack Start", "Tailwind CSS"],
+      technologies: ["React", "Vite", "TanStack Start", "Tailwind CSS"],
       responsibilities: ["Renders Home, About, Projects, Media & Resume", "Handles the Contact Form submission"],
       relationships: [
         "Served by Cloudflare DNS / Workers",

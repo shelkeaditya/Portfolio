@@ -94,481 +94,6 @@ const Toaster = ({ ...props }) => {
   );
 };
 const profileImg = "/assets/profile-DYU8eqih.jpeg";
-const NAV = [
-  { key: "about", label: "About", icon: User },
-  { key: "resume", label: "Resume", icon: FileText },
-  { key: "portfolio", label: "Portfolio", icon: Briefcase },
-  { key: "infra", label: "Build", icon: Workflow },
-  { key: "contact", label: "Contact", icon: Send }
-];
-const INFRA_GROUPS = [
-  { id: "build", title: "Build", category: "build", x: 55, y: 65, w: 220, h: 290 },
-  { id: "observability", title: "Observability", category: "observability", x: 672, y: 65, w: 225, h: 425 }
-];
-const INFRA_NODES = [
-  {
-    id: "development",
-    title: "Development",
-    subtitle: "Local Environment",
-    meta: "VS Code · React · TS",
-    items: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
-    category: "build",
-    icon: Code2,
-    group: "build",
-    x: 165,
-    y: 150,
-    detail: {
-      purpose: "Local development environment where the portfolio is written and iterated on before every commit.",
-      technologies: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
-      responsibilities: [
-        "Component development",
-        "Styling & layout",
-        "Type safety",
-        "Local testing before commit"
-      ],
-      relationships: ["Pushes commits to GitHub"],
-      configuration: "Vite dev server with hot module reload",
-      futureImprovements: "Add Storybook for isolated component development"
-    }
-  },
-  {
-    id: "github",
-    title: "GitHub",
-    subtitle: "Source Control",
-    meta: "main branch · git push",
-    items: ["Repository", "Version Control", "Main Branch"],
-    category: "build",
-    icon: Github,
-    group: "build",
-    x: 165,
-    y: 290,
-    detail: {
-      purpose: "Stores the source code and is the trigger point for every deployment.",
-      technologies: ["Git", "GitHub"],
-      responsibilities: [
-        "Stores source code & commit history",
-        "Tracks changes on the main branch",
-        "Fires a webhook to Cloudflare on every push to main"
-      ],
-      relationships: ["Receives pushes from Development", "Triggers Cloudflare Workers via webhook"],
-      configuration: "main is the only deploy branch — every push ships automatically",
-      futureImprovements: "Add branch preview deployments for pull requests"
-    }
-  },
-  {
-    id: "workers",
-    title: "Cloudflare Workers",
-    subtitle: "Deployment Runtime",
-    meta: "SSR · Edge Runtime",
-    items: ["SSR Runtime", "Deployment", "Edge Runtime"],
-    category: "runtime",
-    icon: Cloud,
-    size: "lg",
-    x: 490,
-    y: 290,
-    detail: {
-      purpose: "The center of the deployment — receives GitHub's webhook, builds the app, and runs it on Cloudflare's edge network.",
-      technologies: ["Cloudflare Workers", "TanStack Start SSR"],
-      responsibilities: [
-        "Builds the project on every webhook trigger",
-        "Runs the TanStack Start SSR runtime at the edge",
-        "Serves every request close to the visitor"
-      ],
-      relationships: [
-        "Triggered by GitHub's webhook",
-        "Resolved through Cloudflare DNS",
-        "Reports to Workers Logs & Traces",
-        "Serves the Portfolio application"
-      ],
-      buildProcess: "Webhook → npm install → vite build → deployed to the edge",
-      runtimeDetails: "Sits outside every group — it's the single runtime the whole pipeline depends on"
-    }
-  },
-  {
-    id: "dns",
-    title: "Cloudflare DNS",
-    subtitle: "Domain Routing",
-    meta: "CNAME · HTTPS/TLS",
-    items: ["Custom Domain", "HTTPS / TLS"],
-    category: "observability",
-    icon: Globe,
-    group: "observability",
-    x: 785,
-    y: 290,
-    detail: {
-      purpose: "Resolves the custom domain and routes every request to the right Worker over HTTPS.",
-      technologies: ["Cloudflare DNS", "HTTPS / TLS"],
-      responsibilities: ["Custom domain resolution", "TLS termination", "Routes traffic to Cloudflare Workers"],
-      relationships: ["Two-way link with Cloudflare Workers", "Hands resolved requests through to the Portfolio"]
-    }
-  },
-  {
-    id: "logs",
-    title: "Workers Logs",
-    subtitle: "Observability",
-    meta: "Request logging",
-    items: ["Request Logs"],
-    category: "observability",
-    icon: FileText,
-    group: "observability",
-    x: 785,
-    y: 150,
-    detail: {
-      purpose: "Captures request-level logs emitted by Cloudflare Workers for debugging.",
-      technologies: ["Cloudflare Workers Logs"],
-      responsibilities: ["Streams request logs", "Surfaces runtime errors"],
-      relationships: ["Fed directly by Cloudflare Workers"]
-    }
-  },
-  {
-    id: "traces",
-    title: "Workers Traces",
-    subtitle: "Observability",
-    meta: "Runtime tracing",
-    items: ["Runtime Traces"],
-    category: "observability",
-    icon: Activity,
-    group: "observability",
-    x: 785,
-    y: 430,
-    detail: {
-      purpose: "Traces execution inside Cloudflare Workers to spot latency and runtime issues.",
-      technologies: ["Cloudflare Workers Traces"],
-      responsibilities: ["Captures execution traces", "Helps diagnose slow requests"],
-      relationships: ["Fed directly by Cloudflare Workers"]
-    }
-  },
-  {
-    id: "portfolio",
-    title: "Portfolio",
-    subtitle: "The Application",
-    meta: "Home · Projects · Contact",
-    items: ["Home", "About", "Projects", "Media", "Resume", "Contact"],
-    category: "application",
-    icon: Briefcase,
-    x: 1130,
-    y: 290,
-    detail: {
-      purpose: "The live application visitors actually interact with.",
-      technologies: ["React", "TanStack Start", "Tailwind CSS"],
-      responsibilities: ["Renders Home, About, Projects, Media & Resume", "Handles the Contact Form submission"],
-      relationships: [
-        "Served by Cloudflare DNS / Workers",
-        "Sends Contact Form submissions to Communication",
-        "Loaded by the User Browser"
-      ],
-      futureImprovements: "Add a blog / MDX-powered writing section"
-    }
-  },
-  {
-    id: "userBrowser",
-    title: "User Browser",
-    subtitle: "Client",
-    meta: "Chrome · Firefox · Safari",
-    items: ["Chrome", "Firefox", "Safari"],
-    category: "client",
-    icon: Monitor,
-    x: 1370,
-    y: 290,
-    detail: {
-      purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
-      technologies: ["Chrome", "Firefox", "Safari"],
-      responsibilities: ["Renders the Portfolio over HTTPS", "Submits the Contact Form when used"],
-      relationships: ["Receives the final response from the Portfolio"]
-    }
-  },
-  {
-    id: "communication",
-    title: "EmailJS",
-    subtitle: "Communication Service",
-    meta: "Contact Form → Gmail",
-    items: ["Contact Form", "Gmail Delivery"],
-    category: "communication",
-    icon: Mail,
-    x: 1130,
-    y: 500,
-    detail: {
-      purpose: "Delivers Contact Form submissions straight to my inbox — a branch off the Portfolio only, with no ties to GitHub or Cloudflare at all.",
-      technologies: ["EmailJS", "Gmail"],
-      responsibilities: [
-        "Receives form data client-side",
-        "Relays the message via the EmailJS API",
-        "Delivers the email to Gmail"
-      ],
-      relationships: ["Only the Portfolio connects to it"],
-      configuration: "Client-side only call from the Portfolio — no backend, no queue",
-      futureImprovements: "Add a serverless fallback queue for guaranteed delivery"
-    }
-  }
-];
-const INFRA_EDGES = [
-  { from: "development", to: "github", label: "git push", style: "dashed", category: "build" },
-  { from: "github", to: "workers", label: "webhook", style: "dashed", category: "build" },
-  { from: "workers", to: "dns", label: "", style: "solid", category: "runtime", bidirectional: true },
-  { from: "workers", to: "logs", label: "", style: "dotted", category: "runtime" },
-  { from: "workers", to: "traces", label: "", style: "dotted", category: "runtime" },
-  { from: "dns", to: "portfolio", label: "serves request", style: "solid", category: "observability" },
-  { from: "portfolio", to: "userBrowser", label: "https", style: "solid", category: "application" },
-  { from: "portfolio", to: "communication", label: "contact form", style: "vertical", category: "communication" }
-];
-const INFRA_CATEGORY_STYLE = {
-  build: {
-    text: "text-orange-400",
-    ring: "border-orange-400/40",
-    dot: "bg-orange-400",
-    stroke: "#fb923c"
-  },
-  runtime: {
-    text: "text-emerald-400",
-    ring: "border-emerald-400/40",
-    dot: "bg-emerald-400",
-    stroke: "#34d399"
-  },
-  observability: {
-    text: "text-violet-400",
-    ring: "border-violet-400/40",
-    dot: "bg-violet-400",
-    stroke: "#a78bfa"
-  },
-  application: {
-    text: "text-blue-400",
-    ring: "border-blue-400/40",
-    dot: "bg-blue-400",
-    stroke: "#60a5fa"
-  },
-  communication: {
-    text: "text-fuchsia-400",
-    ring: "border-fuchsia-400/40",
-    dot: "bg-fuchsia-400",
-    stroke: "#e879f9"
-  },
-  client: {
-    text: "text-slate-300",
-    ring: "border-slate-300/40",
-    dot: "bg-slate-300",
-    stroke: "#cbd5e1"
-  }
-};
-const JOURNEY = [
-  {
-    year: "Aug 2022",
-    title: "Started B.Tech Journey",
-    desc: "Began B.Tech in Cloud Technology & Information Security at Ajeenkya DY Patil University."
-  },
-  {
-    year: "Aug 2023",
-    title: "Programming Foundations",
-    desc: "Built programming fundamentals with C and Java while strengthening problem-solving skills."
-  },
-  {
-    year: "Jan 2024",
-    title: "Cloud & Security",
-    desc: "Started learning Cloud Computing, Linux, Networking, Python, and Information Security, building a strong technical foundation."
-  },
-  {
-    year: "Aug 2024",
-    title: "AWS & Cloud Architecture",
-    desc: "Explored AWS fundamentals, cloud architecture, virtualization, networking, and security through coursework and hands-on labs."
-  },
-  {
-    year: "Apr 2025",
-    title: "Infrastructure Automation",
-    desc: "Began automating deployments and managing cloud infrastructure using Docker, Linux, and DevOps tools."
-  },
-  {
-    year: "Jun 2025",
-    title: "Real-World Projects",
-    desc: "Built the Telemedicine Platform as a final-year group project while developing an internship-level cloud and DevOps project independently and learning Kubernetes."
-  },
-  {
-    year: "Jan 2026",
-    title: "Internship & CI/CD",
-    desc: "Worked on Jenkins, Power BI, CI/CD pipelines, and enhanced cloud and DevOps projects during my internship."
-  },
-  {
-    year: "Apr 2026",
-    title: "AWS Certified",
-    desc: "Earned the AWS Certified Cloud Practitioner (CLF-C02), validating foundational knowledge of AWS Cloud services, architecture, security, and best practices."
-  },
-  {
-    year: "Present",
-    title: "Growing as a Cloud Engineer",
-    desc: "Continuing to build expertise in AWS, Kubernetes, DevOps, Linux, Networking, and Security through hands-on projects and continuous learning."
-  }
-];
-const CARDS = [
-  // ── Certifications ──────────────────────────────────────
-  {
-    category: ["Certifications", "Badges"],
-    icon: /* @__PURE__ */ jsx(Award, { className: "h-5 w-5 text-yellow-400" }),
-    title: "AWS Certified Cloud Practitioner",
-    subtitle: "Amazon Web Services · CLF-C02",
-    description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and core AWS services.",
-    tech: ["AWS", "Cloud Concepts", "IAM", "EC2", "S3", "Pricing & Support"],
-    buttons: [
-      {
-        label: "Credly Badge",
-        href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c"
-      }
-    ]
-  },
-  {
-    category: ["Certifications"],
-    icon: /* @__PURE__ */ jsx(Award, { className: "h-5 w-5 text-rose-400" }),
-    title: "AutoCAD 3D Professional Certification",
-    subtitle: "3D Modelling & Design",
-    description: "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
-    tech: ["AutoCAD", "3D Modelling"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
-      }
-    ]
-  },
-  {
-    category: ["Certifications"],
-    icon: /* @__PURE__ */ jsx(Cloud, { className: "h-5 w-5 text-blue-300" }),
-    title: "AWS Certificate: Udemy",
-    subtitle: "AWS Fundamentals",
-    description: "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
-    tech: ["AWS", "Cloud Computing"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
-      }
-    ]
-  },
-  {
-    category: ["Certifications", "Badges"],
-    icon: /* @__PURE__ */ jsx(Terminal, { className: "h-5 w-5 text-blue-400" }),
-    title: "The Linux Foundation: LFD-103",
-    subtitle: "A Beginner's Guide to Linux Kernel Development",
-    description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
-    tech: ["Linux", "Kernel", "Open Source"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
-      },
-      {
-        label: "Credly Badge",
-        href: "https://www.credly.com/badges/5f324690-36b9-4b1b-9b6f-4d1e1a97dc5c/public_url"
-      }
-    ]
-  },
-  {
-    category: ["Certifications"],
-    icon: /* @__PURE__ */ jsx(ShieldCheck, { className: "h-5 w-5 text-blue-400" }),
-    title: "Saylor Academy: Information Security",
-    subtitle: "Information Security Fundamentals",
-    description: "Coursework covering core information security principles, threat models, and security best practices.",
-    tech: ["Information Security", "Risk Management"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
-      }
-    ]
-  },
-  {
-    category: ["Certifications"],
-    icon: /* @__PURE__ */ jsx(Activity, { className: "h-5 w-5 text-cyan-400" }),
-    title: "Saylor Academy: Computer Networks",
-    subtitle: "Networking Fundamentals",
-    description: "Coursework covering networking concepts including protocols, topologies, and network architecture.",
-    tech: ["Networking", "TCP/IP"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
-      }
-    ]
-  },
-  {
-    category: ["Certifications"],
-    icon: /* @__PURE__ */ jsx(Code2, { className: "h-5 w-5 text-purple-400" }),
-    title: "Saylor Academy: Computer Architecture",
-    subtitle: "Computer Architecture Fundamentals",
-    description: "Coursework covering core computer architecture concepts including processor design and system organization.",
-    tech: ["Computer Architecture", "Systems"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
-      }
-    ]
-  },
-  // ── Projects ────────────────────────────────────────────
-  {
-    category: ["Projects"],
-    icon: /* @__PURE__ */ jsx(ShieldCheck, { className: "h-5 w-5 text-green-400" }),
-    title: "DevSecOps Flask Platform",
-    subtitle: "Secure CI/CD Application",
-    description: "Flask application with integrated DevSecOps practices - containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
-    tech: ["Python", "Flask", "Docker", "GitHub Actions", "Trivy", "SonarQube"],
-    buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }]
-  },
-  {
-    category: ["Projects"],
-    icon: /* @__PURE__ */ jsx(Activity, { className: "h-5 w-5 text-blue-400" }),
-    title: "Resilient Server Monitoring Platform",
-    subtitle: "Infrastructure Monitoring",
-    description: "Monitoring platform that tracks server health, CPU/memory metrics, and system availability with alerting for reliable infra management.",
-    tech: ["Linux", "Python", "Bash", "Networking", "Nginx"],
-    buttons: [
-      {
-        label: "GitHub",
-        href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform"
-      }
-    ]
-  },
-  {
-    category: ["Projects"],
-    icon: /* @__PURE__ */ jsx(Workflow, { className: "h-5 w-5 text-blue-400" }),
-    title: "CI/CD Platform",
-    subtitle: "Automation Pipeline",
-    description: "End-to-end automated build, test, and deployment pipeline that streamlines software delivery and infrastructure provisioning.",
-    tech: ["GitHub Actions", "Docker", "Jenkins", "Linux", "Shell Scripting"],
-    buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/CICD-Platform" }]
-  },
-  {
-    category: ["Projects"],
-    icon: /* @__PURE__ */ jsx(Bot, { className: "h-5 w-5 text-cyan-400" }),
-    title: "AI-Based Backup Management",
-    subtitle: "Intelligent Backup Automation",
-    description: "Backup management solution using Python automation for scheduling, recovery planning, and efficient data protection workflows.",
-    tech: ["Python", "Linux", "Bash", "Cron", "Automation"],
-    buttons: [
-      { label: "GitHub", href: "https://github.com/shelkeaditya/Ai-based-backup-management" }
-    ]
-  },
-  {
-    category: ["Projects"],
-    icon: /* @__PURE__ */ jsx(Cloud, { className: "h-5 w-5 text-sky-400" }),
-    title: "Nextcloud on Linux",
-    subtitle: "Self-Hosted Private Cloud",
-    description: "Deployed and configured Nextcloud on a Linux server for secure self-hosted file sharing, storage, and team collaboration.",
-    tech: ["Linux", "Nextcloud", "Docker", "Nginx", "Networking"],
-    buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/Nextcloud-on-Linux" }]
-  },
-  // ── Publications ─────────────────────────────────────────
-  {
-    category: ["Publications"],
-    icon: /* @__PURE__ */ jsx(FileText, { className: "h-5 w-5 text-indigo-400" }),
-    title: "Connect2Cure: A Telemedine Platform",
-    subtitle: "Published on IRJET",
-    description: "Co-authored and published a peer-reviewed research paper in IRJET, an established engineering and technology journal.",
-    tech: ["Research", "Academic Writing"],
-    buttons: [
-      {
-        label: "Read Paper",
-        href: "https://drive.google.com/drive/u/0/folders/1m2cEsQOWPS5yQ7gLjM2Bu_xERdB0nE7A"
-      }
-    ]
-  }
-];
 function useTheme() {
   const [theme, setTheme] = useState("dark");
   useEffect(() => {
@@ -662,6 +187,49 @@ function VerticalSlide({ words }) {
     },
     word
   )) });
+}
+function BackgroundFX() {
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsx("div", { "aria-hidden": true, className: "pointer-events-none absolute inset-0 grid-texture opacity-40" }),
+    /* @__PURE__ */ jsx("div", { className: "poly-bg-left", children: /* @__PURE__ */ jsxs("svg", { viewBox: "0 0 420 420", xmlns: "http://www.w3.org/2000/svg", children: [
+      /* @__PURE__ */ jsx("polygon", { points: "0,0 165,0 0,165", fill: "#7C3AED", opacity: "0.80" }),
+      /* @__PURE__ */ jsx("polygon", { points: "165,0 215,0 0,215 0,165", fill: "#BE123C", opacity: "0.65" }),
+      /* @__PURE__ */ jsx("polygon", { points: "215,0 260,0 0,260 0,215", fill: "#7C3AED", opacity: "0.32" }),
+      /* @__PURE__ */ jsx("polygon", { points: "260,0 300,0 0,300 0,260", fill: "#BE123C", opacity: "0.16" }),
+      /* @__PURE__ */ jsx("polygon", { points: "300,0 335,0 0,335 0,300", fill: "#7C3AED", opacity: "0.08" }),
+      /* @__PURE__ */ jsxs("defs", { children: [
+        /* @__PURE__ */ jsxs("linearGradient", { id: "fxL", x1: "0", y1: "0", x2: "1", y2: "0", children: [
+          /* @__PURE__ */ jsx("stop", { offset: "40%", stopColor: "var(--background)", stopOpacity: "0" }),
+          /* @__PURE__ */ jsx("stop", { offset: "100%", stopColor: "var(--background)", stopOpacity: "1" })
+        ] }),
+        /* @__PURE__ */ jsxs("linearGradient", { id: "fyL", x1: "0", y1: "0", x2: "0", y2: "1", children: [
+          /* @__PURE__ */ jsx("stop", { offset: "40%", stopColor: "var(--background)", stopOpacity: "0" }),
+          /* @__PURE__ */ jsx("stop", { offset: "100%", stopColor: "var(--background)", stopOpacity: "1" })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("rect", { width: "420", height: "420", fill: "url(#fxL)" }),
+      /* @__PURE__ */ jsx("rect", { width: "420", height: "420", fill: "url(#fyL)" })
+    ] }) }),
+    /* @__PURE__ */ jsx("div", { className: "poly-bg-right", children: /* @__PURE__ */ jsxs("svg", { viewBox: "0 0 420 420", xmlns: "http://www.w3.org/2000/svg", children: [
+      /* @__PURE__ */ jsx("polygon", { points: "420,420 255,420 420,255", fill: "#7C3AED", opacity: "0.70" }),
+      /* @__PURE__ */ jsx("polygon", { points: "255,420 205,420 420,205 420,255", fill: "#5B21B6", opacity: "0.55" }),
+      /* @__PURE__ */ jsx("polygon", { points: "205,420 162,420 420,162 420,205", fill: "#7C3AED", opacity: "0.28" }),
+      /* @__PURE__ */ jsx("polygon", { points: "162,420 124,420 420,124 420,162", fill: "#5B21B6", opacity: "0.14" }),
+      /* @__PURE__ */ jsx("polygon", { points: "124,420 90,420  420,90  420,124", fill: "#7C3AED", opacity: "0.07" }),
+      /* @__PURE__ */ jsxs("defs", { children: [
+        /* @__PURE__ */ jsxs("linearGradient", { id: "fxR", x1: "1", y1: "0", x2: "0", y2: "0", children: [
+          /* @__PURE__ */ jsx("stop", { offset: "40%", stopColor: "var(--background)", stopOpacity: "0" }),
+          /* @__PURE__ */ jsx("stop", { offset: "100%", stopColor: "var(--background)", stopOpacity: "1" })
+        ] }),
+        /* @__PURE__ */ jsxs("linearGradient", { id: "fyR", x1: "0", y1: "1", x2: "0", y2: "0", children: [
+          /* @__PURE__ */ jsx("stop", { offset: "40%", stopColor: "var(--background)", stopOpacity: "0" }),
+          /* @__PURE__ */ jsx("stop", { offset: "100%", stopColor: "var(--background)", stopOpacity: "1" })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("rect", { width: "420", height: "420", fill: "url(#fxR)" }),
+      /* @__PURE__ */ jsx("rect", { width: "420", height: "420", fill: "url(#fyR)" })
+    ] }) })
+  ] });
 }
 function ProfileHero({ onJourney }) {
   const { theme, toggle } = useTheme();
@@ -918,6 +486,13 @@ function ProfileHero({ onJourney }) {
     ] })
   ] }) });
 }
+const NAV = [
+  { key: "about", label: "About", icon: User },
+  { key: "resume", label: "Resume", icon: FileText },
+  { key: "portfolio", label: "Portfolio", icon: Briefcase },
+  { key: "infra", label: "Build", icon: Workflow },
+  { key: "contact", label: "Contact", icon: Send }
+];
 function NavPanel({
   active,
   setActive,
@@ -1191,6 +766,179 @@ function Resume() {
     ] })
   ] });
 }
+const CARDS = [
+  // ── Certifications ──────────────────────────────────────
+  {
+    category: ["Certifications", "Badges"],
+    icon: /* @__PURE__ */ jsx(Award, { className: "h-5 w-5 text-yellow-400" }),
+    title: "AWS Certified Cloud Practitioner",
+    subtitle: "Amazon Web Services · CLF-C02",
+    description: "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and core AWS services.",
+    tech: ["AWS", "Cloud Concepts", "IAM", "EC2", "S3", "Pricing & Support"],
+    buttons: [
+      {
+        label: "Credly Badge",
+        href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c"
+      }
+    ]
+  },
+  {
+    category: ["Certifications"],
+    icon: /* @__PURE__ */ jsx(Award, { className: "h-5 w-5 text-rose-400" }),
+    title: "AutoCAD 3D Professional Certification",
+    subtitle: "3D Modelling & Design",
+    description: "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
+    tech: ["AutoCAD", "3D Modelling"],
+    buttons: [
+      {
+        label: "Certificate",
+        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
+      }
+    ]
+  },
+  {
+    category: ["Certifications"],
+    icon: /* @__PURE__ */ jsx(Cloud, { className: "h-5 w-5 text-blue-300" }),
+    title: "AWS Certificate: Udemy",
+    subtitle: "AWS Fundamentals",
+    description: "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
+    tech: ["AWS", "Cloud Computing"],
+    buttons: [
+      {
+        label: "Certificate",
+        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
+      }
+    ]
+  },
+  {
+    category: ["Certifications", "Badges"],
+    icon: /* @__PURE__ */ jsx(Terminal, { className: "h-5 w-5 text-blue-400" }),
+    title: "The Linux Foundation: LFD-103",
+    subtitle: "A Beginner's Guide to Linux Kernel Development",
+    description: "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
+    tech: ["Linux", "Kernel", "Open Source"],
+    buttons: [
+      {
+        label: "Certificate",
+        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
+      },
+      {
+        label: "Credly Badge",
+        href: "https://www.credly.com/badges/5f324690-36b9-4b1b-9b6f-4d1e1a97dc5c/public_url"
+      }
+    ]
+  },
+  {
+    category: ["Certifications"],
+    icon: /* @__PURE__ */ jsx(ShieldCheck, { className: "h-5 w-5 text-blue-400" }),
+    title: "Saylor Academy: Information Security",
+    subtitle: "Information Security Fundamentals",
+    description: "Coursework covering core information security principles, threat models, and security best practices.",
+    tech: ["Information Security", "Risk Management"],
+    buttons: [
+      {
+        label: "Certificate",
+        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
+      }
+    ]
+  },
+  {
+    category: ["Certifications"],
+    icon: /* @__PURE__ */ jsx(Activity, { className: "h-5 w-5 text-cyan-400" }),
+    title: "Saylor Academy: Computer Networks",
+    subtitle: "Networking Fundamentals",
+    description: "Coursework covering networking concepts including protocols, topologies, and network architecture.",
+    tech: ["Networking", "TCP/IP"],
+    buttons: [
+      {
+        label: "Certificate",
+        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
+      }
+    ]
+  },
+  {
+    category: ["Certifications"],
+    icon: /* @__PURE__ */ jsx(Code2, { className: "h-5 w-5 text-purple-400" }),
+    title: "Saylor Academy: Computer Architecture",
+    subtitle: "Computer Architecture Fundamentals",
+    description: "Coursework covering core computer architecture concepts including processor design and system organization.",
+    tech: ["Computer Architecture", "Systems"],
+    buttons: [
+      {
+        label: "Certificate",
+        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing"
+      }
+    ]
+  },
+  // ── Projects ────────────────────────────────────────────
+  {
+    category: ["Projects"],
+    icon: /* @__PURE__ */ jsx(ShieldCheck, { className: "h-5 w-5 text-green-400" }),
+    title: "DevSecOps Flask Platform",
+    subtitle: "Secure CI/CD Application",
+    description: "Flask application with integrated DevSecOps practices - containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
+    tech: ["Python", "Flask", "Docker", "GitHub Actions", "Trivy", "SonarQube"],
+    buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }]
+  },
+  {
+    category: ["Projects"],
+    icon: /* @__PURE__ */ jsx(Activity, { className: "h-5 w-5 text-blue-400" }),
+    title: "Resilient Server Monitoring Platform",
+    subtitle: "Infrastructure Monitoring",
+    description: "Monitoring platform that tracks server health, CPU/memory metrics, and system availability with alerting for reliable infra management.",
+    tech: ["Linux", "Python", "Bash", "Networking", "Nginx"],
+    buttons: [
+      {
+        label: "GitHub",
+        href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform"
+      }
+    ]
+  },
+  {
+    category: ["Projects"],
+    icon: /* @__PURE__ */ jsx(Workflow, { className: "h-5 w-5 text-blue-400" }),
+    title: "CI/CD Platform",
+    subtitle: "Automation Pipeline",
+    description: "End-to-end automated build, test, and deployment pipeline that streamlines software delivery and infrastructure provisioning.",
+    tech: ["GitHub Actions", "Docker", "Jenkins", "Linux", "Shell Scripting"],
+    buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/CICD-Platform" }]
+  },
+  {
+    category: ["Projects"],
+    icon: /* @__PURE__ */ jsx(Bot, { className: "h-5 w-5 text-cyan-400" }),
+    title: "AI-Based Backup Management",
+    subtitle: "Intelligent Backup Automation",
+    description: "Backup management solution using Python automation for scheduling, recovery planning, and efficient data protection workflows.",
+    tech: ["Python", "Linux", "Bash", "Cron", "Automation"],
+    buttons: [
+      { label: "GitHub", href: "https://github.com/shelkeaditya/Ai-based-backup-management" }
+    ]
+  },
+  {
+    category: ["Projects"],
+    icon: /* @__PURE__ */ jsx(Cloud, { className: "h-5 w-5 text-sky-400" }),
+    title: "Nextcloud on Linux",
+    subtitle: "Self-Hosted Private Cloud",
+    description: "Deployed and configured Nextcloud on a Linux server for secure self-hosted file sharing, storage, and team collaboration.",
+    tech: ["Linux", "Nextcloud", "Docker", "Nginx", "Networking"],
+    buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/Nextcloud-on-Linux" }]
+  },
+  // ── Publications ─────────────────────────────────────────
+  {
+    category: ["Publications"],
+    icon: /* @__PURE__ */ jsx(FileText, { className: "h-5 w-5 text-indigo-400" }),
+    title: "Connect2Cure: A Telemedine Platform",
+    subtitle: "Published on IRJET",
+    description: "Co-authored and published a peer-reviewed research paper in IRJET, an established engineering and technology journal.",
+    tech: ["Research", "Academic Writing"],
+    buttons: [
+      {
+        label: "Read Paper",
+        href: "https://drive.google.com/drive/u/0/folders/1m2cEsQOWPS5yQ7gLjM2Bu_xERdB0nE7A"
+      }
+    ]
+  }
+];
 function PortfolioSection() {
   const [filter, setFilter] = useState("All");
   const filtered = useMemo(
@@ -1256,6 +1004,254 @@ function PortfolioSection() {
     )) })
   ] });
 }
+const INFRA_GROUPS = [
+  { id: "build", title: "Build", category: "build", x: 55, y: 65, w: 220, h: 290 },
+  { id: "observability", title: "Observability", category: "observability", x: 672, y: 65, w: 225, h: 425 }
+];
+const INFRA_NODES = [
+  {
+    id: "development",
+    title: "Development",
+    subtitle: "Local Environment",
+    meta: "VS Code · React · TS",
+    items: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+    category: "build",
+    icon: Code2,
+    group: "build",
+    x: 165,
+    y: 150,
+    detail: {
+      purpose: "Local development environment where the portfolio is written and iterated on before every commit.",
+      technologies: ["VS Code", "React", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+      responsibilities: [
+        "Component development",
+        "Styling & layout",
+        "Type safety",
+        "Local testing before commit"
+      ],
+      relationships: ["Pushes commits to GitHub"],
+      configuration: "Vite dev server with hot module reload",
+      futureImprovements: "Add Storybook for isolated component development"
+    }
+  },
+  {
+    id: "github",
+    title: "GitHub",
+    subtitle: "Source Control",
+    meta: "main branch · git push",
+    items: ["Repository", "Version Control", "Main Branch"],
+    category: "build",
+    icon: Github,
+    group: "build",
+    x: 165,
+    y: 290,
+    detail: {
+      purpose: "Stores the source code and is the trigger point for every deployment.",
+      technologies: ["Git", "GitHub"],
+      responsibilities: [
+        "Stores source code & commit history",
+        "Tracks changes on the main branch",
+        "Fires a webhook to Cloudflare on every push to main"
+      ],
+      relationships: ["Receives pushes from Development", "Triggers Cloudflare Workers via webhook"],
+      configuration: "main is the only deploy branch — every push ships automatically",
+      futureImprovements: "Add branch preview deployments for pull requests"
+    }
+  },
+  {
+    id: "workers",
+    title: "Cloudflare Workers",
+    subtitle: "Deployment Runtime",
+    meta: "SSR · Edge Runtime",
+    items: ["SSR Runtime", "Deployment", "Edge Runtime"],
+    category: "runtime",
+    icon: Cloud,
+    size: "lg",
+    x: 490,
+    y: 290,
+    detail: {
+      purpose: "The center of the deployment — receives GitHub's webhook, builds the app, and runs it on Cloudflare's edge network.",
+      technologies: ["Cloudflare Workers", "TanStack Start SSR"],
+      responsibilities: [
+        "Builds the project on every webhook trigger",
+        "Runs the TanStack Start SSR runtime at the edge",
+        "Serves every request close to the visitor"
+      ],
+      relationships: [
+        "Triggered by GitHub's webhook",
+        "Resolved through Cloudflare DNS",
+        "Reports to Workers Logs & Traces",
+        "Serves the Portfolio application"
+      ],
+      buildProcess: "Webhook → npm install → vite build → deployed to the edge",
+      runtimeDetails: "Sits outside every group — it's the single runtime the whole pipeline depends on"
+    }
+  },
+  {
+    id: "dns",
+    title: "Cloudflare DNS",
+    subtitle: "Domain Routing",
+    meta: "CNAME · HTTPS/TLS",
+    items: ["Custom Domain", "HTTPS / TLS"],
+    category: "observability",
+    icon: Globe,
+    group: "observability",
+    x: 785,
+    y: 290,
+    detail: {
+      purpose: "Resolves the custom domain and routes every request to the right Worker over HTTPS.",
+      technologies: ["Cloudflare DNS", "HTTPS / TLS"],
+      responsibilities: ["Custom domain resolution", "TLS termination", "Routes traffic to Cloudflare Workers"],
+      relationships: ["Two-way link with Cloudflare Workers", "Hands resolved requests through to the Portfolio"]
+    }
+  },
+  {
+    id: "logs",
+    title: "Workers Logs",
+    subtitle: "Observability",
+    meta: "Request logging",
+    items: ["Request Logs"],
+    category: "observability",
+    icon: FileText,
+    group: "observability",
+    x: 785,
+    y: 150,
+    detail: {
+      purpose: "Captures request-level logs emitted by Cloudflare Workers for debugging.",
+      technologies: ["Cloudflare Workers Logs"],
+      responsibilities: ["Streams request logs", "Surfaces runtime errors"],
+      relationships: ["Fed directly by Cloudflare Workers"]
+    }
+  },
+  {
+    id: "traces",
+    title: "Workers Traces",
+    subtitle: "Observability",
+    meta: "Runtime tracing",
+    items: ["Runtime Traces"],
+    category: "observability",
+    icon: Activity,
+    group: "observability",
+    x: 785,
+    y: 430,
+    detail: {
+      purpose: "Traces execution inside Cloudflare Workers to spot latency and runtime issues.",
+      technologies: ["Cloudflare Workers Traces"],
+      responsibilities: ["Captures execution traces", "Helps diagnose slow requests"],
+      relationships: ["Fed directly by Cloudflare Workers"]
+    }
+  },
+  {
+    id: "portfolio",
+    title: "Portfolio",
+    subtitle: "The Application",
+    meta: "Home · Projects · Contact",
+    items: ["Home", "About", "Projects", "Media", "Resume", "Contact"],
+    category: "application",
+    icon: Briefcase,
+    x: 1130,
+    y: 290,
+    detail: {
+      purpose: "The live application visitors actually interact with.",
+      technologies: ["React", "TanStack Start", "Tailwind CSS"],
+      responsibilities: ["Renders Home, About, Projects, Media & Resume", "Handles the Contact Form submission"],
+      relationships: [
+        "Served by Cloudflare DNS / Workers",
+        "Sends Contact Form submissions to Communication",
+        "Loaded by the User Browser"
+      ],
+      futureImprovements: "Add a blog / MDX-powered writing section"
+    }
+  },
+  {
+    id: "userBrowser",
+    title: "User Browser",
+    subtitle: "Client",
+    meta: "Chrome · Firefox · Safari",
+    items: ["Chrome", "Firefox", "Safari"],
+    category: "client",
+    icon: Monitor,
+    x: 1370,
+    y: 290,
+    detail: {
+      purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
+      technologies: ["Chrome", "Firefox", "Safari"],
+      responsibilities: ["Renders the Portfolio over HTTPS", "Submits the Contact Form when used"],
+      relationships: ["Receives the final response from the Portfolio"]
+    }
+  },
+  {
+    id: "communication",
+    title: "EmailJS",
+    subtitle: "Communication Service",
+    meta: "Contact Form → Gmail",
+    items: ["Contact Form", "Gmail Delivery"],
+    category: "communication",
+    icon: Mail,
+    x: 1130,
+    y: 500,
+    detail: {
+      purpose: "Delivers Contact Form submissions straight to my inbox — a branch off the Portfolio only, with no ties to GitHub or Cloudflare at all.",
+      technologies: ["EmailJS", "Gmail"],
+      responsibilities: [
+        "Receives form data client-side",
+        "Relays the message via the EmailJS API",
+        "Delivers the email to Gmail"
+      ],
+      relationships: ["Only the Portfolio connects to it"],
+      configuration: "Client-side only call from the Portfolio — no backend, no queue",
+      futureImprovements: "Add a serverless fallback queue for guaranteed delivery"
+    }
+  }
+];
+const INFRA_EDGES = [
+  { from: "development", to: "github", label: "git push", style: "dashed", category: "build" },
+  { from: "github", to: "workers", label: "webhook", style: "dashed", category: "build" },
+  { from: "workers", to: "dns", label: "", style: "solid", category: "runtime", bidirectional: true },
+  { from: "workers", to: "logs", label: "", style: "dotted", category: "runtime" },
+  { from: "workers", to: "traces", label: "", style: "dotted", category: "runtime" },
+  { from: "dns", to: "portfolio", label: "serves request", style: "solid", category: "observability" },
+  { from: "portfolio", to: "userBrowser", label: "https", style: "solid", category: "application" },
+  { from: "portfolio", to: "communication", label: "contact form", style: "vertical", category: "communication" }
+];
+const INFRA_CATEGORY_STYLE = {
+  build: {
+    text: "text-orange-400",
+    ring: "border-orange-400/40",
+    dot: "bg-orange-400",
+    stroke: "#fb923c"
+  },
+  runtime: {
+    text: "text-emerald-400",
+    ring: "border-emerald-400/40",
+    dot: "bg-emerald-400",
+    stroke: "#34d399"
+  },
+  observability: {
+    text: "text-violet-400",
+    ring: "border-violet-400/40",
+    dot: "bg-violet-400",
+    stroke: "#a78bfa"
+  },
+  application: {
+    text: "text-blue-400",
+    ring: "border-blue-400/40",
+    dot: "bg-blue-400",
+    stroke: "#60a5fa"
+  },
+  communication: {
+    text: "text-fuchsia-400",
+    ring: "border-fuchsia-400/40",
+    dot: "bg-fuchsia-400",
+    stroke: "#e879f9"
+  },
+  client: {
+    text: "text-slate-300",
+    ring: "border-slate-300/40",
+    dot: "bg-slate-300",
+    stroke: "#cbd5e1"
+  }
+};
 const INFRA_CANVAS_W = 1515;
 const INFRA_CANVAS_H = 589;
 function infraNodeHalfDims(node) {
@@ -1855,6 +1851,53 @@ function Contact() {
     ] })
   ] });
 }
+const JOURNEY = [
+  {
+    year: "Aug 2022",
+    title: "Started B.Tech Journey",
+    desc: "Began B.Tech in Cloud Technology & Information Security at Ajeenkya DY Patil University."
+  },
+  {
+    year: "Aug 2023",
+    title: "Programming Foundations",
+    desc: "Built programming fundamentals with C and Java while strengthening problem-solving skills."
+  },
+  {
+    year: "Jan 2024",
+    title: "Cloud & Security",
+    desc: "Started learning Cloud Computing, Linux, Networking, Python, and Information Security, building a strong technical foundation."
+  },
+  {
+    year: "Aug 2024",
+    title: "AWS & Cloud Architecture",
+    desc: "Explored AWS fundamentals, cloud architecture, virtualization, networking, and security through coursework and hands-on labs."
+  },
+  {
+    year: "Apr 2025",
+    title: "Infrastructure Automation",
+    desc: "Began automating deployments and managing cloud infrastructure using Docker, Linux, and DevOps tools."
+  },
+  {
+    year: "Jun 2025",
+    title: "Real-World Projects",
+    desc: "Built the Telemedicine Platform as a final-year group project while developing an internship-level cloud and DevOps project independently and learning Kubernetes."
+  },
+  {
+    year: "Jan 2026",
+    title: "Internship & CI/CD",
+    desc: "Worked on Jenkins, Power BI, CI/CD pipelines, and enhanced cloud and DevOps projects during my internship."
+  },
+  {
+    year: "Apr 2026",
+    title: "AWS Certified",
+    desc: "Earned the AWS Certified Cloud Practitioner (CLF-C02), validating foundational knowledge of AWS Cloud services, architecture, security, and best practices."
+  },
+  {
+    year: "Present",
+    title: "Growing as a Cloud Engineer",
+    desc: "Continuing to build expertise in AWS, Kubernetes, DevOps, Linux, Networking, and Security through hands-on projects and continuous learning."
+  }
+];
 function Journey() {
   return /* @__PURE__ */ jsxs("div", { children: [
     /* @__PURE__ */ jsx(SectionHeading, { title: "Journey." }),
@@ -1890,46 +1933,8 @@ function Portfolio() {
   const [active, setActive] = useState("about");
   const { theme, toggle } = useTheme();
   return /* @__PURE__ */ jsxs("div", { className: "ambient-bg relative min-h-screen text-foreground", children: [
-    /* @__PURE__ */ jsx("div", { "aria-hidden": true, className: "pointer-events-none absolute inset-0 grid-texture opacity-40" }),
+    /* @__PURE__ */ jsx(BackgroundFX, {}),
     /* @__PURE__ */ jsx(Toaster, {}),
-    /* @__PURE__ */ jsx("div", { className: "poly-bg-left", children: /* @__PURE__ */ jsxs("svg", { viewBox: "0 0 420 420", xmlns: "http://www.w3.org/2000/svg", children: [
-      /* @__PURE__ */ jsx("polygon", { points: "0,0 165,0 0,165", fill: "#7C3AED", opacity: "0.80" }),
-      /* @__PURE__ */ jsx("polygon", { points: "165,0 215,0 0,215 0,165", fill: "#BE123C", opacity: "0.65" }),
-      /* @__PURE__ */ jsx("polygon", { points: "215,0 260,0 0,260 0,215", fill: "#7C3AED", opacity: "0.32" }),
-      /* @__PURE__ */ jsx("polygon", { points: "260,0 300,0 0,300 0,260", fill: "#BE123C", opacity: "0.16" }),
-      /* @__PURE__ */ jsx("polygon", { points: "300,0 335,0 0,335 0,300", fill: "#7C3AED", opacity: "0.08" }),
-      /* @__PURE__ */ jsxs("defs", { children: [
-        /* @__PURE__ */ jsxs("linearGradient", { id: "fxL", x1: "0", y1: "0", x2: "1", y2: "0", children: [
-          /* @__PURE__ */ jsx("stop", { offset: "40%", stopColor: "var(--background)", stopOpacity: "0" }),
-          /* @__PURE__ */ jsx("stop", { offset: "100%", stopColor: "var(--background)", stopOpacity: "1" })
-        ] }),
-        /* @__PURE__ */ jsxs("linearGradient", { id: "fyL", x1: "0", y1: "0", x2: "0", y2: "1", children: [
-          /* @__PURE__ */ jsx("stop", { offset: "40%", stopColor: "var(--background)", stopOpacity: "0" }),
-          /* @__PURE__ */ jsx("stop", { offset: "100%", stopColor: "var(--background)", stopOpacity: "1" })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsx("rect", { width: "420", height: "420", fill: "url(#fxL)" }),
-      /* @__PURE__ */ jsx("rect", { width: "420", height: "420", fill: "url(#fyL)" })
-    ] }) }),
-    /* @__PURE__ */ jsx("div", { className: "poly-bg-right", children: /* @__PURE__ */ jsxs("svg", { viewBox: "0 0 420 420", xmlns: "http://www.w3.org/2000/svg", children: [
-      /* @__PURE__ */ jsx("polygon", { points: "420,420 255,420 420,255", fill: "#7C3AED", opacity: "0.70" }),
-      /* @__PURE__ */ jsx("polygon", { points: "255,420 205,420 420,205 420,255", fill: "#5B21B6", opacity: "0.55" }),
-      /* @__PURE__ */ jsx("polygon", { points: "205,420 162,420 420,162 420,205", fill: "#7C3AED", opacity: "0.28" }),
-      /* @__PURE__ */ jsx("polygon", { points: "162,420 124,420 420,124 420,162", fill: "#5B21B6", opacity: "0.14" }),
-      /* @__PURE__ */ jsx("polygon", { points: "124,420 90,420  420,90  420,124", fill: "#7C3AED", opacity: "0.07" }),
-      /* @__PURE__ */ jsxs("defs", { children: [
-        /* @__PURE__ */ jsxs("linearGradient", { id: "fxR", x1: "1", y1: "0", x2: "0", y2: "0", children: [
-          /* @__PURE__ */ jsx("stop", { offset: "40%", stopColor: "var(--background)", stopOpacity: "0" }),
-          /* @__PURE__ */ jsx("stop", { offset: "100%", stopColor: "var(--background)", stopOpacity: "1" })
-        ] }),
-        /* @__PURE__ */ jsxs("linearGradient", { id: "fyR", x1: "0", y1: "1", x2: "0", y2: "0", children: [
-          /* @__PURE__ */ jsx("stop", { offset: "40%", stopColor: "var(--background)", stopOpacity: "0" }),
-          /* @__PURE__ */ jsx("stop", { offset: "100%", stopColor: "var(--background)", stopOpacity: "1" })
-        ] })
-      ] }),
-      /* @__PURE__ */ jsx("rect", { width: "420", height: "420", fill: "url(#fxR)" }),
-      /* @__PURE__ */ jsx("rect", { width: "420", height: "420", fill: "url(#fyR)" })
-    ] }) }),
     /* @__PURE__ */ jsxs("div", { className: "relative mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12", children: [
       /* @__PURE__ */ jsx(ProfileHero, { onJourney: () => setActive("journey") }),
       /* @__PURE__ */ jsxs("div", { className: "mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]", children: [
