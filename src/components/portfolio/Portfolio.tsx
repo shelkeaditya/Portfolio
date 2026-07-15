@@ -397,7 +397,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
                     <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
                     <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
                     <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
-                    <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="X" />
+                    <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="Twitter" />
                     <IconButton onClick={onJourney} icon={Flag} label="Journey" />
                     </div>
                   </div>
@@ -475,7 +475,7 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
                 <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
                 <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
                 <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
-                <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="X" />
+                <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="Twitter" />
                 <IconButton onClick={onJourney} icon={Flag} label="Journey" />
               </div>
             </div>
@@ -2145,7 +2145,7 @@ function Contact() {
                 <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
                 <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
                 <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
-                <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="X" />
+                <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="Twitter" />
               </div>
             </div>
 
