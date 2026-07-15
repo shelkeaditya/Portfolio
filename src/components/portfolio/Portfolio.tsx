@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Instagram,
   Linkedin,
-  TwitterIcon,
   Github,
   Flag,
   Gamepad2,
@@ -97,6 +96,14 @@ function SectionHeading({ title }: { title: string }) {
         <span />
       </span>
     </div>
+  );
+}
+
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
   );
 }
 
@@ -386,28 +393,12 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
                   </div>
 
                   <div className="shrink-0">
-                    <div className="flex items-center gap-0.3">
-                      <IconLink
-                        href="https://linkedin.com/in/shelkeaditya"
-                        icon={Linkedin}
-                        label="LinkedIn"
-                      />
-                      <IconLink
-                        href="https://github.com/shelkeaditya"
-                        icon={Github}
-                        label="GitHub"
-                      />
-                      <IconLink
-                        href="https://instagram.com/shelke__aditya"
-                        icon={Instagram}
-                        label="Instagram"
-                      />
-                      <IconLink
-                        href="https://x.com/shelke__aditya"
-                        icon={TwitterIcon}
-                        label="Twitter"
-                      />
-                      <IconButton onClick={onJourney} icon={Flag} label="Journey" />
+                    <div className="flex items-center gap-0.3"> 
+                    <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
+                    <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
+                    <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
+                    <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="X" />
+                    <IconButton onClick={onJourney} icon={Flag} label="Journey" />
                     </div>
                   </div>
                 </div>
@@ -481,18 +472,10 @@ function ProfileHero({ onJourney }: { onJourney: () => void }) {
 
               {/* Social icons + theme toggle */}
               <div className="flex items-center gap-0.3">
-                <IconLink
-                  href="https://linkedin.com/in/shelkeaditya"
-                  icon={Linkedin}
-                  label="LinkedIn"
-                />
+                <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
                 <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
-                <IconLink
-                  href="https://instagram.com/shelke__aditya"
-                  icon={Instagram}
-                  label="Instagram"
-                />
-                <IconLink href="https://x.com/shelke__aditya" icon={TwitterIcon} label="Twitter" />
+                <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
+                <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="X" />
                 <IconButton onClick={onJourney} icon={Flag} label="Journey" />
               </div>
             </div>
@@ -2159,18 +2142,10 @@ function Contact() {
                 Find me on
               </p>
               <div className="flex items-center gap-0.3">
-                <IconLink
-                  href="https://linkedin.com/in/shelkeaditya"
-                  icon={Linkedin}
-                  label="LinkedIn"
-                />
-                <IconLink href="https://x.com/shelke__aditya" icon={TwitterIcon} label="Twitter" />
-                <IconLink
-                  href="https://instagram.com/shelke__aditya"
-                  icon={Instagram}
-                  label="Instagram"
-                />
+                <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
                 <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
+                <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
+                <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="X" />
               </div>
             </div>
 
