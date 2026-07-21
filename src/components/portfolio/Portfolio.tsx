@@ -684,7 +684,7 @@ function ProfileHero({
                     <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">
                       Job Status :
                     </span>
-                    <span className="flex items-center gap-1.5 text-emerald-400 font-medium text-[13px]">
+                    <span className="flex items-center gap-1.5 whitespace-nowrap text-emerald-400 font-medium text-[13px]">
                       <span className="relative inline-flex h-1.5 w-1.5">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
