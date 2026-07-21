@@ -36,6 +36,7 @@ import {
   Zap,
   Globe,
   Monitor,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -2409,7 +2410,7 @@ function Contact() {
 
             {/* Response time */}
             <div className="flex items-center gap-2.5 text-xs text-muted-foreground/60 pt-4 border-t border-border/60 ">
-              <Send className="h-3.5 w-3.5 shrink-0" />
+              <MessageSquare className="h-3.5 w-3.5 shrink-0" />
               <span>Usually responds within 24 hours</span>
             </div>
           </div>
