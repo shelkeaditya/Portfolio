@@ -55,27 +55,295 @@ type PortfolioFilter = "All" | "Projects" | "Certifications" | "Publications" | 
 
 // ═══════════════════════════════════════════════════════════
 // HOOK - Theme
+// Single source of truth for both the desktop slider and the
+// mobile icon button. Initialized synchronously (lazy useState
+// initializer) from localStorage / system preference so the
+// correct icon is present on the very first render — no flash,
+// no post-mount reset to a hardcoded default.
 // ═══════════════════════════════════════════════════════════
 
-function useTheme() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+function getInitialTheme(): "dark" | "light" {
+  if (typeof window === "undefined") return "dark";
+  try {
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark" || saved === "light") return saved;
+  } catch {
+    // localStorage unavailable (privacy mode, etc.) — fall through to system preference
+  }
+  if (typeof window.matchMedia === "function") {
+    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+    return prefersLight ? "light" : "dark";
+  }
+  return "dark";
+}
 
+function useTheme() {
+  const [theme, setTheme] = useState<"dark" | "light">(() => getInitialTheme());
+
+  // Keep the `dark` class in sync (covers the initial value too, in case
+  // something else touched the class before this hook mounted).
   useEffect(() => {
-    const saved = (typeof window !== "undefined" && localStorage.getItem("theme")) as
-      "dark" | "light" | null;
-    const t = saved ?? "dark";
-    setTheme(t);
-    document.documentElement.classList.toggle("dark", t === "dark");
-  }, []);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
 
   const toggle = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.classList.toggle("dark", next === "dark");
-    localStorage.setItem("theme", next);
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem("theme", next);
+      } catch {
+        // ignore write failures
+      }
+      document.documentElement.classList.toggle("dark", next === "dark");
+      return next;
+    });
   };
 
   return { theme, toggle };
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPONENT - ThemeToggleDesktop (premium sliding pill switch)
+// Used on md: and above.
+// ═══════════════════════════════════════════════════════════
+
+function ThemeToggleDesktop({
+  theme,
+  toggle,
+  className,
+}: {
+  theme: "dark" | "light";
+  toggle: () => void;
+  className?: string;
+}) {
+  const isDark = theme === "dark";
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+  const [justSwitched, setJustSwitched] = useState(false);
+  const prevTheme = useRef(theme);
+
+  useEffect(() => {
+    if (prevTheme.current !== theme) {
+      prevTheme.current = theme;
+      setJustSwitched(true);
+      const t = setTimeout(() => setJustSwitched(false), 500);
+      return () => clearTimeout(t);
+    }
+  }, [theme]);
+
+  const releasePress = () => setIsPressed(false);
+
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isDark}
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      onClick={toggle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        releasePress();
+      }}
+      onMouseDown={() => setIsPressed(true)}
+      onMouseUp={releasePress}
+      onKeyDown={(e) => {
+        if (e.key === " " || e.key === "Enter") setIsPressed(true);
+      }}
+      onKeyUp={releasePress}
+      onBlur={releasePress}
+      className={cn(
+        "theme-toggle-track relative inline-flex h-9 w-[104px] shrink-0 items-center rounded-full border outline-none",
+        "focus-visible:ring-2 focus-visible:ring-[color:var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        isDark ? "border-border/50" : "",
+        className,
+      )}
+      style={{
+        background: isDark ? "#171A22" : "#E7E0D3",
+        borderColor: isDark ? undefined : "#DAD0BC",
+        boxShadow: isHovered
+          ? isDark
+            ? "0 0 0 5px color-mix(in oklab, var(--accent-blue) 14%, transparent), inset 0 1px 3px rgba(0,0,0,0.35)"
+            : "0 0 0 5px color-mix(in oklab, var(--accent-blue) 10%, transparent), inset 0 1px 2px rgba(0,0,0,0.06)"
+          : isDark
+            ? "inset 0 1px 3px rgba(0,0,0,0.4)"
+            : "inset 0 1px 2px rgba(0,0,0,0.05)",
+        transition: "background-color 380ms ease, border-color 380ms ease, box-shadow 250ms ease-out",
+      }}
+    >
+      {/* Tiny stars — dark mode only */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-full transition-opacity duration-300"
+        style={{ opacity: isDark ? 1 : 0 }}
+      >
+        <span className="theme-toggle-star" style={{ top: "18px", left: "9px", animationDelay: "0.2s" }} />
+        <span className="theme-toggle-star" style={{ top: "21px", left: "15px", animationDelay: "1.1s" }} />
+        <span className="theme-toggle-star" style={{ top: "12px", left: "23px", animationDelay: "2.0s" }} />
+      </span>
+
+      {/* Knob */}
+      <span
+        aria-hidden
+        className="absolute top-1 flex h-7 w-7 items-center justify-center rounded-full"
+        style={{
+          left: isDark ? "4px" : "70px",
+          transform: `translateY(${isHovered && !isPressed ? "-1px" : "0px"}) scale(${isPressed ? 0.96 : 1})`,
+          background: isDark ? "#232733" : "#FFF8EE",
+          boxShadow: isDark
+            ? "0 2px 6px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)"
+            : "0 2px 6px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.02)",
+          transition:
+            "left 340ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 380ms ease",
+        }}
+      >
+        <Moon
+          className="absolute h-4 w-4 text-slate-300"
+          style={{
+            opacity: isDark ? 1 : 0,
+            transform: isDark ? "rotate(0deg) scale(1)" : "rotate(100deg) scale(1)",
+            transition: "opacity 260ms ease-out, transform 300ms ease-out",
+          }}
+        />
+        <Sun
+          className="absolute h-4 w-4"
+          style={{
+            color: "#E89A2B",
+            opacity: isDark ? 0 : 1,
+            transform: isDark ? "rotate(-100deg) scale(0.5)" : "rotate(0deg) scale(1)",
+            transition: "opacity 260ms ease-out, transform 300ms ease-out",
+          }}
+        />
+
+        {/* Brief sun-ray pulse right after switching to light */}
+        {!isDark && justSwitched && (
+          <span aria-hidden className="theme-toggle-rays pointer-events-none absolute inset-0 rounded-full" />
+        )}
+      </span>
+
+      <style>{`
+        @keyframes theme-toggle-twinkle {
+          0%, 100% { opacity: 0; transform: scale(0.5); }
+          50% { opacity: 0.85; transform: scale(1); }
+        }
+        .theme-toggle-star {
+          position: absolute;
+          width: 2px;
+          height: 2px;
+          border-radius: 9999px;
+          background: rgba(255, 255, 255, 0.75);
+          animation: theme-toggle-twinkle 3.4s ease-in-out infinite;
+        }
+        @keyframes theme-toggle-ray-pulse {
+          0% { opacity: 0; transform: scale(0.6); }
+          45% { opacity: 0.7; transform: scale(1.2); }
+          100% { opacity: 0; transform: scale(1.4); }
+        }
+        .theme-toggle-rays {
+          background: radial-gradient(circle, rgba(232, 154, 43, 0.35) 0%, transparent 70%);
+          animation: theme-toggle-ray-pulse 0.55s ease-out;
+        }
+      `}</style>
+    </button>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPONENT - ThemeToggleMobile (condensed circular icon button)
+// Used below md:. Same visual language and timing as the desktop
+// slider's knob, but as a single ~44x44 tap target.
+//
+// Performance notes:
+// - Hover/press states are handled with CSS :hover / :active
+//   instead of onMouseEnter/onMouseDown React state, so there are
+//   no re-renders on pointer interaction — important on low-end
+//   mobile devices.
+// - Only transform, opacity, background-color, border-color and
+//   box-shadow are ever transitioned (all GPU/compositor-friendly).
+//   No `transition: all`, no layout-triggering properties (no
+//   `left`, `width`, `top`, etc.).
+// - Hover glow is scoped to `@media (hover: hover) and (pointer: fine)`
+//   so touchscreens never get a "sticky hover" after tapping.
+// ═══════════════════════════════════════════════════════════
+
+function ThemeToggleMobile({
+  theme,
+  toggleTheme,
+  className,
+}: {
+  theme: "dark" | "light";
+  toggleTheme: () => void;
+  className?: string;
+}) {
+  const isDark = theme === "dark";
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isDark}
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+      onClick={toggleTheme}
+      className={cn(
+        "theme-toggle-mobile-btn relative inline-flex h-11 w-11 items-center justify-center rounded-full border outline-none",
+        "focus-visible:ring-2 focus-visible:ring-[color:var(--accent-blue)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        isDark ? "border-border/50" : "",
+        className,
+      )}
+      style={{
+        background: isDark ? "#232733" : "#FFF8EE",
+        borderColor: isDark ? undefined : "#E3D9C4",
+        boxShadow: isDark
+          ? "0 2px 8px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04)"
+          : "0 2px 8px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.02)",
+      }}
+    >
+      <span className="relative flex h-5 w-5 items-center justify-center">
+        <Moon
+          className="theme-toggle-mobile-icon absolute h-5 w-5 text-slate-300"
+          style={{
+            opacity: isDark ? 1 : 0,
+            transform: isDark ? "rotate(0deg) scale(1)" : "rotate(100deg) scale(0.5)",
+          }}
+        />
+        <Sun
+          className="theme-toggle-mobile-icon absolute h-5 w-5"
+          style={{
+            color: "#E89A2B",
+            opacity: isDark ? 0 : 1,
+            transform: isDark ? "rotate(-100deg) scale(0.5)" : "rotate(0deg) scale(1)",
+          }}
+        />
+      </span>
+      <style>{`
+        .theme-toggle-mobile-btn {
+          transition:
+            background-color 320ms ease,
+            border-color 320ms ease,
+            box-shadow 200ms ease-out,
+            transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+          will-change: transform;
+        }
+        .theme-toggle-mobile-btn:active {
+          transform: scale(0.92);
+        }
+        @media (hover: hover) and (pointer: fine) {
+          .theme-toggle-mobile-btn:hover {
+            transform: translateY(-1px);
+            box-shadow:
+              0 0 0 5px color-mix(in oklab, var(--accent-blue) 12%, transparent),
+              0 2px 8px rgba(0, 0, 0, 0.3);
+          }
+          .theme-toggle-mobile-btn:hover:active {
+            transform: translateY(-1px) scale(0.92);
+          }
+        }
+        .theme-toggle-mobile-icon {
+          transition: opacity 260ms ease-out, transform 300ms ease-out;
+          will-change: transform, opacity;
+        }
+      `}</style>
+    </button>
+  );
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -264,20 +532,26 @@ function BackgroundFX() {
 //   col-3 : Download CV + email + social icons
 // ═══════════════════════════════════════════════════════════
 
-function ProfileHero({ onJourney }: { onJourney: () => void }) {
-  const { theme, toggle } = useTheme();
+function ProfileHero({
+  onJourney,
+  theme,
+  toggleTheme,
+}: {
+  onJourney: () => void;
+  theme: "dark" | "light";
+  toggleTheme: () => void;
+}) {
   const [expanded, setExpanded] = useState(false);
 
   return (
     <section className="relative">
       <div className="surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
-        {/* Mobile theme toggle */}
-        <button
-          onClick={toggle}
-          className="absolute top-3 right-3 z-20 md:hidden surface-3 rounded-xl border border-border/60 p-2"
-        >
-          {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </button>
+        {/* Mobile theme toggle — condensed circular button, shares theme state with the desktop slider */}
+        <ThemeToggleMobile
+          theme={theme}
+          toggleTheme={toggleTheme}
+          className="absolute top-3 right-3 z-20 md:hidden"
+        />
 
         {/* ── 3-column row ── */}
         <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-8 md:py-5">
@@ -552,27 +826,11 @@ function NavPanel({
 
       <div className="my-3 h-px bg-border/60" />
 
-      <button
-        onClick={toggleTheme}
-        aria-label="Toggle theme"
-        className="surface-3 group flex w-full items-center gap-3 rounded-lg border border-border/60 px-3 py-2.5 text-sm text-muted-foreground transition-all hover:text-foreground"
-      >
-        <span className="relative flex h-7 w-7 items-center justify-center rounded-md bg-foreground/5">
-          <Sun
-            className={cn(
-              "h-4 w-4 absolute transition-all duration-500",
-              theme === "dark" ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100",
-            )}
-          />
-          <Moon
-            className={cn(
-              "h-4 w-4 absolute transition-all duration-500",
-              theme === "dark" ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0",
-            )}
-          />
-        </span>
-        <span className="flex-1 text-left">{theme === "dark" ? "Dark Mode" : "Light Mode"}</span>
-      </button>
+      {/* Theme toggle — left-aligned to match the nav buttons' px-4 rhythm,
+          with breathing room above/below rather than being centered. */}
+      <div className="px-6 pt-2 pb-.5">
+        <ThemeToggleDesktop theme={theme} toggle={toggleTheme} />
+      </div>
     </aside>
   );
 }
@@ -743,7 +1001,7 @@ function Resume() {
           icon={<Briefcase className="h-5 w-5 text-blue-400" />}
         >
           <ResumeItem
-            heading="Cloud & DevSecOps Intern"
+            heading="Cloud & DevOps Intern"
             college="E-Sutra Technologies"
             year="Jun 2026 – Present"
             location="Remote"
@@ -2288,7 +2546,7 @@ export default function Portfolio() {
 
       {/* ── Main layout ── */}
       <div className="relative mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12">
-        <ProfileHero onJourney={() => setActive("journey")} />
+        <ProfileHero onJourney={() => setActive("journey")} theme={theme} toggleTheme={toggle} />
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]">
           <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0">
