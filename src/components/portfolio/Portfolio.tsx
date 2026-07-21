@@ -916,14 +916,14 @@ function ResumeBlock({
 
 function ResumeItem({
   heading,
-  college,
+  organization,
   year,
   location,
   description,
   points,
 }: {
   heading: string;
-  college?: string;
+  organization?: string;
   year: string;
   location: string;
   description?: string;
@@ -933,7 +933,7 @@ function ResumeItem({
     <div className="surface-2 rounded-xl border border-border/60 p-5">
       <div className="flex-1">
         <h4 className="text-lg font-semibold text-foreground sm:text-xl">{heading}</h4>
-        {college && <div className="text-base font-medium text-blue-400">{college}</div>}
+        {organization && <div className="text-base font-medium text-blue-400">{organization}</div>}
         <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
           {location && (
             <>
@@ -1003,15 +1003,21 @@ function Resume() {
         >
           <ResumeItem
             heading="Cloud & DevOps Intern"
-            college="E-Sutra Technologies"
+            organization="E-Sutra Technologies"
             year="Jun 2026 – Present"
             location="Remote"
             description="Working on real-world DevOps and cloud tasks including CI/CD pipeline management, infrastructure automation, and security practices in an Agile team environment."
             points={[
-              "Participating in sprint rituals - planning, stand-ups, retrospectives",
-              "Managing Git branching workflows and PR reviews",
-              "Working with Jira for task tracking and project management",
-              "Applying DevSecOps practices with SonarQube and security scanning",
+              "Managed end-to-end deployment of production applications across Linux-based cloud environments.",
+              "Designed, built, and maintained CI/CD pipelines using Jenkins to automate build, quality checks, and deployment workflows.",
+              "Provisioned and administered Oracle Cloud Infrastructure (OCI) virtual machines and deployment environments.",
+              "Performed secure server administration and deployment activities using SSH on remote Linux servers.",
+              "Integrated SonarQube into CI/CD pipelines to automate static code analysis and enforce quality gates before deployment.",
+              "Containerized and deployed applications using Docker and Docker Compose for consistent production environments.",
+              "Configured and maintained Nginx as a reverse proxy for application routing and production hosting.",
+              "Executed deployment validation, monitored application health, analyzed logs, and resolved production deployment issues.",
+              "Performed functional automation testing using Selenium and conducted performance testing with Apache JMeter as part of release validation.",
+              "Collaborated with development teams to coordinate releases, troubleshoot deployment issues, and ensure reliable production deployments.",
             ]}
           />
           <div className="mt-4">
@@ -1038,7 +1044,7 @@ function Resume() {
         >
           <ResumeItem
             heading="B.Tech - Cloud Technology & Information Security"
-            college="Ajeenkya DY Patil University"
+            organization="Ajeenkya DY Patil University"
             year="Aug 2022 – May 2026"
             location="Pune, India"
           />
