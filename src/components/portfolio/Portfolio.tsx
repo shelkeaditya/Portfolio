@@ -1515,7 +1515,7 @@ const INFRA_NODES: InfraNode[] = [
     detail: {
       purpose:
         "The center of the deployment — receives GitHub's webhook, builds the app, and runs live server-side rendering on Cloudflare's edge network for every single request.",
-      technologies: ["Cloudflare Workers", "TanStack Start SSR", "TanStack Router"],
+      technologies: ["Cloudflare Workers", "Bun", "TanStack Start SSR", "TanStack Router"],
       responsibilities: [
         "Builds the project on every webhook trigger",
         "TanStack Router resolves the matched route before rendering",
@@ -1529,7 +1529,8 @@ const INFRA_NODES: InfraNode[] = [
         "Reports to Workers Logs & Traces",
         "Serves the Portfolio application",
       ],
-      buildProcess: "Webhook → npm install → vite build (client + server bundles) → deployed as a Worker",
+      buildProcess:
+        "Webhook → bun install --frozen-lockfile → bun run build → wrangler deploy -c dist/server/wrangler.json",
       runtimeDetails:
         "wrangler.jsonc sets \"main\": \"src/server.ts\" and \"compatibility_flags\": [\"nodejs_compat\"] — the Worker genuinely executes this file per request; it's not serving pre-built static files",
     },
@@ -1620,7 +1621,7 @@ const INFRA_NODES: InfraNode[] = [
     items: ["Chrome", "Firefox", "Safari"],
     category: "client",
     icon: Monitor,
-    x: 1370,
+    x: 1400,
     y: 290,
     detail: {
       purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
@@ -1713,37 +1714,204 @@ const INFRA_CATEGORY_STYLE: Record<InfraCategory, { text: string; ring: string; 
 const INFRA_CANVAS_W = 1515;
 const INFRA_CANVAS_H = 589;
 
-// Approximate rendered half-width/half-height of each node card (at the sm+ breakpoint),
-// used to trim connector lines so they stop at the node's edge instead of its center.
+// Node width now sizes to its own content (title + icon, subtitle, meta — whichever is
+// widest) instead of a fixed "lg | default" bucket, while keeping horizontal padding
+// perfectly symmetrical (24px each side, see the px-6 on the node button below). This is
+// a deterministic character-width estimate rather than a DOM measurement, so it stays in
+// sync with layout on first paint (no measure-then-reflow flash) and works the same on
+// server-rendered output.
+const INFRA_NODE_MIN_W = 128;
+// No max width — nodes must grow to fit their longest line rather than truncate. This is
+// only a sanity ceiling against a pathologically long future label, not a real constraint.
+const INFRA_NODE_SAFETY_CEILING = 420;
+const INFRA_NODE_PAD_X = 24; // symmetrical left/right padding (px-6)
+const INFRA_NODE_HH = 34; // half-height stays as-is — height is unchanged
+
+function estimateInfraNodeWidth(node: InfraNode) {
+  const iconAndGap = 14 + 6; // h-3.5 icon + gap-1.5
+  const titleW = iconAndGap + node.title.length * 7.1; // text-xs font-semibold — slightly generous so it never clips
+  const subtitleW = node.subtitle.length * 6.1; // text-[10px]
+  const metaW = node.meta.length * 5.5; // text-[9px]
+  const contentW = Math.max(titleW, subtitleW, metaW);
+  const width = Math.ceil(contentW + INFRA_NODE_PAD_X * 2);
+  return Math.min(INFRA_NODE_SAFETY_CEILING, Math.max(INFRA_NODE_MIN_W, width));
+}
+
+// Half-width/half-height of each node card, driven by the same content-based width used
+// to render it — so connector ports always land exactly on the card's actual edge.
 function infraNodeHalfDims(node: InfraNode) {
-  return node.size === "lg" ? { hw: 105, hh: 34 } : { hw: 75, hh: 34 };
+  return { hw: estimateInfraNodeWidth(node) / 2, hh: INFRA_NODE_HH };
 }
 
-// Given a node's center, its half-width/half-height, and a direction vector pointing
-// away from that center (toward the other node), returns the point where that ray
-// exits the node's rectangle, pushed outward by `gap` extra pixels.
-function infraTrimToBox(
-  cx: number,
-  cy: number,
-  hw: number,
-  hh: number,
-  dx: number,
-  dy: number,
-  gap: number,
-) {
-  const adx = Math.abs(dx);
-  const ady = Math.abs(dy);
-  if (adx < 0.0001 && ady < 0.0001) return { x: cx, y: cy };
-  const scale = Math.min(adx > 0 ? hw / adx : Infinity, ady > 0 ? hh / ady : Infinity);
-  const bx = cx + dx * scale;
-  const by = cy + dy * scale;
-  const len = Math.sqrt(dx * dx + dy * dy) || 1;
-  const ux = dx / len;
-  const uy = dy / len;
-  return { x: bx + ux * gap, y: by + uy * gap };
+const INFRA_EDGE_GAP = 6; // px between the arrowhead/line end and the node border — tight, not floaty
+const INFRA_CORNER_RADIUS = 10; // px, rounded 90° bends on orthogonal connectors
+const INFRA_LABEL_OFFSET = 10; // px, consistent clearance between a label and its connector
+
+type InfraPoint = { x: number; y: number };
+
+// A port sits at the mid-point of whichever side of the node faces the other end,
+// pushed outward by `gap` so the line/arrowhead never touches the card.
+function infraPort(node: InfraNode, side: "left" | "right" | "top" | "bottom", gap: number): InfraPoint {
+  const { hw, hh } = infraNodeHalfDims(node);
+  switch (side) {
+    case "right":
+      return { x: node.x + hw + gap, y: node.y };
+    case "left":
+      return { x: node.x - hw - gap, y: node.y };
+    case "bottom":
+      return { x: node.x, y: node.y + hh + gap };
+    case "top":
+      return { x: node.x, y: node.y - hh - gap };
+  }
 }
 
-const INFRA_EDGE_GAP = 12; // px between the arrowhead/line end and the node border
+// Builds the Manhattan (horizontal/vertical-only) waypoints between two nodes. Picks
+// whichever axis dominates as the "through" direction, exits/enters on the matching side,
+// and — only if the two ports aren't already aligned — inserts a single mid-line jog so
+// every segment stays perfectly horizontal or vertical. Already-aligned nodes (the common
+// case here) come back as a plain 2-point straight run with zero bends.
+function infraOrthogonalPoints(from: InfraNode, to: InfraNode, gap: number): InfraPoint[] {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const horizontalDominant = Math.abs(dx) >= Math.abs(dy);
+
+  if (horizontalDominant) {
+    const start = infraPort(from, dx >= 0 ? "right" : "left", gap);
+    const end = infraPort(to, dx >= 0 ? "left" : "right", gap);
+    if (Math.abs(start.y - end.y) < 0.5) return [start, end];
+    const midX = (start.x + end.x) / 2;
+    return [start, { x: midX, y: start.y }, { x: midX, y: end.y }, end];
+  }
+  const start = infraPort(from, dy >= 0 ? "bottom" : "top", gap);
+  const end = infraPort(to, dy >= 0 ? "top" : "bottom", gap);
+  if (Math.abs(start.x - end.x) < 0.5) return [start, end];
+  const midY = (start.y + end.y) / 2;
+  return [start, { x: start.x, y: midY }, { x: end.x, y: midY }, end];
+}
+
+// Turns a Manhattan polyline into an SVG path string with rounded corners at every
+// interior vertex (quadratic-curve corner, radius clamped to half the shorter adjoining
+// segment so short jogs never produce an overshooting curve).
+function infraRoundedPath(points: InfraPoint[], radius: number): string {
+  if (points.length < 2) return "";
+  if (points.length === 2) return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
+  let d = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length - 1; i++) {
+    const prev = points[i - 1];
+    const curr = points[i];
+    const next = points[i + 1];
+    const inLen = Math.hypot(curr.x - prev.x, curr.y - prev.y) || 1;
+    const outLen = Math.hypot(next.x - curr.x, next.y - curr.y) || 1;
+    const r = Math.min(radius, inLen / 2, outLen / 2);
+    const a = { x: curr.x - ((curr.x - prev.x) / inLen) * r, y: curr.y - ((curr.y - prev.y) / inLen) * r };
+    const b = { x: curr.x + ((next.x - curr.x) / outLen) * r, y: curr.y + ((next.y - curr.y) / outLen) * r };
+    d += ` L ${a.x} ${a.y} Q ${curr.x} ${curr.y} ${b.x} ${b.y}`;
+  }
+  const last = points[points.length - 1];
+  d += ` L ${last.x} ${last.y}`;
+  return d;
+}
+
+// Finds the longest straight run in the polyline (the whole thing, for a simple 2-point
+// line) and returns a label anchor centered on that segment, offset a fixed distance to
+// the side so the label clears the line itself, any arrowhead, and the nodes at either end.
+function infraLabelAnchor(points: InfraPoint[], offset: number): InfraPoint {
+  let bestLen = -1;
+  let bestMid: InfraPoint = points[0];
+  let bestHorizontal = true;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p = points[i];
+    const q = points[i + 1];
+    const len = Math.hypot(q.x - p.x, q.y - p.y);
+    if (len > bestLen) {
+      bestLen = len;
+      bestMid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
+      bestHorizontal = Math.abs(q.y - p.y) < 0.5;
+    }
+  }
+  return bestHorizontal ? { x: bestMid.x, y: bestMid.y - offset } : { x: bestMid.x + offset, y: bestMid.y };
+}
+
+// Which side of `from` an edge exits, and which side of `to` it enters — same
+// horizontal/vertical-dominant rule used by infraOrthogonalPoints, exposed separately so
+// the fan-out grouping below can key edges by (node, side) before any points are built.
+function infraExitSide(from: InfraNode, to: InfraNode): "left" | "right" | "top" | "bottom" {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? "right" : "left";
+  return dy >= 0 ? "bottom" : "top";
+}
+function infraEntrySide(from: InfraNode, to: InfraNode): "left" | "right" | "top" | "bottom" {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? "left" : "right";
+  return dy >= 0 ? "top" : "bottom";
+}
+
+// Drops any repeated consecutive vertex (e.g. a branch whose target row is level with the
+// trunk collapses two of the bus waypoints onto the same point) — infraRoundedPath can't
+// round a zero-length segment.
+function infraDedupePoints(points: InfraPoint[]): InfraPoint[] {
+  const out: InfraPoint[] = [points[0]];
+  for (let i = 1; i < points.length; i++) {
+    const p = points[i];
+    const last = out[out.length - 1];
+    if (Math.hypot(p.x - last.x, p.y - last.y) > 0.5) out.push(p);
+  }
+  return out;
+}
+
+const INFRA_BUS_OFFSET = 30; // px the shared trunk runs before it's allowed to branch
+
+// Computes the routed waypoints for every edge in one pass. Edges that share the same
+// exit side of the same source node (e.g. Cloudflare Workers fanning out to DNS, Logs, and
+// Traces all off its right edge) are grouped into a single shared trunk: one line leaves
+// the node, runs INFRA_BUS_OFFSET px clear of it, and only THEN splits into a bus that the
+// individual branches tap off of — so nothing crosses or bundles right at the node
+// boundary, the way Cloudflare/AWS reference diagrams draw fan-out. Edges that don't share
+// an exit side with any sibling fall back to the plain point-to-point orthogonal route.
+function infraComputeEdgeGeometries(edges: InfraEdge[], nodeMap: Record<string, InfraNode>, gap: number, busOffset: number): InfraPoint[][] {
+  const groups = new Map<string, number[]>();
+  edges.forEach((edge, i) => {
+    const from = nodeMap[edge.from];
+    const to = nodeMap[edge.to];
+    const key = `${edge.from}::${infraExitSide(from, to)}`;
+    groups.set(key, [...(groups.get(key) ?? []), i]);
+  });
+
+  const result: InfraPoint[][] = new Array(edges.length);
+
+  groups.forEach((indices) => {
+    if (indices.length === 1) {
+      const edge = edges[indices[0]];
+      result[indices[0]] = infraOrthogonalPoints(nodeMap[edge.from], nodeMap[edge.to], gap);
+      return;
+    }
+
+    // Shared trunk: same source node + exit side for every edge in this group.
+    const first = edges[indices[0]];
+    const fromNode = nodeMap[first.from];
+    const side = infraExitSide(fromNode, nodeMap[first.to]);
+    const trunkStart = infraPort(fromNode, side, gap);
+    const horizontalTrunk = side === "left" || side === "right";
+    const busCoord = horizontalTrunk
+      ? trunkStart.x + (side === "right" ? busOffset : -busOffset)
+      : trunkStart.y + (side === "bottom" ? busOffset : -busOffset);
+
+    indices.forEach((i) => {
+      const edge = edges[i];
+      const toNode = nodeMap[edge.to];
+      const entrySide = infraEntrySide(fromNode, toNode);
+      const end = infraPort(toNode, entrySide, gap);
+      const points = horizontalTrunk
+        ? [trunkStart, { x: busCoord, y: trunkStart.y }, { x: busCoord, y: end.y }, end]
+        : [trunkStart, { x: trunkStart.x, y: busCoord }, { x: end.x, y: busCoord }, end];
+      result[i] = infraDedupePoints(points);
+    });
+  });
+
+  return result;
+}
 
 const INFRA_SUMMARY_CARDS: { title: string; category: InfraCategory; items: string[] }[] = [
   { title: "Edge Stack", category: "runtime", items: ["Cloudflare Workers", "Cloudflare DNS", "Edge Runtime", "HTTPS/TLS", "Custom Domain"] },
@@ -1762,6 +1930,14 @@ function InfraBuild() {
   const nodeMap = useMemo(
     () => Object.fromEntries(INFRA_NODES.map((n) => [n.id, n])) as Record<string, InfraNode>,
     [],
+  );
+
+  // Routed waypoints per edge — shared trunk/bus for any node's fanned-out edges, plain
+  // point-to-point orthogonal route otherwise. Computed once so the line pass and the
+  // label pass below always agree on exactly where each connector runs.
+  const edgeGeometries = useMemo(
+    () => infraComputeEdgeGeometries(INFRA_EDGES, nodeMap, INFRA_EDGE_GAP, INFRA_BUS_OFFSET),
+    [nodeMap],
   );
 
   const activeIds = useMemo(() => {
@@ -1906,8 +2082,6 @@ function InfraBuild() {
                   ))}
                 </defs>
                 {INFRA_EDGES.map((edge, i) => {
-                  const from = nodeMap[edge.from];
-                  const to = nodeMap[edge.to];
                   const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
                   const dash =
                     edge.style === "dashed"
@@ -1920,38 +2094,23 @@ function InfraBuild() {
                   const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
                   const isLive = edge.style === "solid";
 
-                  const dx = to.x - from.x;
-                  const dy = to.y - from.y;
-                  const fromDims = infraNodeHalfDims(from);
-                  const toDims = infraNodeHalfDims(to);
-                  const start = infraTrimToBox(
-                    from.x,
-                    from.y,
-                    fromDims.hw,
-                    fromDims.hh,
-                    dx,
-                    dy,
-                    edge.bidirectional ? INFRA_EDGE_GAP : 0,
-                  );
-                  const end = infraTrimToBox(
-                    to.x,
-                    to.y,
-                    toDims.hw,
-                    toDims.hh,
-                    -dx,
-                    -dy,
-                    INFRA_EDGE_GAP,
-                  );
+                  // Orthogonal (horizontal/vertical-only) waypoints — a plain point-to-point
+                  // route, or a shared trunk-then-bus route when this edge fans out from the
+                  // same node/side as siblings (see infraComputeEdgeGeometries) — then a
+                  // rounded-corner path drawn through them.
+                  const points = edgeGeometries[i];
+                  const d = infraRoundedPath(points, INFRA_CORNER_RADIUS);
 
                   return (
                     <path
                       key={i}
-                      d={`M ${start.x} ${start.y} L ${end.x} ${end.y}`}
+                      d={d}
                       fill="none"
                       stroke={color}
                       strokeWidth={edge.style === "vertical" ? 1.6 : 1.8}
                       strokeDasharray={dash}
                       strokeLinecap="round"
+                      strokeLinejoin="round"
                       markerEnd={`url(#infra-arrow-${edge.category})`}
                       markerStart={edge.bidirectional ? `url(#infra-arrow-${edge.category})` : undefined}
                       className={cn("transition-opacity duration-200", isLive && "infra-edge-live")}
@@ -1963,30 +2122,20 @@ function InfraBuild() {
 
               {INFRA_EDGES.map((edge, i) => {
                 if (!edge.label) return null;
-                const from = nodeMap[edge.from];
-                const to = nodeMap[edge.to];
                 const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
-                const dx = to.x - from.x;
-                const dy = to.y - from.y;
-                const fromDims = infraNodeHalfDims(from);
-                const toDims = infraNodeHalfDims(to);
-                const start = infraTrimToBox(
-                  from.x,
-                  from.y,
-                  fromDims.hw,
-                  fromDims.hh,
-                  dx,
-                  dy,
-                  edge.bidirectional ? INFRA_EDGE_GAP : 0,
-                );
-                const end = infraTrimToBox(to.x, to.y, toDims.hw, toDims.hh, -dx, -dy, INFRA_EDGE_GAP);
-                const midX = (start.x + end.x) / 2;
-                const midY = (start.y + end.y) / 2;
+
+                // Label rides on whichever axis the connector actually runs along — for
+                // these edges that's a single straight segment, so it lands centered on
+                // the line and offset a fixed distance clear of it (never on top of the
+                // stroke, an arrowhead, or a node). For a jogged (Z-shaped or bus) connector
+                // this automatically picks the longest of the straight runs instead.
+                const anchor = infraLabelAnchor(edgeGeometries[i], INFRA_LABEL_OFFSET);
+
                 return (
                   <span
                     key={i}
                     className="surface-1 absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded border border-border/50 px-1.5 py-0.5 text-[9px] text-muted-foreground transition-opacity duration-200 md:text-[10px]"
-                    style={{ left: midX, top: midY, opacity: isActive ? 1 : 0.15, zIndex: 3 }}
+                    style={{ left: anchor.x, top: anchor.y, opacity: isActive ? 1 : 0.15, zIndex: 3 }}
                   >
                     {edge.label}
                   </span>
@@ -1999,7 +2148,6 @@ function InfraBuild() {
                 const isActive = !hovered || activeIds?.has(node.id);
                 const isHovered = hovered === node.id;
                 const isSelected = selected === node.id;
-                const isLg = node.size === "lg";
                 return (
                   <div
                     key={node.id}
@@ -2017,11 +2165,14 @@ function InfraBuild() {
                       type="button"
                       onClick={() => setSelected(node.id)}
                       className={cn(
-                        "surface-1 flex flex-col gap-0.5 rounded-lg border px-3 py-2 text-left shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5",
-                        isLg ? "w-[190px] sm:w-[210px]" : "w-[132px] sm:w-[150px]",
+                        "surface-1 flex flex-col gap-0.5 rounded-lg border px-6 py-2 text-left shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5",
                         style.ring,
                       )}
                       style={{
+                        // Content-sized width (see estimateInfraNodeWidth) — same value the
+                        // connector ports use, and px-6 above keeps 24px on both sides so
+                        // there's never leftover space stacked on just the right edge.
+                        width: estimateInfraNodeWidth(node),
                         boxShadow: isSelected
                           ? `0 0 0 2px ${style.stroke}, 0 0 22px 2px ${style.stroke}55`
                           : isHovered
@@ -2031,12 +2182,12 @@ function InfraBuild() {
                     >
                       <div className="flex items-center gap-1.5">
                         <Icon className={cn("h-3.5 w-3.5 shrink-0", style.text)} />
-                        <span className="truncate text-xs font-semibold text-foreground">
+                        <span className="whitespace-nowrap text-xs font-semibold text-foreground">
                           {node.title}
                         </span>
                       </div>
                       <span className="text-[10px] text-muted-foreground">{node.subtitle}</span>
-                      <span className="truncate text-[9px] text-muted-foreground/60">{node.meta}</span>
+                      <span className="whitespace-nowrap text-[9px] text-muted-foreground/60">{node.meta}</span>
                     </button>
                   </div>
                 );
