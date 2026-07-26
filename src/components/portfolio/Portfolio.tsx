@@ -637,11 +637,11 @@ function ProfileHero({
                 <span className="block h-px bg-border/60" />
 
                 <a
-                  href="mailto:work.shelkeaditya@gmail.com"
+                  href="mailto:shelkeaditya@proton.me"
                   className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-                  work.shelkeaditya@gmail.com
+                  shelkeaditya@proton.me
                 </a>
                 <div className="flex items-center justify-between">
                   <div className="shrink-0">
@@ -738,11 +738,11 @@ function ProfileHero({
 
               {/* Email */}
               <a
-                href="mailto:work.shelkeaditya@gmail.com"
+                href="mailto:shelkeaditya@proton.me"
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors"
               >
                 <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-                work.shelkeaditya@gmail.com
+                shelkeaditya@proton.me
               </a>
 
               {/* Social icons + theme toggle */}
@@ -2537,10 +2537,10 @@ function Contact() {
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
               <a
-                href="mailto:work.shelkeaditya@gmail.com"
+                href="mailto:shelkeaditya@proton.me"
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors"
               >
-                work.shelkeaditya@gmail.com
+                shelkeaditya@proton.me
               </a>
             </div>
 
