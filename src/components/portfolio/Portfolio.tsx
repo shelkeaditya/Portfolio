@@ -2581,90 +2581,195 @@ function Contact() {
 // CONSTANTS - Journey timeline
 // ═════════════════════════════════════════════════════════════
 
-const JOURNEY = [
-  {
-    year: "Aug 2022",
-    title: "Started B.Tech Journey",
-    desc: "Began B.Tech in Cloud Technology & Information Security at Ajeenkya DY Patil University.",
-  },
+type JourneyEvent = {
+  date: string; // "Mon D"
+  year: number;
+  desc: React.ReactNode;
+};
 
+const JOURNEY: JourneyEvent[] = [
   {
-    year: "Aug 2023",
-    title: "Programming Foundations",
-    desc: "Built programming fundamentals with C and Java while strengthening problem-solving skills.",
+    date: "May 29",
+    year: 2026,
+    desc: (
+      <>
+        Portfolio launched as a server-rendered application on <strong>TanStack Start</strong>,{" "}
+        <strong>TanStack Router</strong>, and Vite, deployed on <strong>Cloudflare Workers</strong>.
+      </>
+    ),
   },
-
   {
-    year: "Jan 2024",
-    title: "Cloud & Security",
-    desc: "Started learning Cloud Computing, Linux, Networking, Python, and Information Security, building a strong technical foundation.",
+    date: "Jun 1",
+    year: 2026,
+    desc: "Contact section and mobile layout refined for better usability.",
   },
-
   {
-    year: "Aug 2024",
-    title: "AWS & Cloud Architecture",
-    desc: "Explored AWS fundamentals, cloud architecture, virtualization, networking, and security through coursework and hands-on labs.",
+    date: "Jun 2",
+    year: 2026,
+    desc: "Project cards, contact section, and resume skills tab restructured for clarity; Search Console verification added to support SEO.",
   },
-
   {
-    year: "Apr 2025",
-    title: "Infrastructure Automation",
-    desc: "Began automating deployments and managing cloud infrastructure using Docker, Linux, and DevOps tools.",
+    date: "Jun 9",
+    year: 2026,
+    desc: "Homepage tile layout and typography refined.",
   },
-
   {
-    year: "Jun 2025",
-    title: "Real-World Projects",
-    desc: "Built the Telemedicine Platform as a final-year group project while developing an internship-level cloud and DevOps project independently and learning Kubernetes.",
+    date: "Jun 14",
+    year: 2026,
+    desc: "Resume content updated.",
   },
-
   {
-    year: "Jan 2026",
-    title: "Internship & CI/CD",
-    desc: "Worked on Jenkins, Power BI, CI/CD pipelines, and enhanced cloud and DevOps projects during my internship.",
+    date: "Jun 25",
+    year: 2026,
+    desc: (
+      <>
+        Contact form integrated with <strong>EmailJS</strong> for direct, serverless messaging.
+      </>
+    ),
   },
-
   {
-    year: "Apr 2026",
-    title: "AWS Certified",
-    desc: "Earned the AWS Certified Cloud Practitioner (CLF-C02), validating foundational knowledge of AWS Cloud services, architecture, security, and best practices.",
+    date: "Jun 29",
+    year: 2026,
+    desc: "Journey timeline introduced, and the resume section restructured with refined layout and transitions.",
   },
-
   {
-    year: "Present",
-    title: "Growing as a Cloud Engineer",
-    desc: "Continuing to build expertise in AWS, Kubernetes, DevOps, Linux, Networking, and Security through hands-on projects and continuous learning.",
+    date: "Jun 30",
+    year: 2026,
+    desc: "Certifications linked directly to their verifiable sources, with resume actions split for clarity.",
+  },
+  {
+    date: "Jul 1",
+    year: 2026,
+    desc: "Favicon and brand touches added for visual consistency across pages.",
+  },
+  {
+    date: "Jul 9",
+    year: 2026,
+    desc: "Bio copy refined.",
+  },
+  {
+    date: "Jul 10",
+    year: 2026,
+    desc: "Color palette and mobile presentation adjusted ahead of the full design pass.",
+  },
+  {
+    date: "Jul 11",
+    year: 2026,
+    desc: "Design system overhaul completed — dark and light themes rebuilt, iconography refreshed, and layouts made mobile-first.",
+  },
+  {
+    date: "Jul 12",
+    year: 2026,
+    desc: (
+      <>
+        Deployment pipeline refined, with observability enabled on the <strong>Cloudflare Worker</strong>.
+      </>
+    ),
+  },
+  {
+    date: "Jul 13",
+    year: 2026,
+    desc: "Codebase reorganized and repository hygiene improved; professional title updated to Cloud & DevOps Engineer.",
+  },
+  {
+    date: "Jul 15",
+    year: 2026,
+    desc: "Social icon updated to the official X logomark.",
+  },
+  {
+    date: "Jul 21",
+    year: 2026,
+    desc: "Theme adjustments and internal reorganization, including status indicators and authentication testing.",
+  },
+  {
+    date: "Jul 22",
+    year: 2026,
+    desc: "Theme finalized and documentation updated to reflect the current build.",
+  },
+  {
+    date: "Jul 26",
+    year: 2026,
+    desc: (
+      <>
+        <strong>Proton Mail</strong> integrated as the primary professional contact address.
+      </>
+    ),
   },
 ];
-
 
 // ═══════════════════════════════════════════════════════════
 // SECTION - Journey
 // ═══════════════════════════════════════════════════════════
 
 function Journey() {
+  const years = useMemo(() => {
+    const map = new Map<number, JourneyEvent[]>();
+    for (const ev of JOURNEY) {
+      if (!map.has(ev.year)) map.set(ev.year, []);
+      map.get(ev.year)!.push(ev);
+    }
+    return Array.from(map.entries()).sort((a, b) => a[0] - b[0]);
+  }, []);
+
+  const first = JOURNEY[0];
+  const last = JOURNEY[JOURNEY.length - 1];
+
   return (
     <div>
       <SectionHeading title="Journey." />
-      <ol className="relative ml-3 border-l border-border/70 pl-6">
-        {JOURNEY.map((j, i) => (
-          <li key={i} className="group relative pb-7 last:pb-0">
-            <span
-              aria-hidden
-              className="absolute -left-[33px] top-1 grid h-5 w-5 place-items-center rounded-full border border-border/80 bg-card shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent-blue)_18%,transparent)]"
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-blue transition-all group-hover:scale-150" />
-            </span>
-            <div className="surface-2 rounded-xl border border-border/60 p-4 transition-colors hover:border-[color:var(--accent-blue)]/25">
-              <span className="rounded-md border border-border/60 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
-                {j.year}
+
+      <div className="mb-8 text-sm text-muted-foreground">
+        <span className="font-semibold text-accent-blue">{JOURNEY.length}</span> milestones ·{" "}
+        {first.year} – {last.year}
+      </div>
+
+      <div className="space-y-10">
+        {years.map(([year, events]) => (
+          <div key={year}>
+            {/* Year header with ghost numeral */}
+            <div className="relative mb-5 flex items-center justify-between">
+              <div className="relative">
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -top-6 left-0 select-none text-6xl font-black leading-none text-foreground md:text-7xl"
+                  style={{ opacity: "var(--ghost-year-opacity)" }}
+                >
+                  {year}
+                </span>
+                <div className="relative">
+                  <h3 className="text-xl font-bold text-foreground md:text-2xl">{year}</h3>
+                  <span className="mt-1 block h-[2px] w-56 rounded-full bg-gradient-to-r from-accent-blue to-transparent" />
+                </div>
+              </div>
+              <span className="rounded-full border border-border/60 bg-card px-3 py-1 font-mono text-xs text-muted-foreground">
+                {events.length} events
               </span>
-              <div className="mt-1 text-base font-medium text-foreground">{j.title}</div>
-              <div className="text-sm text-muted-foreground">{j.desc}</div>
             </div>
-          </li>
+
+            {/* Rail of events for this year */}
+            <ol className="relative ml-[7px] pl-6">
+              {events.map((ev, i) => (
+                <li key={i} className="group relative pb-6 last:pb-0">
+                  {i !== events.length - 1 && (
+                    <span
+                      aria-hidden
+                      className="absolute -left-[25px] top-3 bottom-0 w-px bg-border/60"
+                    />
+                  )}
+                  <span
+                    aria-hidden
+                    className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-accent-blue shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent-blue)_18%,transparent)] transition-transform group-hover:scale-125"
+                  />
+                  <span className="mb-2 inline-block rounded-md border border-border/60 bg-card px-2 py-0.5 font-mono text-xs text-muted-foreground">
+                    {ev.date}
+                  </span>
+                  <div className="text-sm leading-relaxed text-foreground/90">{ev.desc}</div>
+                </li>
+              ))}
+            </ol>
+          </div>
         ))}
-      </ol>
+      </div>
     </div>
   );
 }

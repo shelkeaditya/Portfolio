@@ -21,7 +21,6 @@
  */
 
 @theme inline {
-;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -92,12 +91,14 @@
   --surface-1: oklch(0.97 0.003 250);
   --surface-2: oklch(0.94 0.005 250);
   --surface-3: oklch(0.91 0.007 255);
+  --ghost-year-opacity: 0.1;
 }
 
 .dark {
   color-scheme: dark;
   --background: #0d0e12;   /* #16181F */
   --foreground: #E8E6E1;
+  --ghost-year-opacity: 0.06;
   --card: oklch(0.13 0 0);         /* #1E1F22 */
   --card-foreground: #E8E6E1;
   --popover: #161B22;
