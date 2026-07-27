@@ -66,8 +66,29 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   return brandedErrorResponse();
 }
 
+async function handleAssetRequest(request: Request, env: unknown): Promise<Response> {
+  const url = new URL(request.url);
+  const key = url.pathname.replace("/r2/", "");
+  const assetsEnv = env as { Assets: R2Bucket };
+
+  const obj = await assetsEnv.Assets.get(key);
+  if (!obj) return new Response("Not found", { status: 404 });
+
+  const headers = new Headers();
+  obj.writeHttpMetadata(headers);
+  headers.set("etag", obj.httpEtag);
+  headers.set("cache-control", "public, max-age=31536000, immutable");
+  return new Response(obj.body, { headers });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const url = new URL(request.url);
+
+    if (url.pathname.startsWith("/r2/")) {
+      return handleAssetRequest(request, env);
+    }
+
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

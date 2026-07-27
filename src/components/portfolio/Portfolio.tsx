@@ -45,7 +45,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import emailjs from "@emailjs/browser";
-import profileImg from "@/assets/profile.jpeg";
+import profileImg from "/assets/images/profile.jpeg" ;
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
@@ -569,7 +569,7 @@ function ProfileHero({
                 />
 
                 <img
-                  src={profileImg}
+                  src="/r2/images/profile.jpeg"
                   alt="Aditya Shelke"
                   className="relative h-20 w-20 md:h-24 md:w-24 rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 group-hover:ring-[color:var(--accent-orange)]"
                 />
@@ -657,7 +657,7 @@ function ProfileHero({
                       </a>
                       <div className="w-px bg-[color:var(--accent-blue)]/30" />
                       <a
-                        href="/Aditya Shelke CV.pdf"
+                        href="/r2/Aditya_Shelke_CV.pdf"
                         download
                         aria-label="Download CV"
                         className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"
@@ -727,7 +727,7 @@ function ProfileHero({
                 </a>
                 <div className="w-px bg-[color:var(--accent-blue)]/30" />
                 <a
-                  href="/Aditya Shelke CV.pdf"
+                  href="/r2/Aditya_Shelke_CV.pdf"
                   download
                   aria-label="Download CV"
                   className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"

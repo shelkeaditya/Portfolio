@@ -5,6 +5,10 @@
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
 
+  "r2_buckets": [
+    { "binding": "Assets", "bucket_name": "portfolio-assets" }
+  ],
+
   "observability": {
     "logs": {
       "enabled": true,
