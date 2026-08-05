@@ -45,7 +45,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import emailjs from "@emailjs/browser";
-import profileImg from "/assets/images/profile.jpeg" ;
+import profileImg from "/r2/images/profile.jpeg" ;
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
@@ -77,7 +77,6 @@ function getInitialTheme(): "dark" | "light" {
   }
   return "dark";
 }
-
 function useTheme() {
   const [theme, setTheme] = useState<"dark" | "light">(() => getInitialTheme());
 
@@ -87,17 +86,17 @@ function useTheme() {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
+  // Persist the theme choice whenever it changes.
+  useEffect(() => {
+    try {
+      localStorage.setItem("theme", theme);
+    } catch {
+      // ignore write failures (privacy mode, etc.)
+    }
+  }, [theme]);
+
   const toggle = () => {
-    setTheme((prev) => {
-      const next = prev === "dark" ? "light" : "dark";
-      try {
-        localStorage.setItem("theme", next);
-      } catch {
-        // ignore write failures
-      }
-      document.documentElement.classList.toggle("dark", next === "dark");
-      return next;
-    });
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   };
 
   return { theme, toggle };
@@ -657,7 +656,7 @@ function ProfileHero({
                       </a>
                       <div className="w-px bg-[color:var(--accent-blue)]/30" />
                       <a
-                        href="/r2/Aditya_Shelke_CV.pdf"
+                        href="/r2/Aditya Shelke CV.pdf"
                         download
                         aria-label="Download CV"
                         className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"
@@ -727,7 +726,7 @@ function ProfileHero({
                 </a>
                 <div className="w-px bg-[color:var(--accent-blue)]/30" />
                 <a
-                  href="/r2/Aditya_Shelke_CV.pdf"
+                  href="/r2/Aditya Shelke CV.pdf"
                   download
                   aria-label="Download CV"
                   className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"
@@ -1445,92 +1444,96 @@ type InfraGroup = {
 };
 
 
+// Two dashed groups only — Build wraps Local Development + GitHub Repository,
+// Observability wraps the four Cloudflare platform services. The Cloudflare
+// Worker sits outside both, between them, as the deployment runtime.
 const INFRA_GROUPS: InfraGroup[] = [
-  { id: "build", title: "Build", category: "build", x: 55, y: 65, w: 220, h: 290 },
-  { id: "observability", title: "Observability", category: "observability", x: 672, y: 65, w: 225, h: 425 },
+  { id: "build", title: "Build", category: "build", x: 20, y: 60, w: 220, h: 208 },
+  { id: "observability", title: "Observability", category: "observability", x: 455, y: 49, w: 358, h: 322 },
 ];
 
 const INFRA_NODES: InfraNode[] = [
   {
     id: "development",
-    title: "Development",
+    title: "Local Development",
     subtitle: "Local Environment",
     meta: "VS Code · React · TS",
-    items: ["VS Code", "React", "Vite", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+    items: ["VS Code", "React", "TypeScript", "TanStack Start", "Tailwind CSS", "Git"],
     category: "build",
     icon: Code2,
     group: "build",
-    x: 165,
-    y: 150,
+    x: 130,
+    y: 110,
     detail: {
       purpose:
-        "Local development environment where the portfolio is written and iterated on before every commit. `vite dev` runs through TanStack Start, so SSR renders live locally too — not just in production.",
-      technologies: ["VS Code", "React", "Vite", "TanStack Start", "TypeScript", "Tailwind CSS", "Git"],
+        "Local machine where the portfolio is written and iterated on before every commit — SSR renders live locally too, not just in production.",
+      technologies: ["VS Code", "React", "TypeScript", "TanStack Start", "Tailwind CSS", "Git"],
       responsibilities: [
         "Component development",
         "Styling & layout",
         "Type safety",
         "Local testing before commit",
       ],
-      relationships: ["Pushes commits to GitHub"],
+      relationships: ["Pushes commits to the GitHub Repository"],
       configuration: "Vite dev server with hot module reload",
       futureImprovements: "Add Storybook for isolated component development",
     },
   },
   {
     id: "github",
-    title: "GitHub",
+    title: "GitHub Repository",
     subtitle: "Source Control",
     meta: "main branch · git push",
-    items: ["Repository", "Version Control", "Main Branch"],
+    items: ["Main Branch", "Version Control"],
     category: "build",
     icon: Github,
     group: "build",
-    x: 165,
-    y: 290,
+    x: 130,
+    y: 218,
     detail: {
-      purpose: "Stores the source code and is the trigger point for every deployment.",
-      technologies: ["Git", "GitHub"],
+      purpose:
+        "Stores the source code and automatically triggers a build and deployment on every push to main — no manual webhook step.",
+      technologies: ["Main Branch", "Version Control"],
       responsibilities: [
         "Stores source code & commit history",
         "Tracks changes on the main branch",
-        "Fires a webhook to Cloudflare on every push to main",
+        "Automatically triggers a Cloudflare Worker deployment on every push to main",
       ],
-      relationships: ["Receives pushes from Development", "Triggers Cloudflare Workers via webhook"],
+      relationships: ["Receives pushes from Local Development", "Automatically deploys to the Cloudflare Worker"],
       configuration: "main is the only deploy branch — every push ships automatically",
       futureImprovements: "Add branch preview deployments for pull requests",
     },
   },
   {
-    id: "workers",
-    title: "Cloudflare Workers",
+    id: "worker",
+    title: "Cloudflare Worker",
     subtitle: "Deployment Runtime",
     meta: "SSR · Edge Runtime",
-    items: ["SSR Runtime", "Deployment", "Edge Runtime"],
+    items: ["Build Application", "SSR Runtime", "Edge Runtime", "Global Deployment"],
     category: "runtime",
     icon: Cloud,
     size: "lg",
-    x: 490,
-    y: 290,
+    x: 350,
+    y: 170,
     detail: {
       purpose:
-        "The center of the deployment — receives GitHub's webhook, builds the app, and runs live server-side rendering on Cloudflare's edge network for every single request.",
+        "The center of the deployment — automatically builds the app and runs live server-side rendering on Cloudflare's global edge network for every request.",
       technologies: ["Cloudflare Workers", "Bun", "TanStack Start SSR", "TanStack Router"],
       responsibilities: [
-        "Builds the project on every webhook trigger",
+        "Builds the project automatically on every push to main",
         "TanStack Router resolves the matched route before rendering",
         "Runs src/server.ts to render the page server-side on every request",
-        "error-capture.ts / error-page.ts wrap the SSR pipeline for graceful error handling",
+        "Requests static assets from the bound R2 bucket",
         "Serves every request close to the visitor",
       ],
       relationships: [
-        "Triggered by GitHub's webhook",
-        "Resolved through Cloudflare DNS",
+        "Automatically deployed from the GitHub Repository",
+        "Bidirectional link with Cloudflare DNS",
+        "Fetches assets from the bound R2 bucket",
         "Reports to Workers Logs & Traces",
-        "Serves the Portfolio application",
+        "Serves the User Browser directly over HTTPS",
       ],
-      buildProcess:
-        "Webhook → bun install --frozen-lockfile → bun run build → wrangler deploy -c dist/server/wrangler.json",
+      buildProcess: "push to main → automatic build → wrangler deploy -c dist/server/wrangler.json",
       runtimeDetails:
         "wrangler.jsonc sets \"main\": \"src/server.ts\" and \"compatibility_flags\": [\"nodejs_compat\"] — the Worker genuinely executes this file per request; it's not serving pre-built static files",
     },
@@ -1540,35 +1543,57 @@ const INFRA_NODES: InfraNode[] = [
     title: "Cloudflare DNS",
     subtitle: "Domain Routing",
     meta: "CNAME · HTTPS/TLS",
-    items: ["Custom Domain", "HTTPS / TLS"],
+    items: ["Custom Domain", "HTTPS / TLS", "Traffic Routing"],
     category: "observability",
     icon: Globe,
     group: "observability",
-    x: 785,
-    y: 290,
+    x: 710,
+    y: 110,
     detail: {
-      purpose: "Resolves the custom domain and routes every request to the right Worker over HTTPS.",
-      technologies: ["Cloudflare DNS", "HTTPS / TLS"],
-      responsibilities: ["Custom domain resolution", "TLS termination", "Routes traffic to Cloudflare Workers"],
-      relationships: ["Two-way link with Cloudflare Workers", "Hands resolved requests through to the Portfolio"],
+      purpose: "Resolves the custom domain and routes every request to the deployed Worker over HTTPS.",
+      technologies: ["Custom Domain", "HTTPS / TLS", "Traffic Routing"],
+      responsibilities: ["Custom domain resolution", "TLS termination", "Routes traffic to the Cloudflare Worker"],
+      relationships: ["Bidirectional link with the Cloudflare Worker"],
+    },
+  },
+  {
+    id: "r2",
+    title: "R2 Assets",
+    subtitle: "Static Asset Storage",
+    meta: "Images · Resume · Favicon",
+    items: ["Profile Image", "Resume PDF", "Favicon", "Static Images"],
+    category: "observability",
+    icon: FileText,
+    group: "observability",
+    x: 560,
+    y: 160,
+    detail: {
+      purpose: "Object storage the Worker reads through a binding — never exposed directly to the browser.",
+      technologies: ["Profile Image", "Resume PDF", "Favicon", "Static Images"],
+      responsibilities: [
+        "Stores the profile image, resume PDF, favicon & other static images",
+        "Serves reads only through the Worker's binding",
+      ],
+      relationships: ["Bound to the Cloudflare Worker — fetched on demand, never called directly by the browser"],
+      configuration: "wrangler.jsonc → r2_buckets: [{ binding: \"ASSETS\" }]",
     },
   },
   {
     id: "logs",
     title: "Workers Logs",
     subtitle: "Observability",
-    meta: "Request logging",
-    items: ["Request Logs"],
+    meta: "Runtime logging",
+    items: ["Runtime Logs", "Errors", "Requests"],
     category: "observability",
-    icon: FileText,
+    icon: Activity,
     group: "observability",
-    x: 785,
-    y: 150,
+    x: 710,
+    y: 210,
     detail: {
-      purpose: "Captures request-level logs emitted by Cloudflare Workers for debugging.",
-      technologies: ["Cloudflare Workers Logs"],
-      responsibilities: ["Streams request logs", "Surfaces runtime errors"],
-      relationships: ["Fed directly by Cloudflare Workers"],
+      purpose: "Captures request-level logs emitted by the Cloudflare Worker for debugging.",
+      technologies: ["Runtime Logs", "Errors", "Requests"],
+      responsibilities: ["Streams runtime logs", "Captures errors and request details"],
+      relationships: ["Fed directly by the Cloudflare Worker"],
       configuration: "wrangler.jsonc → observability.logs: { enabled: true, invocation_logs: true }",
     },
   },
@@ -1577,40 +1602,18 @@ const INFRA_NODES: InfraNode[] = [
     title: "Workers Traces",
     subtitle: "Observability",
     meta: "Runtime tracing",
-    items: ["Runtime Traces"],
+    items: ["Performance", "Diagnostics"],
     category: "observability",
     icon: Activity,
     group: "observability",
-    x: 785,
-    y: 430,
+    x: 710,
+    y: 310,
     detail: {
-      purpose: "Traces execution inside Cloudflare Workers to spot latency and runtime issues.",
-      technologies: ["Cloudflare Workers Traces"],
-      responsibilities: ["Captures execution traces", "Helps diagnose slow requests"],
-      relationships: ["Fed directly by Cloudflare Workers"],
+      purpose: "Traces execution inside the Cloudflare Worker to spot latency and runtime issues.",
+      technologies: ["Performance", "Diagnostics"],
+      responsibilities: ["Captures performance traces", "Helps diagnose slow requests"],
+      relationships: ["Fed directly by the Cloudflare Worker"],
       configuration: "wrangler.jsonc → observability.traces: { enabled: true }",
-    },
-  },
-  {
-    id: "portfolio",
-    title: "Portfolio",
-    subtitle: "The Application",
-    meta: "Home · Projects · Contact",
-    items: ["Home", "About", "Projects", "Media", "Resume", "Contact"],
-    category: "application",
-    icon: Briefcase,
-    x: 1130,
-    y: 290,
-    detail: {
-      purpose: "The live application visitors actually interact with.",
-      technologies: ["React", "Vite", "TanStack Start", "Tailwind CSS"],
-      responsibilities: ["Renders Home, About, Projects, Media & Resume", "Handles the Contact Form submission"],
-      relationships: [
-        "Served by Cloudflare DNS / Workers",
-        "Sends Contact Form submissions to Communication",
-        "Loaded by the User Browser",
-      ],
-      futureImprovements: "Add a blog / MDX-powered writing section",
     },
   },
   {
@@ -1621,36 +1624,40 @@ const INFRA_NODES: InfraNode[] = [
     items: ["Chrome", "Firefox", "Safari"],
     category: "client",
     icon: Monitor,
-    x: 1400,
-    y: 290,
+    x: 960,
+    y: 170,
     detail: {
       purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
       technologies: ["Chrome", "Firefox", "Safari"],
-      responsibilities: ["Renders the Portfolio over HTTPS", "Submits the Contact Form when used"],
-      relationships: ["Receives the final response from the Portfolio"],
+      responsibilities: ["Renders the SSR application over HTTPS", "Submits the Contact Form when used"],
+      relationships: [
+        "Receives the SSR application directly from the Cloudflare Worker",
+        "Requests images, favicon & resume through the Worker, which fetches them from R2",
+        "Submits the Contact Form to EmailJS",
+      ],
     },
   },
   {
     id: "communication",
     title: "EmailJS",
     subtitle: "Communication Service",
-    meta: "Contact Form → Gmail",
-    items: ["Contact Form", "Gmail Delivery"],
+    meta: "Contact Form",
+    items: ["Contact Form", "Email Inbox"],
     category: "communication",
     icon: Mail,
-    x: 1130,
-    y: 500,
+    x: 960,
+    y: 340,
     detail: {
       purpose:
-        "Delivers Contact Form submissions straight to my inbox — a branch off the Portfolio only, with no ties to GitHub or Cloudflare at all.",
-      technologies: ["EmailJS", "Gmail"],
+        "Delivers Contact Form submissions straight to a designated inbox — a branch off the User Browser only, with no ties to GitHub or Cloudflare at all.",
+      technologies: ["EmailJS"],
       responsibilities: [
         "Receives form data client-side",
         "Relays the message via the EmailJS API",
-        "Delivers the email to Gmail",
+        "Delivers the email to a designated inbox",
       ],
-      relationships: ["Only the Portfolio connects to it"],
-      configuration: "Client-side only call from the Portfolio — no backend, no queue",
+      relationships: ["Only the User Browser connects to it — never the Cloudflare Worker"],
+      configuration: "Client-side only call from the browser — no backend, no queue",
       futureImprovements: "Add a serverless fallback queue for guaranteed delivery",
     },
   },
@@ -1658,13 +1665,13 @@ const INFRA_NODES: InfraNode[] = [
 
 const INFRA_EDGES: InfraEdge[] = [
   { from: "development", to: "github", label: "git push", style: "dashed", category: "build" },
-  { from: "github", to: "workers", label: "webhook", style: "dashed", category: "build" },
-  { from: "workers", to: "dns", label: "", style: "solid", category: "runtime", bidirectional: true },
-  { from: "workers", to: "logs", label: "", style: "dotted", category: "runtime" },
-  { from: "workers", to: "traces", label: "", style: "dotted", category: "runtime" },
-  { from: "dns", to: "portfolio", label: "serves request", style: "solid", category: "observability" },
-  { from: "portfolio", to: "userBrowser", label: "https", style: "solid", category: "application" },
-  { from: "portfolio", to: "communication", label: "contact form", style: "vertical", category: "communication" },
+  { from: "github", to: "worker", label: "Automatic Deployment", style: "dashed", category: "build" },
+  { from: "worker", to: "dns", label: "", style: "solid", category: "runtime", bidirectional: true },
+  { from: "worker", to: "r2", label: "Worker Binding", style: "dotted", category: "runtime" },
+  { from: "worker", to: "logs", label: "", style: "dotted", category: "runtime" },
+  { from: "worker", to: "traces", label: "", style: "dotted", category: "runtime" },
+  { from: "worker", to: "userBrowser", label: "HTTPS", style: "solid", category: "runtime" },
+  { from: "userBrowser", to: "communication", label: "Contact Form", style: "vertical", category: "communication" },
 ];
 
 const INFRA_CATEGORY_STYLE: Record<InfraCategory, { text: string; ring: string; dot: string; stroke: string }> = {
@@ -1711,27 +1718,27 @@ const INFRA_CATEGORY_STYLE: Record<InfraCategory, { text: string; ring: string; 
 // SECTION - Infra Build
 // ═══════════════════════════════════════════════════════════
 
-const INFRA_CANVAS_W = 1515;
-const INFRA_CANVAS_H = 589;
+const INFRA_CANVAS_W = 1090;
+const INFRA_CANVAS_H = 400;
 
 // Node width now sizes to its own content (title + icon, subtitle, meta — whichever is
 // widest) instead of a fixed "lg | default" bucket, while keeping horizontal padding
-// perfectly symmetrical (24px each side, see the px-6 on the node button below). This is
+// perfectly symmetrical (16px each side, see the px-4 on the node button below). This is
 // a deterministic character-width estimate rather than a DOM measurement, so it stays in
 // sync with layout on first paint (no measure-then-reflow flash) and works the same on
 // server-rendered output.
-const INFRA_NODE_MIN_W = 128;
+const INFRA_NODE_MIN_W = 108;
 // No max width — nodes must grow to fit their longest line rather than truncate. This is
 // only a sanity ceiling against a pathologically long future label, not a real constraint.
-const INFRA_NODE_SAFETY_CEILING = 420;
-const INFRA_NODE_PAD_X = 24; // symmetrical left/right padding (px-6)
-const INFRA_NODE_HH = 34; // half-height stays as-is — height is unchanged
+const INFRA_NODE_SAFETY_CEILING = 340;
+const INFRA_NODE_PAD_X = 16; // symmetrical left/right padding (px-4)
+const INFRA_NODE_HH = 26; // half-height — compact card height
 
 function estimateInfraNodeWidth(node: InfraNode) {
-  const iconAndGap = 14 + 6; // h-3.5 icon + gap-1.5
-  const titleW = iconAndGap + node.title.length * 7.1; // text-xs font-semibold — slightly generous so it never clips
-  const subtitleW = node.subtitle.length * 6.1; // text-[10px]
-  const metaW = node.meta.length * 5.5; // text-[9px]
+  const iconAndGap = 12 + 4; // h-3 icon + gap-1
+  const titleW = iconAndGap + node.title.length * 6.3; // text-[11px] font-semibold — slightly generous so it never clips
+  const subtitleW = node.subtitle.length * 5.3; // text-[9px]
+  const metaW = node.meta.length * 4.7; // text-[8px]
   const contentW = Math.max(titleW, subtitleW, metaW);
   const width = Math.ceil(contentW + INFRA_NODE_PAD_X * 2);
   return Math.min(INFRA_NODE_SAFETY_CEILING, Math.max(INFRA_NODE_MIN_W, width));
@@ -1743,9 +1750,9 @@ function infraNodeHalfDims(node: InfraNode) {
   return { hw: estimateInfraNodeWidth(node) / 2, hh: INFRA_NODE_HH };
 }
 
-const INFRA_EDGE_GAP = 6; // px between the arrowhead/line end and the node border — tight, not floaty
-const INFRA_CORNER_RADIUS = 10; // px, rounded 90° bends on orthogonal connectors
-const INFRA_LABEL_OFFSET = 10; // px, consistent clearance between a label and its connector
+const INFRA_EDGE_GAP = 5; // px between the arrowhead/line end and the node border — tight, not floaty
+const INFRA_CORNER_RADIUS = 8; // px, rounded 90° bends on orthogonal connectors
+const INFRA_LABEL_OFFSET = 9; // px, consistent clearance between a label and its connector
 
 type InfraPoint = { x: number; y: number };
 
@@ -1861,15 +1868,16 @@ function infraDedupePoints(points: InfraPoint[]): InfraPoint[] {
   return out;
 }
 
-const INFRA_BUS_OFFSET = 30; // px the shared trunk runs before it's allowed to branch
+const INFRA_BUS_OFFSET = 26; // px the shared trunk runs before it's allowed to branch
 
 // Computes the routed waypoints for every edge in one pass. Edges that share the same
-// exit side of the same source node (e.g. Cloudflare Workers fanning out to DNS, Logs, and
-// Traces all off its right edge) are grouped into a single shared trunk: one line leaves
-// the node, runs INFRA_BUS_OFFSET px clear of it, and only THEN splits into a bus that the
-// individual branches tap off of — so nothing crosses or bundles right at the node
-// boundary, the way Cloudflare/AWS reference diagrams draw fan-out. Edges that don't share
-// an exit side with any sibling fall back to the plain point-to-point orthogonal route.
+// exit side of the same source node (e.g. the Cloudflare Worker fanning out to DNS, R2,
+// Logs, Traces, and the Browser, all off its right edge) are grouped into a single shared
+// trunk: one line leaves the node, runs INFRA_BUS_OFFSET px clear of it, and only THEN
+// splits into a bus that the individual branches tap off of — so nothing crosses or
+// bundles right at the node boundary, the way Cloudflare's own reference diagrams draw
+// fan-out. Edges that don't share an exit side with any sibling fall back to the plain
+// point-to-point orthogonal route.
 function infraComputeEdgeGeometries(edges: InfraEdge[], nodeMap: Record<string, InfraNode>, gap: number, busOffset: number): InfraPoint[][] {
   const groups = new Map<string, number[]>();
   edges.forEach((edge, i) => {
@@ -1916,8 +1924,8 @@ function infraComputeEdgeGeometries(edges: InfraEdge[], nodeMap: Record<string, 
 const INFRA_SUMMARY_CARDS: { title: string; category: InfraCategory; items: string[] }[] = [
   { title: "Edge Stack", category: "runtime", items: ["Cloudflare Workers", "Cloudflare DNS", "Edge Runtime", "HTTPS/TLS", "Custom Domain"] },
   { title: "Monitoring", category: "observability", items: ["Workers Logs", "Workers Traces", "Runtime Monitoring"] },
-  { title: "Build Pipeline", category: "build", items: ["Development", "GitHub", "Git Push", "Webhook", "Automatic Deployment"] },
-  { title: "Communication", category: "communication", items: ["EmailJS", "Gmail Delivery"] },
+  { title: "Build Pipeline", category: "build", items: ["Development", "GitHub", "Git Push", "Automatic Deployment"] },
+  { title: "Communication", category: "communication", items: ["EmailJS", "Contact Form"] },
 ];
 
 function InfraBuild() {
@@ -1993,7 +2001,7 @@ function InfraBuild() {
   return (
     <div>
       <style>{`
-        .infra-scroll::-webkit-scrollbar { height: 10px; }
+        .infra-scroll::-webkit-scrollbar { height: 8px; }
         .infra-scroll::-webkit-scrollbar-track { background: color-mix(in oklab, var(--foreground) 6%, transparent); border-radius: 999px; }
         .infra-scroll::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--foreground) 22%, transparent); border-radius: 999px; }
         .infra-scroll::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--foreground) 34%, transparent); }
@@ -2035,22 +2043,23 @@ function InfraBuild() {
                 height: INFRA_CANVAS_H,
                 backgroundImage:
                   "linear-gradient(to right, color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 1px)",
-                backgroundSize: "28px 28px",
+                backgroundSize: "24px 24px",
               }}
               onMouseLeave={() => setHovered(null)}
             >
-              {/* Group outlines (Build / Observability) */}
+              {/* Group outlines (Build / Observability) — thin dashed borders, tightly
+                  wrapped around their child nodes, small monospace title top-left */}
               {INFRA_GROUPS.map((g) => {
                 const style = INFRA_CATEGORY_STYLE[g.category];
                 return (
                   <div
                     key={g.id}
-                    className={cn("absolute rounded-2xl border-2 border-dashed", style.ring)}
+                    className={cn("absolute rounded-xl border border-dashed", style.ring)}
                     style={{ left: g.x, top: g.y, width: g.w, height: g.h, zIndex: 1 }}
                   >
                     <span
                       className={cn(
-                        "surface-2 absolute -top-3 left-4 rounded px-2 text-[10px] font-semibold uppercase tracking-[0.14em]",
+                        "surface-2 absolute -top-2.5 left-3 rounded px-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.14em]",
                         style.text,
                       )}
                     >
@@ -2073,8 +2082,8 @@ function InfraBuild() {
                       viewBox="0 0 10 10"
                       refX="8"
                       refY="5"
-                      markerWidth="7"
-                      markerHeight="7"
+                      markerWidth="5"
+                      markerHeight="5"
                       orient="auto-start-reverse"
                     >
                       <path d="M 0 0 L 10 5 L 0 10 z" fill={INFRA_CATEGORY_STYLE[cat].stroke} />
@@ -2085,11 +2094,11 @@ function InfraBuild() {
                   const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
                   const dash =
                     edge.style === "dashed"
-                      ? "7 6"
+                      ? "6 5"
                       : edge.style === "dotted"
-                        ? "2 7"
+                        ? "2 6"
                         : edge.style === "vertical"
-                          ? "10 4 2 4"
+                          ? "9 4 2 4"
                           : undefined;
                   const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
                   const isLive = edge.style === "solid";
@@ -2107,7 +2116,7 @@ function InfraBuild() {
                       d={d}
                       fill="none"
                       stroke={color}
-                      strokeWidth={edge.style === "vertical" ? 1.6 : 1.8}
+                      strokeWidth={edge.style === "vertical" ? 1.3 : 1.5}
                       strokeDasharray={dash}
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -2120,22 +2129,23 @@ function InfraBuild() {
                 })}
               </svg>
 
+              {/* Connection labels — plain coloured monospace text floating above the
+                  line, no background/border/pill, matching the reference diagram. */}
               {INFRA_EDGES.map((edge, i) => {
                 if (!edge.label) return null;
                 const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
-
-                // Label rides on whichever axis the connector actually runs along — for
-                // these edges that's a single straight segment, so it lands centered on
-                // the line and offset a fixed distance clear of it (never on top of the
-                // stroke, an arrowhead, or a node). For a jogged (Z-shaped or bus) connector
-                // this automatically picks the longest of the straight runs instead.
                 const anchor = infraLabelAnchor(edgeGeometries[i], INFRA_LABEL_OFFSET);
-
                 return (
                   <span
                     key={i}
-                    className="surface-1 absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded border border-border/50 px-1.5 py-0.5 text-[9px] text-muted-foreground transition-opacity duration-200 md:text-[10px]"
-                    style={{ left: anchor.x, top: anchor.y, opacity: isActive ? 1 : 0.15, zIndex: 3 }}
+                    className="absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-mono text-[9px] font-medium transition-opacity duration-200 md:text-[10px]"
+                    style={{
+                      left: anchor.x,
+                      top: anchor.y,
+                      opacity: isActive ? 1 : 0.15,
+                      zIndex: 3,
+                      color: INFRA_CATEGORY_STYLE[edge.category].stroke,
+                    }}
                   >
                     {edge.label}
                   </span>
@@ -2165,29 +2175,30 @@ function InfraBuild() {
                       type="button"
                       onClick={() => setSelected(node.id)}
                       className={cn(
-                        "surface-1 flex flex-col gap-0.5 rounded-lg border px-6 py-2 text-left shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5",
+                        "surface-1 flex flex-col justify-center gap-0.5 rounded-md border px-4 py-1.5 text-left shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5",
                         style.ring,
                       )}
                       style={{
                         // Content-sized width (see estimateInfraNodeWidth) — same value the
-                        // connector ports use, and px-6 above keeps 24px on both sides so
+                        // connector ports use, and px-4 above keeps 16px on both sides so
                         // there's never leftover space stacked on just the right edge.
                         width: estimateInfraNodeWidth(node),
+                        height: INFRA_NODE_HH * 2,
                         boxShadow: isSelected
-                          ? `0 0 0 2px ${style.stroke}, 0 0 22px 2px ${style.stroke}55`
+                          ? `0 0 0 2px ${style.stroke}, 0 0 18px 2px ${style.stroke}55`
                           : isHovered
-                            ? `0 0 0 3px ${style.stroke}30`
-                            : `0 0 12px -4px ${style.stroke}40`,
+                            ? `0 0 0 2px ${style.stroke}30`
+                            : `0 0 8px -4px ${style.stroke}40`,
                       }}
                     >
-                      <div className="flex items-center gap-1.5">
-                        <Icon className={cn("h-3.5 w-3.5 shrink-0", style.text)} />
-                        <span className="whitespace-nowrap text-xs font-semibold text-foreground">
+                      <div className="flex items-center gap-1">
+                        <Icon className={cn("h-3 w-3 shrink-0", style.text)} />
+                        <span className="whitespace-nowrap text-[11px] font-semibold text-foreground">
                           {node.title}
                         </span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground">{node.subtitle}</span>
-                      <span className="whitespace-nowrap text-[9px] text-muted-foreground/60">{node.meta}</span>
+                      <span className="whitespace-nowrap text-[9px] text-muted-foreground">{node.subtitle}</span>
+                      <span className="whitespace-nowrap text-[8px] text-muted-foreground/60">{node.meta}</span>
                     </button>
                   </div>
                 );
