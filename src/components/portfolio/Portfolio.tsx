@@ -656,7 +656,7 @@ function ProfileHero({
                       </a>
                       <div className="w-px bg-[color:var(--accent-blue)]/30" />
                       <a
-                        href="/r2/Aditya Shelke CV.pdf"
+                        href="/r2/Aditya20%Shelke20%CV.pdf"
                         download
                         aria-label="Download CV"
                         className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"
@@ -726,7 +726,7 @@ function ProfileHero({
                 </a>
                 <div className="w-px bg-[color:var(--accent-blue)]/30" />
                 <a
-                  href="/r2/Aditya Shelke CV.pdf"
+                  href="/r2/Aditya20%Shelke20%CV.pdf"
                   download
                   aria-label="Download CV"
                   className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"
