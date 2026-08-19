@@ -1471,9 +1471,7 @@ type InfraGroup = {
 // and EmailJS hangs off the User Browser on its own curved connector, outside every box.
 const INFRA_GROUPS: InfraGroup[] = [
   { id: "build", title: "Build", category: "build", x: 15, y: 190, w: 200, h: 220 },
-  { id: "worker", title: "Cloudflare Worker", category: "runtime", x: 245, y: 190, w: 260, h: 220 },
   { id: "observability", title: "Observability", category: "observability", x: 535, y: 110, w: 260, h: 440 },
-  { id: "browser", title: "User Browser", category: "client", x: 825, y: 190, w: 210, h: 220 },
 ];
 
 const INFRA_NODES: InfraNode[] = [
@@ -1538,7 +1536,7 @@ const INFRA_NODES: InfraNode[] = [
     icon: Cloud,
     size: "lg",
     group: "worker",
-    x: 375,
+    x: 385,
     y: 300,
     detail: {
       purpose:
@@ -1598,8 +1596,8 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: FileText,
     group: "observability",
-    x: 665,
-    y: 170,
+    x: 700,
+    y: 190,
     detail: {
       purpose: "Object storage bound straight into the Worker's runtime — never exposed directly to the browser.",
       technologies: ["Profile Image", "Resume PDF", "Favicon", "Static Images"],
@@ -1620,8 +1618,8 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: Activity,
     group: "observability",
-    x: 665,
-    y: 400,
+    x: 710,
+    y: 410,
     detail: {
       purpose: "Traces execution inside the Cloudflare Worker to spot latency and runtime issues — invocation counts, duration and CPU time roll up here too.",
       technologies: ["Performance", "Diagnostics"],
@@ -1643,7 +1641,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: Zap,
     group: "observability",
-    x: 665,
+    x: 620,
     y: 490,
     detail: {
       purpose:
@@ -1690,7 +1688,7 @@ const INFRA_NODES: InfraNode[] = [
     category: "communication",
     icon: Mail,
     x: 930,
-    y: 520,
+    y: 420,
     detail: {
       purpose:
         "Delivers Contact Form submissions straight to a designated inbox — a branch off the User Browser only, with no ties to GitHub or Cloudflare at all.",
@@ -1717,16 +1715,17 @@ const INFRA_EDGES: InfraEdge[] = [
   { from: "development", to: "github", label: "git push", style: "dashed", category: "build" },
   { from: "github", to: "worker", label: "Auto Deploy", style: "dashed", category: "build" },
   { from: "worker", to: "dns", label: "", style: "solid", category: "runtime" },
+  { from: "r2", to: "worker", label: "", style: "dotted", category: "observability" },
   { from: "dns", to: "userBrowser", label: "HTTPS / SSR Response", style: "solid", category: "runtime" },
   { from: "dns", to: "logs", label: "", style: "dotted", category: "observability" },
   { from: "dns", to: "events", label: "", style: "dotted", category: "observability" },
   {
     from: "userBrowser",
     to: "communication",
-    label: "Contact Form",
+    label: "Mail Delivery",
     style: "curved",
     category: "communication",
-    labelAnchor: { x: 865, y: 415 },
+    labelAnchor: { x: 890, y: 360 },
   },
 ];
 
@@ -1774,8 +1773,8 @@ const INFRA_CATEGORY_STYLE: Record<InfraCategory, { text: string; ring: string; 
 // SECTION - Infra Build
 // ═══════════════════════════════════════════════════════════
 
-const INFRA_CANVAS_W = 1060;
-const INFRA_CANVAS_H = 580;
+const INFRA_CANVAS_W = 1057;
+const INFRA_CANVAS_H = 577;
 
 // Node width now sizes to its own content (title + icon, subtitle, meta — whichever is
 // widest) instead of a fixed "lg | default" bucket, while keeping horizontal padding
