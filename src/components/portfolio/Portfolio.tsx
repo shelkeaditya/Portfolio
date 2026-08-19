@@ -440,10 +440,16 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function VerticalSlide({ words }: { words: string[] }) {
   const [index, setIndex] = useState(0);
+  const [prevIndex, setPrevIndex] = useState<number | null>(null);
+  const indexRef = useRef(0);
 
   useEffect(() => {
     const id = setInterval(() => {
-      setIndex((i) => (i + 1) % words.length);
+      const current = indexRef.current;
+      const next = (current + 1) % words.length;
+      setPrevIndex(current);
+      setIndex(next);
+      indexRef.current = next;
     }, 2500);
 
     return () => clearInterval(id);
@@ -457,7 +463,7 @@ function VerticalSlide({ words }: { words: string[] }) {
           className="absolute inset-0 flex items-center whitespace-nowrap transition-all duration-700 ease-in-out text-sm md:text-lg font-medium text-muted-foreground"
           style={{
             transform:
-              i === index ? "translateY(0)" : i < index ? "translateY(-100%)" : "translateY(100%)",
+              i === index ? "translateY(0)" : i === prevIndex ? "translateY(100%)" : "translateY(-100%)",
             opacity: i === index ? 1 : 0,
           }}
         >
@@ -644,12 +650,12 @@ function ProfileHero({
                 </a>
                 <div className="flex items-center justify-between">
                   <div className="shrink-0">
-                    <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden transition-all hover:-translate-y-0.5">
+                    <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden">
                       <a
                         href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-background transition-colors"
                       >
                         <FileText className="h-4 w-4" />
                         CV
@@ -659,7 +665,7 @@ function ProfileHero({
                         href="/r2/aditya-shelke-cv.pdf"
                         download
                         aria-label="Download CV"
-                        className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"
+                        className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-background transition-colors"
                       >
                         <Download className="h-4 w-4" />
                       </a>
@@ -714,12 +720,12 @@ function ProfileHero({
             <div className="hidden md:flex flex-col gap-3 pt-0 md:flex-1 md:pl-8 md:items-end">
               <span aria-hidden className="h-px w-full bg-border/60 md:hidden" />
               {/* Download CV */}
-              <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden transition-all hover:-translate-y-0.5">
+              <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden">
                 <a
                   href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-background transition-colors"
                 >
                   <FileText className="h-4 w-4" />
                   View CV
@@ -729,7 +735,7 @@ function ProfileHero({
                   href="/r2/aditya-shelke-cv.pdf"
                   download
                   aria-label="Download CV"
-                  className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-foreground transition-colors"
+                  className="flex items-center pl-3 pr-3 py-2 text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-background transition-colors"
                 >
                   <Download className="h-4 w-4" />
                 </a>
@@ -1416,13 +1422,13 @@ type InfraNode = {
   category: InfraCategory;
   icon: React.ComponentType<{ className?: string }>;
   size?: "md" | "lg";
-  group?: "build" | "observability"; // which dashed group outline this node sits inside, if any
+  group?: "build" | "worker" | "observability" | "browser"; // which dashed group outline this node sits inside, if any
   x: number; // px on the infra canvas
   y: number; // px on the infra canvas
   detail: InfraDetail;
 };
 
-type InfraEdgeStyle = "solid" | "dashed" | "dotted" | "vertical";
+type InfraEdgeStyle = "solid" | "dashed" | "dotted" | "vertical" | "curved";
 
 type InfraEdge = {
   from: string;
@@ -1431,10 +1437,23 @@ type InfraEdge = {
   style: InfraEdgeStyle;
   category: InfraCategory; // colors the edge
   bidirectional?: boolean;
+  // Fixed label position, used instead of the auto-computed longest-segment anchor.
+  // Needed for the Worker → Observability telemetry edge: with only two branches (Logs,
+  // Traces) fanning out underneath it, the longest straight run of the routed line is
+  // whichever branch's final descent into its node, which pulls the label off-center. A
+  // pinned anchor keeps "Emits Telemetry" visually centered between the Worker and the
+  // Observability container regardless of how the branches route.
+  labelAnchor?: InfraPoint;
+  // Shifts this edge's endpoint off the node's center point along whichever side it
+  // enters — see infraPort. Only applies to edges that get the plain point-to-point
+  // route (i.e. don't share a bus with siblings). Used so DNS and R2, which both enter
+  // the Worker's top side but come from different sources, land on two distinct points
+  // instead of colliding at the one default center-of-side port.
+  toPortOffset?: number;
 };
 
 type InfraGroup = {
-  id: "build" | "observability";
+  id: "build" | "worker" | "observability" | "browser";
   title: string;
   category: InfraCategory;
   x: number;
@@ -1444,12 +1463,17 @@ type InfraGroup = {
 };
 
 
-// Two dashed groups only — Build wraps Local Development + GitHub Repository,
-// Observability wraps the four Cloudflare platform services. The Cloudflare
-// Worker sits outside both, between them, as the deployment runtime.
+// Four containers laid out strictly left → right — Build, Cloudflare Worker,
+// Observability, User Browser — each its own dashed boundary so the topology reads as a
+// single horizontal pipeline. Build feeds the Worker; the Worker's live request line runs
+// straight through Observability's DNS card on its way to the User Browser; R2 taps in
+// from Observability's own right edge; Worker Logs/Events branch off DNS underneath it;
+// and EmailJS hangs off the User Browser on its own curved connector, outside every box.
 const INFRA_GROUPS: InfraGroup[] = [
-  { id: "build", title: "Build", category: "build", x: 20, y: 60, w: 220, h: 208 },
-  { id: "observability", title: "Observability", category: "observability", x: 455, y: 49, w: 358, h: 322 },
+  { id: "build", title: "Build", category: "build", x: 15, y: 190, w: 200, h: 220 },
+  { id: "worker", title: "Cloudflare Worker", category: "runtime", x: 245, y: 190, w: 260, h: 220 },
+  { id: "observability", title: "Observability", category: "observability", x: 535, y: 110, w: 260, h: 440 },
+  { id: "browser", title: "User Browser", category: "client", x: 825, y: 190, w: 210, h: 220 },
 ];
 
 const INFRA_NODES: InfraNode[] = [
@@ -1458,16 +1482,16 @@ const INFRA_NODES: InfraNode[] = [
     title: "Local Development",
     subtitle: "Local Environment",
     meta: "VS Code · React · TS",
-    items: ["VS Code", "React", "TypeScript", "TanStack Start", "Tailwind CSS", "Git"],
+    items: ["VS Code", "React", "TypeScript", "TanStack Start", "TanStack Router", "Tailwind CSS", "Git"],
     category: "build",
     icon: Code2,
     group: "build",
-    x: 130,
-    y: 110,
+    x: 115,
+    y: 250,
     detail: {
       purpose:
         "Local machine where the portfolio is written and iterated on before every commit — SSR renders live locally too, not just in production.",
-      technologies: ["VS Code", "React", "TypeScript", "TanStack Start", "Tailwind CSS", "Git"],
+      technologies: ["VS Code", "React", "TypeScript", "TanStack Start", "TanStack Router", "Tailwind CSS", "Git"],
       responsibilities: [
         "Component development",
         "Styling & layout",
@@ -1488,8 +1512,8 @@ const INFRA_NODES: InfraNode[] = [
     category: "build",
     icon: Github,
     group: "build",
-    x: 130,
-    y: 218,
+    x: 115,
+    y: 350,
     detail: {
       purpose:
         "Stores the source code and automatically triggers a build and deployment on every push to main — no manual webhook step.",
@@ -1513,8 +1537,9 @@ const INFRA_NODES: InfraNode[] = [
     category: "runtime",
     icon: Cloud,
     size: "lg",
-    x: 350,
-    y: 170,
+    group: "worker",
+    x: 375,
+    y: 300,
     detail: {
       purpose:
         "The center of the deployment — automatically builds the app and runs live server-side rendering on Cloudflare's global edge network for every request.",
@@ -1528,9 +1553,9 @@ const INFRA_NODES: InfraNode[] = [
       ],
       relationships: [
         "Automatically deployed from the GitHub Repository",
-        "Bidirectional link with Cloudflare DNS",
+        "Its response travels through Cloudflare DNS on the way to the browser",
         "Fetches assets from the bound R2 bucket",
-        "Reports to Workers Logs & Traces",
+        "Reports to Worker Logs & Worker Events",
         "Serves the User Browser directly over HTTPS",
       ],
       buildProcess: "push to main → automatic build → wrangler deploy -c dist/server/wrangler.json",
@@ -1544,16 +1569,24 @@ const INFRA_NODES: InfraNode[] = [
     subtitle: "Domain Routing",
     meta: "CNAME · HTTPS/TLS",
     items: ["Custom Domain", "HTTPS / TLS", "Traffic Routing"],
-    category: "observability",
+    category: "application",
     icon: Globe,
     group: "observability",
-    x: 710,
-    y: 110,
+    x: 665,
+    y: 300,
     detail: {
-      purpose: "Resolves the custom domain and routes every request to the deployed Worker over HTTPS.",
+      purpose: "Resolves the custom domain and routes every request from the Worker to the browser over HTTPS — sitting directly on the main request line.",
       technologies: ["Custom Domain", "HTTPS / TLS", "Traffic Routing"],
-      responsibilities: ["Custom domain resolution", "TLS termination", "Routes traffic to the Cloudflare Worker"],
-      relationships: ["Bidirectional link with the Cloudflare Worker"],
+      responsibilities: [
+        "Custom domain resolution",
+        "TLS termination",
+        "Routes the Worker's response through to the User Browser",
+        "Branches off to Worker Logs & Worker Events",
+      ],
+      relationships: [
+        "Sits on the request line between the Cloudflare Worker and the User Browser",
+        "Feeds Worker Logs & Worker Events",
+      ],
     },
   },
   {
@@ -1565,70 +1598,81 @@ const INFRA_NODES: InfraNode[] = [
     category: "observability",
     icon: FileText,
     group: "observability",
-    x: 560,
-    y: 160,
+    x: 665,
+    y: 170,
     detail: {
-      purpose: "Object storage the Worker reads through a binding — never exposed directly to the browser.",
+      purpose: "Object storage bound straight into the Worker's runtime — never exposed directly to the browser.",
       technologies: ["Profile Image", "Resume PDF", "Favicon", "Static Images"],
       responsibilities: [
         "Stores the profile image, resume PDF, favicon & other static images",
         "Serves reads only through the Worker's binding",
       ],
-      relationships: ["Bound to the Cloudflare Worker — fetched on demand, never called directly by the browser"],
+      relationships: ["Bound directly into the Cloudflare Worker — fetched on demand, never called directly by the browser"],
       configuration: "wrangler.jsonc → r2_buckets: [{ binding: \"ASSETS\" }]",
     },
   },
   {
     id: "logs",
-    title: "Workers Logs",
+    title: "Worker Logs",
     subtitle: "Observability",
-    meta: "Runtime logging",
-    items: ["Runtime Logs", "Errors", "Requests"],
+    meta: "Runtime tracing",
+    items: ["Runtime Tracing", "Performance", "Diagnostics"],
     category: "observability",
     icon: Activity,
     group: "observability",
-    x: 710,
-    y: 210,
+    x: 665,
+    y: 400,
     detail: {
-      purpose: "Captures request-level logs emitted by the Cloudflare Worker for debugging.",
-      technologies: ["Runtime Logs", "Errors", "Requests"],
-      responsibilities: ["Streams runtime logs", "Captures errors and request details"],
-      relationships: ["Fed directly by the Cloudflare Worker"],
-      configuration: "wrangler.jsonc → observability.logs: { enabled: true, invocation_logs: true }",
+      purpose: "Traces execution inside the Cloudflare Worker to spot latency and runtime issues — invocation counts, duration and CPU time roll up here too.",
+      technologies: ["Performance", "Diagnostics"],
+      responsibilities: [
+        "Captures performance traces",
+        "Helps diagnose slow requests",
+        "Tracks invocation count, duration & CPU time per run",
+      ],
+      relationships: ["Branches off Cloudflare DNS, downstream of the Worker"],
+      configuration: "wrangler.jsonc → observability.traces: { enabled: true }",
     },
   },
   {
-    id: "traces",
-    title: "Workers Traces",
+    id: "events",
+    title: "Worker Events",
     subtitle: "Observability",
-    meta: "Runtime tracing",
-    items: ["Performance", "Diagnostics"],
+    meta: "Request · Deploy Events",
+    items: ["Request Events", "Deploy Events", "Logs", "Dashboards"],
     category: "observability",
-    icon: Activity,
+    icon: Zap,
     group: "observability",
-    x: 710,
-    y: 310,
+    x: 665,
+    y: 490,
     detail: {
-      purpose: "Traces execution inside the Cloudflare Worker to spot latency and runtime issues.",
-      technologies: ["Performance", "Diagnostics"],
-      responsibilities: ["Captures performance traces", "Helps diagnose slow requests"],
-      relationships: ["Fed directly by the Cloudflare Worker"],
-      configuration: "wrangler.jsonc → observability.traces: { enabled: true }",
+      purpose:
+        "The event feed inside Cloudflare's Workers Observability dashboard — every request, deployment, runtime log and alert the Worker generates, charted into one timeline.",
+      technologies: ["Workers Observability"],
+      responsibilities: [
+        "Timelines incoming requests",
+        "Surfaces deployment events",
+        "Streams runtime logs & errors",
+        "Charts everything into dashboards",
+      ],
+      relationships: ["Branches off Cloudflare DNS, downstream of the Worker"],
+      configuration: "wrangler.jsonc → observability.logs: { enabled: true, invocation_logs: true }",
     },
   },
   {
     id: "userBrowser",
     title: "User Browser",
     subtitle: "Client",
-    meta: "Chrome · Firefox · Safari",
-    items: ["Chrome", "Firefox", "Safari"],
+    meta: "Brave · Safari · Edge",
+    items: ["Brave", "Safari", "Edge"],
     category: "client",
     icon: Monitor,
-    x: 960,
-    y: 170,
+    group: "browser",
+    x: 930,
+    y: 300,
     detail: {
       purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
-      technologies: ["Chrome", "Firefox", "Safari"],
+      technologies: ["Brave", "Safari", "Edge"],
       responsibilities: ["Renders the SSR application over HTTPS", "Submits the Contact Form when used"],
       relationships: [
         "Receives the SSR application directly from the Cloudflare Worker",
@@ -1642,11 +1686,11 @@ const INFRA_NODES: InfraNode[] = [
     title: "EmailJS",
     subtitle: "Communication Service",
     meta: "Contact Form",
-    items: ["Contact Form", "Email Inbox"],
+    items: ["Contact Form", "Email Delivery", "Communication Service"],
     category: "communication",
     icon: Mail,
-    x: 960,
-    y: 340,
+    x: 930,
+    y: 520,
     detail: {
       purpose:
         "Delivers Contact Form submissions straight to a designated inbox — a branch off the User Browser only, with no ties to GitHub or Cloudflare at all.",
@@ -1663,15 +1707,27 @@ const INFRA_NODES: InfraNode[] = [
   },
 ];
 
+// Strict left → right pipeline: Build feeds the Worker, and the Worker's live request line
+// runs straight through the DNS card (inside Observability) on its way to the User Browser
+// — DNS is on the main line, not a side branch. R2 is fed separately by a bold arrow off
+// Observability's own right border (drawn directly in the SVG below, not as a node edge).
+// Worker Logs & Worker Events branch off DNS underneath it, sharing one trunk. EmailJS sits
+// outside every container, reached only by a curved branch off the User Browser.
 const INFRA_EDGES: InfraEdge[] = [
   { from: "development", to: "github", label: "git push", style: "dashed", category: "build" },
-  { from: "github", to: "worker", label: "Automatic Deployment", style: "dashed", category: "build" },
-  { from: "worker", to: "dns", label: "", style: "solid", category: "runtime", bidirectional: true },
-  { from: "worker", to: "r2", label: "Worker Binding", style: "dotted", category: "runtime" },
-  { from: "worker", to: "logs", label: "", style: "dotted", category: "runtime" },
-  { from: "worker", to: "traces", label: "", style: "dotted", category: "runtime" },
-  { from: "worker", to: "userBrowser", label: "HTTPS", style: "solid", category: "runtime" },
-  { from: "userBrowser", to: "communication", label: "Contact Form", style: "vertical", category: "communication" },
+  { from: "github", to: "worker", label: "Auto Deploy", style: "dashed", category: "build" },
+  { from: "worker", to: "dns", label: "", style: "solid", category: "runtime" },
+  { from: "dns", to: "userBrowser", label: "HTTPS / SSR Response", style: "solid", category: "runtime" },
+  { from: "dns", to: "logs", label: "", style: "dotted", category: "observability" },
+  { from: "dns", to: "events", label: "", style: "dotted", category: "observability" },
+  {
+    from: "userBrowser",
+    to: "communication",
+    label: "Contact Form",
+    style: "curved",
+    category: "communication",
+    labelAnchor: { x: 865, y: 415 },
+  },
 ];
 
 const INFRA_CATEGORY_STYLE: Record<InfraCategory, { text: string; ring: string; dot: string; stroke: string }> = {
@@ -1718,8 +1774,8 @@ const INFRA_CATEGORY_STYLE: Record<InfraCategory, { text: string; ring: string; 
 // SECTION - Infra Build
 // ═══════════════════════════════════════════════════════════
 
-const INFRA_CANVAS_W = 1090;
-const INFRA_CANVAS_H = 400;
+const INFRA_CANVAS_W = 1060;
+const INFRA_CANVAS_H = 580;
 
 // Node width now sizes to its own content (title + icon, subtitle, meta — whichever is
 // widest) instead of a fixed "lg | default" bucket, while keeping horizontal padding
@@ -1727,27 +1783,41 @@ const INFRA_CANVAS_H = 400;
 // a deterministic character-width estimate rather than a DOM measurement, so it stays in
 // sync with layout on first paint (no measure-then-reflow flash) and works the same on
 // server-rendered output.
-const INFRA_NODE_MIN_W = 108;
+const INFRA_NODE_MIN_W = 140; // raised from 108 so Workers Logs & Workers Traces — the two
+// Observability cards — land on the exact same rendered width (both clamp to this floor)
+// instead of each sizing independently to their own text length.
 // No max width — nodes must grow to fit their longest line rather than truncate. This is
 // only a sanity ceiling against a pathologically long future label, not a real constraint.
 const INFRA_NODE_SAFETY_CEILING = 340;
 const INFRA_NODE_PAD_X = 16; // symmetrical left/right padding (px-4)
 const INFRA_NODE_HH = 26; // half-height — compact card height
 
+// The Worker is the one "lg" node in the graph — the diagram's center of gravity —
+// so it renders at a visibly larger scale (bigger padding, taller card, larger type)
+// than every other card. Kept as a multiplier off the base metrics so it stays in
+// lockstep with estimateInfraNodeWidth/infraNodeHalfDims below, which both connector
+// ports and the rendered button read from.
+const INFRA_LG_SCALE = 1.3;
+
+function infraNodeHH(node: InfraNode) {
+  return node.size === "lg" ? Math.round(INFRA_NODE_HH * INFRA_LG_SCALE) : INFRA_NODE_HH;
+}
+
 function estimateInfraNodeWidth(node: InfraNode) {
-  const iconAndGap = 12 + 4; // h-3 icon + gap-1
-  const titleW = iconAndGap + node.title.length * 6.3; // text-[11px] font-semibold — slightly generous so it never clips
-  const subtitleW = node.subtitle.length * 5.3; // text-[9px]
-  const metaW = node.meta.length * 4.7; // text-[8px]
+  const scale = node.size === "lg" ? INFRA_LG_SCALE : 1;
+  const iconAndGap = (12 + 4) * scale; // h-3 icon + gap-1
+  const titleW = iconAndGap + node.title.length * 6.3 * scale; // text-[11px] font-semibold — slightly generous so it never clips
+  const subtitleW = node.subtitle.length * 5.3 * scale; // text-[9px]
+  const metaW = node.meta.length * 4.7 * scale; // text-[8px]
   const contentW = Math.max(titleW, subtitleW, metaW);
-  const width = Math.ceil(contentW + INFRA_NODE_PAD_X * 2);
+  const width = Math.ceil(contentW + INFRA_NODE_PAD_X * 2 * scale);
   return Math.min(INFRA_NODE_SAFETY_CEILING, Math.max(INFRA_NODE_MIN_W, width));
 }
 
 // Half-width/half-height of each node card, driven by the same content-based width used
 // to render it — so connector ports always land exactly on the card's actual edge.
 function infraNodeHalfDims(node: InfraNode) {
-  return { hw: estimateInfraNodeWidth(node) / 2, hh: INFRA_NODE_HH };
+  return { hw: estimateInfraNodeWidth(node) / 2, hh: infraNodeHH(node) };
 }
 
 const INFRA_EDGE_GAP = 5; // px between the arrowhead/line end and the node border — tight, not floaty
@@ -1757,18 +1827,21 @@ const INFRA_LABEL_OFFSET = 9; // px, consistent clearance between a label and it
 type InfraPoint = { x: number; y: number };
 
 // A port sits at the mid-point of whichever side of the node faces the other end,
-// pushed outward by `gap` so the line/arrowhead never touches the card.
-function infraPort(node: InfraNode, side: "left" | "right" | "top" | "bottom", gap: number): InfraPoint {
+// pushed outward by `gap` so the line/arrowhead never touches the card. `offset` shifts
+// that point along the side (x for top/bottom, y for left/right) — used so two edges
+// converging on the same node/side (e.g. DNS and R2 both entering the Worker's top) land
+// on two visibly distinct points instead of the exact same coordinate.
+function infraPort(node: InfraNode, side: "left" | "right" | "top" | "bottom", gap: number, offset = 0): InfraPoint {
   const { hw, hh } = infraNodeHalfDims(node);
   switch (side) {
     case "right":
-      return { x: node.x + hw + gap, y: node.y };
+      return { x: node.x + hw + gap, y: node.y + offset };
     case "left":
-      return { x: node.x - hw - gap, y: node.y };
+      return { x: node.x - hw - gap, y: node.y + offset };
     case "bottom":
-      return { x: node.x, y: node.y + hh + gap };
+      return { x: node.x + offset, y: node.y + hh + gap };
     case "top":
-      return { x: node.x, y: node.y - hh - gap };
+      return { x: node.x + offset, y: node.y - hh - gap };
   }
 }
 
@@ -1776,25 +1849,27 @@ function infraPort(node: InfraNode, side: "left" | "right" | "top" | "bottom", g
 // whichever axis dominates as the "through" direction, exits/enters on the matching side,
 // and — only if the two ports aren't already aligned — inserts a single mid-line jog so
 // every segment stays perfectly horizontal or vertical. Already-aligned nodes (the common
-// case here) come back as a plain 2-point straight run with zero bends.
-function infraOrthogonalPoints(from: InfraNode, to: InfraNode, gap: number): InfraPoint[] {
+// case here) come back as a plain 2-point straight run with zero bends. `fromOffset`/
+// `toOffset` nudge either endpoint off-center along its side — see infraPort.
+function infraOrthogonalPoints(from: InfraNode, to: InfraNode, gap: number, fromOffset = 0, toOffset = 0): InfraPoint[] {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const horizontalDominant = Math.abs(dx) >= Math.abs(dy);
 
   if (horizontalDominant) {
-    const start = infraPort(from, dx >= 0 ? "right" : "left", gap);
-    const end = infraPort(to, dx >= 0 ? "left" : "right", gap);
+    const start = infraPort(from, dx >= 0 ? "right" : "left", gap, fromOffset);
+    const end = infraPort(to, dx >= 0 ? "left" : "right", gap, toOffset);
     if (Math.abs(start.y - end.y) < 0.5) return [start, end];
     const midX = (start.x + end.x) / 2;
     return [start, { x: midX, y: start.y }, { x: midX, y: end.y }, end];
   }
-  const start = infraPort(from, dy >= 0 ? "bottom" : "top", gap);
-  const end = infraPort(to, dy >= 0 ? "top" : "bottom", gap);
+  const start = infraPort(from, dy >= 0 ? "bottom" : "top", gap, fromOffset);
+  const end = infraPort(to, dy >= 0 ? "top" : "bottom", gap, toOffset);
   if (Math.abs(start.x - end.x) < 0.5) return [start, end];
   const midY = (start.y + end.y) / 2;
   return [start, { x: start.x, y: midY }, { x: end.x, y: midY }, end];
 }
+
 
 // Turns a Manhattan polyline into an SVG path string with rounded corners at every
 // interior vertex (quadratic-curve corner, radius clamped to half the shorter adjoining
@@ -1892,7 +1967,7 @@ function infraComputeEdgeGeometries(edges: InfraEdge[], nodeMap: Record<string, 
   groups.forEach((indices) => {
     if (indices.length === 1) {
       const edge = edges[indices[0]];
-      result[indices[0]] = infraOrthogonalPoints(nodeMap[edge.from], nodeMap[edge.to], gap);
+      result[indices[0]] = infraOrthogonalPoints(nodeMap[edge.from], nodeMap[edge.to], gap, 0, edge.toPortOffset ?? 0);
       return;
     }
 
@@ -1923,7 +1998,7 @@ function infraComputeEdgeGeometries(edges: InfraEdge[], nodeMap: Record<string, 
 
 const INFRA_SUMMARY_CARDS: { title: string; category: InfraCategory; items: string[] }[] = [
   { title: "Edge Stack", category: "runtime", items: ["Cloudflare Workers", "Cloudflare DNS", "Edge Runtime", "HTTPS/TLS", "Custom Domain"] },
-  { title: "Monitoring", category: "observability", items: ["Workers Logs", "Workers Traces", "Runtime Monitoring"] },
+  { title: "Monitoring", category: "observability", items: ["Worker Logs", "Worker Events", "R2 Assets", "Runtime Monitoring"] },
   { title: "Build Pipeline", category: "build", items: ["Development", "GitHub", "Git Push", "Automatic Deployment"] },
   { title: "Communication", category: "communication", items: ["EmailJS", "Contact Form"] },
 ];
@@ -2134,7 +2209,7 @@ function InfraBuild() {
               {INFRA_EDGES.map((edge, i) => {
                 if (!edge.label) return null;
                 const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
-                const anchor = infraLabelAnchor(edgeGeometries[i], INFRA_LABEL_OFFSET);
+                const anchor = edge.labelAnchor ?? infraLabelAnchor(edgeGeometries[i], INFRA_LABEL_OFFSET);
                 return (
                   <span
                     key={i}
@@ -2158,6 +2233,7 @@ function InfraBuild() {
                 const isActive = !hovered || activeIds?.has(node.id);
                 const isHovered = hovered === node.id;
                 const isSelected = selected === node.id;
+                const isLg = node.size === "lg";
                 return (
                   <div
                     key={node.id}
@@ -2175,30 +2251,49 @@ function InfraBuild() {
                       type="button"
                       onClick={() => setSelected(node.id)}
                       className={cn(
-                        "surface-1 flex flex-col justify-center gap-0.5 rounded-md border px-4 py-1.5 text-left shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5",
+                        "surface-1 flex flex-col justify-center gap-0.5 rounded-md border text-left shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5",
+                        isLg ? "gap-1 rounded-lg border-2 px-5 py-2" : "px-4 py-1.5",
                         style.ring,
                       )}
                       style={{
                         // Content-sized width (see estimateInfraNodeWidth) — same value the
-                        // connector ports use, and px-4 above keeps 16px on both sides so
-                        // there's never leftover space stacked on just the right edge.
+                        // connector ports use, and px-4/px-5 above keeps padding symmetrical
+                        // so there's never leftover space stacked on just the right edge. The
+                        // Worker is the one "lg" node — the diagram's center of gravity — so
+                        // it renders visibly larger than every other card (see INFRA_LG_SCALE).
                         width: estimateInfraNodeWidth(node),
-                        height: INFRA_NODE_HH * 2,
+                        height: infraNodeHH(node) * 2,
                         boxShadow: isSelected
                           ? `0 0 0 2px ${style.stroke}, 0 0 18px 2px ${style.stroke}55`
                           : isHovered
                             ? `0 0 0 2px ${style.stroke}30`
-                            : `0 0 8px -4px ${style.stroke}40`,
+                            : isLg
+                              ? `0 0 24px -6px ${style.stroke}70`
+                              : `0 0 8px -4px ${style.stroke}40`,
                       }}
                     >
-                      <div className="flex items-center gap-1">
-                        <Icon className={cn("h-3 w-3 shrink-0", style.text)} />
-                        <span className="whitespace-nowrap text-[11px] font-semibold text-foreground">
+                      <div className="flex items-center gap-1.5">
+                        <Icon className={cn(isLg ? "h-4 w-4" : "h-3 w-3", "shrink-0", style.text)} />
+                        <span
+                          className={cn(
+                            "whitespace-nowrap font-semibold text-foreground",
+                            isLg ? "text-[14px]" : "text-[11px]",
+                          )}
+                        >
                           {node.title}
                         </span>
                       </div>
-                      <span className="whitespace-nowrap text-[9px] text-muted-foreground">{node.subtitle}</span>
-                      <span className="whitespace-nowrap text-[8px] text-muted-foreground/60">{node.meta}</span>
+                      <span className={cn("whitespace-nowrap text-muted-foreground", isLg ? "text-[11px]" : "text-[9px]")}>
+                        {node.subtitle}
+                      </span>
+                      <span
+                        className={cn(
+                          "whitespace-nowrap text-muted-foreground/60",
+                          isLg ? "text-[9px]" : "text-[8px]",
+                        )}
+                      >
+                        {node.meta}
+                      </span>
                     </button>
                   </div>
                 );
