@@ -1418,8 +1418,12 @@ function CertificateModal({
   // Prefer an official verification link (e.g. Credly) if one exists.
   const verifyHref = card.buttons.find((b) => b.href.includes("credly.com"))?.href;
   const accent = getCardAccent(card.category);
-  const isPdf =
-    Boolean(card.document?.toLowerCase().endsWith(".pdf")) && !card.image;
+  // The modal always prefers the PDF `document` over the `image` thumbnail
+  // when one is available — `image` is for the card preview/badge only.
+  // Whether the card *also* has a preview `image` (AutoCAD, Udemy AWS,
+  // Linux Foundation) must not affect this: that used to force a fallback
+  // to the webp image instead of the PDF.
+  const isPdf = Boolean(card.document?.toLowerCase().endsWith(".pdf"));
 
   return (
     <div
@@ -1434,7 +1438,7 @@ function CertificateModal({
         className={cn(
           "surface-2 relative flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
           isPdf
-            ? "h-[min(90vh,920px)] max-w-5xl"
+            ? "h-[min(96vh,1200px)] max-w-6xl"
             : card.document
               ? "max-w-4xl"
               : "max-w-lg",
@@ -1451,7 +1455,7 @@ function CertificateModal({
         </button>
 
         {isPdf ? (
-          <div className="min-h-0 flex-1 bg-black/20 p-3 sm:p-5">
+          <div className="min-h-0 flex-1 bg-black/20 p-1.5 sm:p-2">
             <iframe
               src={card.document}
               title={card.title}
