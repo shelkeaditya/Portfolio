@@ -47,6 +47,7 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import emailjs from "@emailjs/browser";
 import profileImg from "/r2/images/profile.jpeg" ;
+import { on } from "events";
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
@@ -1114,6 +1115,14 @@ const CARDS: {
   imageLabel?: string;
   /** Optional metadata shown in the in-page certificate modal. */
   certDetails?: { issued: string; expires: string; issuedBy: string };
+  /** Publications only: the research paper PDF opened in the in-page modal
+   *  via the "Read Paper" action. Independent of `image`/`document` so this
+   *  never triggers the certificate-card renderer. */
+  paperDocument?: string;
+  /** Publications only: the published certificate image opened in the
+   *  in-page modal via the "View Certificate" action. Independent of
+   *  `image`/`document` so this never triggers the certificate-card renderer. */
+  certificateDocument?: string;
 }[] = [
   // ── Certifications ──────────────────────────────────────
   {
@@ -1257,17 +1266,19 @@ const CARDS: {
   {
     category: ["Publications"],
     icon: <FileText className="h-5 w-5 text-indigo-400" />,
-    title: "Connect2Cure: A Telemedine Platform",
+    title: "Connect2Cure: A Telemedicine Platform",
     subtitle: "Published on IRJET",
     description:
       "Co-authored and published a peer-reviewed research paper in IRJET, an established engineering and technology journal.",
     tech: ["Research", "Academic Writing"],
-    buttons: [
-      {
-        label: "Read Paper",
-        href: "https://drive.google.com/drive/u/0/folders/1m2cEsQOWPS5yQ7gLjM2Bu_xERdB0nE7A",
-      },
-    ],
+    buttons: [],
+    // R2 object keys (portfolio-assets/Research Paper/...) served through the
+    // existing /r2/ Worker route. Spaces/parentheses are percent-encoded
+    // once, matching the convention already used for the certificate PDFs
+    // above (e.g. "The%20Linux%20Foundation%20%28LFD-103%29.pdf").
+    paperDocument: "/r2/Research%20Paper/Connect2Cure%20Research%20Paper%20%28IRJET%29.pdf",
+    certificateDocument:
+      "/r2/Research%20Paper/IRJET%20Research%20Paper%20Published%20Certificate.webp",
   },
 ];
 
@@ -1491,6 +1502,83 @@ function PortfolioSection() {
                   {c.imageLabel ?? c.title}
                 </h4>
               </div>
+            </div>
+          ) : c.category.includes("Publications") ? (
+            // ── Publication card (independent of certificate renderer) ──
+            <div
+              key={c.title}
+              className="surface-2 group relative flex flex-col overflow-hidden rounded-xl border border-border/60 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-blue)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]"
+            >
+              <div className="pointer-events-none absolute inset-0 bg-[color:var(--accent-blue)]/0 transition-colors duration-300 group-hover:bg-[color:var(--accent-blue)]/[0.04]" />
+
+              {/* Card header */}
+              <div className="relative flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <div className="text-3xl shrink-0">{c.icon}</div>
+                  <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
+                </div>
+                <span className="surface-3 max-w-[110px] shrink-0 rounded-md border border-border/60 px-2 py-0.5 text-right text-[10px] uppercase leading-tight tracking-wider text-muted-foreground">
+                  {c.category.join(" / ")}
+                </span>
+              </div>
+              <div className="relative mt-1 text-xs text-muted-foreground">{c.subtitle}</div>
+
+              {/* Description fades out on hover; actions fade in over the
+                  same slot so the card doesn't jump in height. */}
+              <div className="relative mt-3 min-h-[3.75rem]">
+                <p className="text-sm text-muted-foreground transition-opacity duration-300 group-hover:opacity-0">
+                  {c.description}
+                </p>
+                <div className="absolute inset-0 flex flex-wrap items-start gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  {c.paperDocument && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveCert({
+                          ...c,
+                          title: `${c.title} — Research Paper`,
+                          image: undefined,
+                          document: c.paperDocument,
+                          buttons: [],
+                          certDetails: undefined,
+                        })
+                      }
+                      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-3 py-1.5 text-xs font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+                    >
+                      Read Paper
+                      <ExternalLink className="h-3 w-3" />
+                    </button>
+                  )}
+                  {c.certificateDocument && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveCert({
+                          ...c,
+                          title: `${c.title} — Certificate`,
+                          image: undefined,
+                          document: c.certificateDocument,
+                          buttons: [],
+                          certDetails: undefined,
+                        })
+                      }
+                      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-3 py-1.5 text-xs font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+                    >
+                      View Certificate
+                      <ExternalLink className="h-3 w-3" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Tech stack */}
+              {c.tech.length > 0 && (
+                <div className="relative mt-3 flex flex-wrap gap-1.5">
+                  {c.tech.map((t) => (
+                    <TechBadge key={t} label={t} />
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             // ── Default card ────────────────────────────────
