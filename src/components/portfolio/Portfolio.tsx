@@ -1367,11 +1367,12 @@ function getCardAccent(categories: Exclude<PortfolioFilter, "All">[]): CardAccen
 }
 
 const ACCENT_HOVER_CLASSES: Record<CardAccent, string> = {
-  // Certifications/Badges: border-only accent, no colored glow/box-shadow.
+  // Border-only accent on hover — no colored glow/box-shadow for any
+  // category. Elevation/shadow is handled separately (CARD_ELEVATION_CLASSES)
+  // and is identical across all cards regardless of accent color.
   orange: "hover:border-[color:var(--accent-orange)]/60",
   yellow: "hover:border-yellow-400/60",
-  // Projects/Publications: unchanged.
-  blue: "hover:border-[color:var(--accent-blue)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]",
+  blue: "hover:border-[color:var(--accent-blue)]/40",
 };
 
 const ACCENT_BORDER_CLASSES: Record<CardAccent, string> = {
@@ -1379,6 +1380,14 @@ const ACCENT_BORDER_CLASSES: Record<CardAccent, string> = {
   yellow: "border-yellow-400/50",
   blue: "border-[color:var(--accent-blue)]/40",
 };
+
+/** Shared elevation/lift interaction applied identically to every portfolio
+ *  card (Projects, Certifications, Badges, Publications) so the hover
+ *  behaviour feels like one cohesive design system. Subtle resting shadow,
+ *  a small lift + slightly stronger neutral shadow on hover — never a
+ *  colored glow. Combine with ACCENT_HOVER_CLASSES for the category border. */
+const CARD_ELEVATION_CLASSES =
+  "shadow-[0_2px_10px_-6px_rgba(0,0,0,0.4)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_18px_35px_-15px_rgba(0,0,0,0.55)]";
 
 // ═══════════════════════════════════════════════════════════
 // COMPONENT - Certificate modal (in-page, image-first cards)
@@ -1540,7 +1549,8 @@ function PortfolioSection() {
             <div
               key={c.title}
               className={cn(
-                "surface-2 group flex flex-col overflow-hidden rounded-xl border border-border/60 transition-all duration-300 hover:-translate-y-0.5",
+                "surface-2 group flex flex-col overflow-hidden rounded-xl border border-border/60",
+                CARD_ELEVATION_CLASSES,
                 ACCENT_HOVER_CLASSES[getCardAccent(c.category)],
               )}
             >
@@ -1575,7 +1585,11 @@ function PortfolioSection() {
             // ── Publication card (independent of certificate renderer) ──
             <div
               key={c.title}
-              className="surface-2 group flex flex-col overflow-hidden rounded-xl border border-border/60 transition-colors duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-blue)]/40"
+              className={cn(
+                "surface-2 group flex flex-col overflow-hidden rounded-xl border border-border/60",
+                CARD_ELEVATION_CLASSES,
+                ACCENT_HOVER_CLASSES.blue,
+              )}
             >
               {/* Large research-paper preview, certificate-card style */}
               <div className="relative h-44 w-full shrink-0 overflow-hidden bg-black/20 sm:h-56">
@@ -1653,7 +1667,11 @@ function PortfolioSection() {
             // ── Default card ────────────────────────────────
             <div
               key={c.title}
-              className="surface-2 group flex flex-col rounded-xl border border-border/60 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-blue)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]"
+              className={cn(
+                "surface-2 group flex flex-col rounded-xl border border-border/60 p-5",
+                CARD_ELEVATION_CLASSES,
+                ACCENT_HOVER_CLASSES.blue,
+              )}
             >
               {/* Card header */}
               <div className="flex items-start justify-between gap-3">
