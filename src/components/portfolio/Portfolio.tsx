@@ -1115,6 +1115,11 @@ const CARDS: {
   imageLabel?: string;
   /** Optional metadata shown in the in-page certificate modal. */
   certDetails?: { issued: string; expires: string; issuedBy: string };
+  /** Opt this specific modal view into a larger size (currently only used
+   *  for the Connect2Cure publication's "View Certificate" action). Leaving
+   *  this unset keeps the default modal sizing used by every Certification/
+   *  Badge card and the "Read Paper" PDF view. */
+  modalSize?: "large";
   /** Publications only: a large research-paper preview shown across the top
    *  of the card (certificate-card style). Independent of `image` so this
    *  never triggers the certificate-card (image-first) renderer — the
@@ -1324,6 +1329,16 @@ const ACCENT_BORDER_CLASSES: Record<CardAccent, string> = {
 // COMPONENT - Certificate modal (in-page, image-first cards)
 // ═══════════════════════════════════════════════════════════
 
+/** Extensions the modal will render as a rendered image (large, clear,
+ *  object-contain). Anything else with a `.pdf` extension falls back to the
+ *  embedded PDF viewer. Shared by every Certification/Badge card — new
+ *  cards get the same behavior automatically as long as they set `image`
+ *  (or `document`) to one of these. */
+const MODAL_IMAGE_EXTENSIONS = [".webp", ".jpg", ".jpeg", ".png"];
+function isImageAsset(src?: string): src is string {
+  return Boolean(src && MODAL_IMAGE_EXTENSIONS.some((ext) => src.toLowerCase().endsWith(ext)));
+}
+
 function CertificateModal({
   card,
   onClose,
@@ -1347,7 +1362,16 @@ function CertificateModal({
   // Prefer an official verification link (e.g. Credly) if one exists.
   const verifyHref = card.buttons.find((b) => b.href.includes("credly.com"))?.href;
   const accent = getCardAccent(card.category);
-  const isPdf = Boolean(card.document?.toLowerCase().endsWith(".pdf"));
+  // Every Certification/Badge routes through this same lookup: a rendered
+  // image (webp/jpg/jpeg/png) always wins when present, regardless of
+  // whether a PDF is also attached to the card. Only cards with a PDF and
+  // no image asset fall back to the embedded PDF viewer.
+  const mediaSrc =
+    (isImageAsset(card.image) && card.image) ||
+    (isImageAsset(card.document) && card.document) ||
+    card.document ||
+    card.image;
+  const isPdf = Boolean(mediaSrc?.toLowerCase().endsWith(".pdf"));
 
   return (
     <div
@@ -1361,7 +1385,11 @@ function CertificateModal({
         onClick={(e) => e.stopPropagation()}
         className={cn(
           "surface-2 relative flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
-          isPdf ? "max-w-3xl" : "max-w-lg",
+          isPdf
+            ? "max-w-3xl"
+            : card.modalSize === "large"
+              ? "max-h-[92vh] w-[88vw] max-w-[1250px] overflow-y-auto"
+              : "max-h-[90vh] w-[80vw] max-w-[1100px] overflow-y-auto",
           ACCENT_BORDER_CLASSES[accent],
         )}
       >
@@ -1376,17 +1404,17 @@ function CertificateModal({
 
         {isPdf ? (
           <iframe
-            src={card.document}
+            src={mediaSrc}
             title={card.title}
             className="h-[75vh] w-full bg-black/20"
           />
         ) : (
-          (card.document ?? card.image) && (
-            <div className="flex items-center justify-center bg-black/20 p-8 sm:p-10">
+          mediaSrc && (
+            <div className="flex items-center justify-center bg-black/20 p-6 sm:p-8">
               <img
-                src={card.document ?? card.image}
+                src={mediaSrc}
                 alt={card.title}
-                className="max-h-[70vh] w-auto max-w-full object-contain"
+                className="h-auto max-h-[75vh] w-full max-w-full object-contain"
               />
             </div>
           )
@@ -1561,6 +1589,7 @@ function PortfolioSection() {
                           document: c.certificateDocument,
                           buttons: [],
                           certDetails: undefined,
+                          modalSize: "large",
                         })
                       }
                       className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-[color:var(--accent-blue)]/70 hover:bg-black/65"
