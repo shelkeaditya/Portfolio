@@ -1591,8 +1591,8 @@ function PortfolioSection() {
                 ACCENT_HOVER_CLASSES.blue,
               )}
             >
-              {/* Large research-paper preview, certificate-card style */}
-              <div className="relative h-44 w-full shrink-0 overflow-hidden bg-black/20 sm:h-56">
+              {/* Compact research-paper preview — recognizable but no longer dominates the card */}
+              <div className="relative h-24 w-full shrink-0 overflow-hidden bg-black/20 sm:h-28">
                 <span className="surface-3 absolute left-3 top-3 z-10 inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1 text-[10px] font-semibold uppercase leading-tight tracking-wider text-muted-foreground">
                   📄 {c.category[0]}
                 </span>
@@ -1647,15 +1647,15 @@ function PortfolioSection() {
               </div>
 
               {/* Title, subtitle, description, tags — always visible */}
-              <div className="flex flex-1 flex-col p-5">
+              <div className="flex flex-1 flex-col p-4">
                 <div className="flex items-center gap-2">
-                  <div className="text-3xl shrink-0">{c.icon}</div>
+                  <div className="text-2xl shrink-0">{c.icon}</div>
                   <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground">{c.subtitle}</div>
-                <p className="mt-3 text-sm text-muted-foreground">{c.description}</p>
+                <div className="mt-0.5 text-xs text-muted-foreground">{c.subtitle}</div>
+                <p className="mt-2 text-sm text-muted-foreground">{c.description}</p>
                 {c.tech.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
+                  <div className="mt-2 flex flex-wrap gap-1.5">
                     {c.tech.map((t) => (
                       <TechBadge key={t} label={t} />
                     ))}
