@@ -1418,7 +1418,8 @@ function CertificateModal({
   // Prefer an official verification link (e.g. Credly) if one exists.
   const verifyHref = card.buttons.find((b) => b.href.includes("credly.com"))?.href;
   const accent = getCardAccent(card.category);
-  const isPdf = Boolean(card.document?.toLowerCase().endsWith(".pdf"));
+  const isPdf =
+    Boolean(card.document?.toLowerCase().endsWith(".pdf")) && !card.image;
 
   return (
     <div
@@ -1454,10 +1455,10 @@ function CertificateModal({
             />
           </div>
         ) : (
-          (card.document ?? card.image) && (
+          (card.image ?? card.document) && (
             <div className="flex items-center justify-center bg-black/20 p-8 sm:p-10">
               <img
-                src={card.document ?? card.image}
+                src={card.image ?? card.document}
                 alt={card.title}
                 className="max-h-[70vh] w-auto max-w-full object-contain"
               />
