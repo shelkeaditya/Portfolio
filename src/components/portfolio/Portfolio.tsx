@@ -37,6 +37,7 @@ import {
   Globe,
   Monitor,
   MessageSquare,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -70,10 +71,6 @@ function getInitialTheme(): "dark" | "light" {
     if (saved === "dark" || saved === "light") return saved;
   } catch {
     // localStorage unavailable (privacy mode, etc.) — fall through to system preference
-  }
-  if (typeof window.matchMedia === "function") {
-    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-    return prefersLight ? "light" : "dark";
   }
   return "dark";
 }
@@ -1106,6 +1103,17 @@ const CARDS: {
   description: string;
   tech: string[];
   buttons: { label: string; href: string }[];
+  /** Optional badge/certificate image. When present, the card renders the
+   *  image-first certificate layout instead of the default text card. */
+  image?: string;
+  /** Optional PDF (or larger image) opened inside the certificate modal.
+   *  Falls back to `image` in the modal when omitted. */
+  document?: string;
+  /** Optional short title shown in the image-first card's dark title bar.
+   *  Falls back to `title` when omitted. */
+  imageLabel?: string;
+  /** Optional metadata shown in the in-page certificate modal. */
+  certDetails?: { issued: string; expires: string; issuedBy: string };
 }[] = [
   // ── Certifications ──────────────────────────────────────
   {
@@ -1122,6 +1130,13 @@ const CARDS: {
         href: "https://www.credly.com/badges/30a486c6-e52b-4250-a616-bc685ccf9f9c",
       },
     ],
+    image: "/r2/Certificates/AWS.webp",
+    imageLabel: "AWS Cloud Practitioner",
+    certDetails: {
+      issued: "April 8, 2026",
+      expires: "April 8, 2029",
+      issuedBy: "Amazon Web Services",
+    },
   },
   {
     category: ["Certifications"],
@@ -1137,6 +1152,8 @@ const CARDS: {
         href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing",
       },
     ],
+    image: "/r2/Certificates/AutoCAD%203D%20Professional%20Certification.webp",
+    document: "/r2/Certificates/AutoCAD%203D%20Professional%20Certification.pdf",
   },
   {
     category: ["Certifications"],
@@ -1152,6 +1169,8 @@ const CARDS: {
         href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing",
       },
     ],
+    image: "/r2/Certificates/Udemy%20AWS%20Certificate-4.webp",
+    document: "/r2/Certificates/Udemy%20AWS%20Certificate-4.pdf",
   },
   {
     category: ["Certifications", "Badges"],
@@ -1171,51 +1190,8 @@ const CARDS: {
         href: "https://www.credly.com/badges/5f324690-36b9-4b1b-9b6f-4d1e1a97dc5c/public_url",
       },
     ],
-  },
-  {
-    category: ["Certifications"],
-    icon: <ShieldCheck className="h-5 w-5 text-blue-400" />,
-    title: "Saylor Academy: Information Security",
-    subtitle: "Information Security Fundamentals",
-    description:
-      "Coursework covering core information security principles, threat models, and security best practices.",
-    tech: ["Information Security", "Risk Management"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing",
-      },
-    ],
-  },
-  {
-    category: ["Certifications"],
-    icon: <Activity className="h-5 w-5 text-cyan-400" />,
-    title: "Saylor Academy: Computer Networks",
-    subtitle: "Networking Fundamentals",
-    description:
-      "Coursework covering networking concepts including protocols, topologies, and network architecture.",
-    tech: ["Networking", "TCP/IP"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing",
-      },
-    ],
-  },
-  {
-    category: ["Certifications"],
-    icon: <Code2 className="h-5 w-5 text-purple-400" />,
-    title: "Saylor Academy: Computer Architecture",
-    subtitle: "Computer Architecture Fundamentals",
-    description:
-      "Coursework covering core computer architecture concepts including processor design and system organization.",
-    tech: ["Computer Architecture", "Systems"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing",
-      },
-    ],
+    image: "/r2/Certificates/The%20Linux%20Foundation%20%28LFD-103%29.webp",
+    document: "/r2/Certificates/The%20Linux%20Foundation%20%28LFD-103%29.pdf",
   },
 
   // ── Projects ────────────────────────────────────────────
@@ -1297,11 +1273,150 @@ const CARDS: {
 
 
 // ═══════════════════════════════════════════════════════════
+// HELPERS - Category hover accent
+// ═══════════════════════════════════════════════════════════
+
+type CardAccent = "orange" | "yellow" | "blue";
+
+/** Certification-tagged cards get the orange accent; badge-only cards get
+ *  yellow; everything else (projects, publications) gets blue. Cards are
+ *  neutral by default and only pick up their accent color on hover. */
+function getCardAccent(categories: Exclude<PortfolioFilter, "All">[]): CardAccent {
+  if (categories.includes("Certifications")) return "orange";
+  if (categories.includes("Badges")) return "yellow";
+  return "blue";
+}
+
+const ACCENT_HOVER_CLASSES: Record<CardAccent, string> = {
+  orange:
+    "hover:border-[color:var(--accent-orange)]/60 hover:shadow-[0_20px_40px_-25px_color-mix(in_oklab,var(--accent-orange)_40%,transparent)]",
+  yellow:
+    "hover:border-yellow-400/60 hover:shadow-[0_20px_40px_-25px_rgba(250,204,21,0.35)]",
+  blue: "hover:border-[color:var(--accent-blue)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]",
+};
+
+const ACCENT_BORDER_CLASSES: Record<CardAccent, string> = {
+  orange: "border-[color:var(--accent-orange)]/50",
+  yellow: "border-yellow-400/50",
+  blue: "border-[color:var(--accent-blue)]/40",
+};
+
+// ═══════════════════════════════════════════════════════════
+// COMPONENT - Certificate modal (in-page, image-first cards)
+// ═══════════════════════════════════════════════════════════
+
+function CertificateModal({
+  card,
+  onClose,
+}: {
+  card: (typeof CARDS)[number];
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  // Prefer an official verification link (e.g. Credly) if one exists.
+  const verifyHref = card.buttons.find((b) => b.href.includes("credly.com"))?.href;
+  const accent = getCardAccent(card.category);
+  const isPdf = Boolean(card.document?.toLowerCase().endsWith(".pdf"));
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={card.title}
+        onClick={(e) => e.stopPropagation()}
+        className={cn(
+          "surface-2 relative flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
+          isPdf ? "max-w-3xl" : "max-w-lg",
+          ACCENT_BORDER_CLASSES[accent],
+        )}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white transition-colors hover:bg-black/70"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        {isPdf ? (
+          <iframe
+            src={card.document}
+            title={card.title}
+            className="h-[75vh] w-full bg-black/20"
+          />
+        ) : (
+          (card.document ?? card.image) && (
+            <div className="flex items-center justify-center bg-black/20 p-8 sm:p-10">
+              <img
+                src={card.document ?? card.image}
+                alt={card.title}
+                className="max-h-[70vh] w-auto max-w-full object-contain"
+              />
+            </div>
+          )
+        )}
+
+        <div className="border-t border-border/60 p-5">
+          <h3 className="text-lg font-semibold text-foreground">{card.title}</h3>
+
+          {card.certDetails && (
+            <dl className="mt-3 space-y-1.5 text-sm">
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-muted-foreground">Issued</dt>
+                <dd className="text-foreground">{card.certDetails.issued}</dd>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-muted-foreground">Expires</dt>
+                <dd className="text-foreground">{card.certDetails.expires}</dd>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-muted-foreground">Issued by</dt>
+                <dd className="text-foreground">{card.certDetails.issuedBy}</dd>
+              </div>
+            </dl>
+          )}
+
+          {verifyHref && (
+            <a
+              href={verifyHref}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-3 py-1.5 text-xs font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+            >
+              Verify on Credly
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
 // SECTION - Portfolio
 // ═══════════════════════════════════════════════════════════
 
 function PortfolioSection() {
   const [filter, setFilter] = useState<PortfolioFilter>("All");
+  const [activeCert, setActiveCert] = useState<(typeof CARDS)[number] | null>(null);
 
   const filtered = useMemo(
     () => (filter === "All" ? CARDS : CARDS.filter((c) => c.category.includes(filter))),
@@ -1340,58 +1455,101 @@ function PortfolioSection() {
 
       {/* Cards grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {filtered.map((c) => (
-          <div
-            key={c.title}
-            className="surface-2 group flex flex-col rounded-xl border border-border/60 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-blue)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]"
-          >
-            {/* Card header */}
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex min-w-0 flex-1 items-center gap-2">
-                <div className="text-3xl shrink-0">{c.icon}</div>
-                <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
+        {filtered.map((c) =>
+          c.image ? (
+            // ── Image-first certificate card ──────────────────
+            <div
+              key={c.title}
+              className={cn(
+                "surface-2 group flex flex-col overflow-hidden rounded-xl border border-border/60 transition-all duration-300 hover:-translate-y-0.5",
+                ACCENT_HOVER_CLASSES[getCardAccent(c.category)],
+              )}
+            >
+              <button
+                type="button"
+                onClick={() => setActiveCert(c)}
+                aria-label={`View ${c.imageLabel ?? c.title} certificate`}
+                className="group/img relative block aspect-[4/3] w-full overflow-hidden bg-black/20"
+              >
+                <span className="surface-3 absolute left-3 top-3 z-10 inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1 text-[10px] font-semibold uppercase leading-tight tracking-wider text-muted-foreground">
+                  🏆 {c.category[0]}
+                </span>
+                <img
+                  src={c.image}
+                  alt={c.title}
+                  className="h-full w-full object-contain p-6"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover/img:bg-black/60 group-hover/img:opacity-100">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-white">
+                    View Certificate
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+              </button>
+              <div className="surface-3 border-t border-border/60 px-4 py-3">
+                <h4 className="text-sm font-semibold text-foreground">
+                  {c.imageLabel ?? c.title}
+                </h4>
               </div>
-              <span className="surface-3 max-w-[110px] shrink-0 rounded-md border border-border/60 px-2 py-0.5 text-right text-[10px] uppercase leading-tight tracking-wider text-muted-foreground">
-                {c.category.join(" / ")}
-              </span>
             </div>
-            <div className="mt-1 text-xs text-muted-foreground">{c.subtitle}</div>
+          ) : (
+            // ── Default card ────────────────────────────────
+            <div
+              key={c.title}
+              className="surface-2 group flex flex-col rounded-xl border border-border/60 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-blue)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]"
+            >
+              {/* Card header */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <div className="text-3xl shrink-0">{c.icon}</div>
+                  <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
+                </div>
+                <span className="surface-3 max-w-[110px] shrink-0 rounded-md border border-border/60 px-2 py-0.5 text-right text-[10px] uppercase leading-tight tracking-wider text-muted-foreground">
+                  {c.category.join(" / ")}
+                </span>
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground">{c.subtitle}</div>
 
-            {/* Description */}
-            <p className="mt-3 text-sm text-muted-foreground">{c.description}</p>
+              {/* Description */}
+              <p className="mt-3 text-sm text-muted-foreground">{c.description}</p>
 
-            {/* Tech stack */}
-            {c.tech.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {c.tech.map((t) => (
-                  <TechBadge key={t} label={t} />
+              {/* Tech stack */}
+              {c.tech.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {c.tech.map((t) => (
+                    <TechBadge key={t} label={t} />
+                  ))}
+                </div>
+              )}
+
+              {/* Action buttons */}
+              <div className="mt-auto pt-5 flex flex-wrap gap-2">
+                {c.buttons.map((b, i) => (
+                  <a
+                    key={b.label}
+                    href={b.href}
+                    target={b.href.startsWith("http") ? "_blank" : undefined}
+                    rel="noreferrer"
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
+                      i === 0
+                        ? "border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 text-accent-blue hover:bg-[color:var(--accent-blue)]/15"
+                        : "surface-3 border-border/60 text-foreground hover:border-border",
+                    )}
+                  >
+                    {b.label}
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
                 ))}
               </div>
-            )}
-
-            {/* Action buttons */}
-            <div className="mt-auto pt-5 flex flex-wrap gap-2">
-              {c.buttons.map((b, i) => (
-                <a
-                  key={b.label}
-                  href={b.href}
-                  target={b.href.startsWith("http") ? "_blank" : undefined}
-                  rel="noreferrer"
-                  className={cn(
-                    "inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
-                    i === 0
-                      ? "border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 text-accent-blue hover:bg-[color:var(--accent-blue)]/15"
-                      : "surface-3 border-border/60 text-foreground hover:border-border",
-                  )}
-                >
-                  {b.label}
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              ))}
             </div>
-          </div>
-        ))}
+          ),
+        )}
       </div>
+
+      {activeCert && (
+        <CertificateModal card={activeCert} onClose={() => setActiveCert(null)} />
+      )}
     </div>
   );
 }
