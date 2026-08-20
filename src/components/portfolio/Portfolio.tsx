@@ -1115,6 +1115,10 @@ const CARDS: {
   imageLabel?: string;
   /** Optional metadata shown in the in-page certificate modal. */
   certDetails?: { issued: string; expires: string; issuedBy: string };
+  /** Publications only: a small preview thumbnail shown on the card itself.
+   *  Independent of `image` so this never triggers the certificate-card
+   *  (image-first) renderer — the publication keeps its text-card layout. */
+  previewImage?: string;
   /** Publications only: the research paper PDF opened in the in-page modal
    *  via the "Read Paper" action. Independent of `image`/`document` so this
    *  never triggers the certificate-card renderer. */
@@ -1276,9 +1280,11 @@ const CARDS: {
     // existing /r2/ Worker route. Spaces/parentheses are percent-encoded
     // once, matching the convention already used for the certificate PDFs
     // above (e.g. "The%20Linux%20Foundation%20%28LFD-103%29.pdf").
+    previewImage:
+      "/r2/Research%20Paper/Connect2Cure%20Research%20Paper%20%28IRJET%29-1.webp",
     paperDocument: "/r2/Research%20Paper/Connect2Cure%20Research%20Paper%20%28IRJET%29.pdf",
     certificateDocument:
-      "/r2/Research%20Paper/IRJET%20Research%20Paper%20Published%20Certificate.webp",
+      "/r2/Research%20Paper/Connect2Cure%20Research%20Paper%20Published%20Certificate%20%28IRJET%29.jpg",
   },
 ];
 
@@ -1299,10 +1305,10 @@ function getCardAccent(categories: Exclude<PortfolioFilter, "All">[]): CardAccen
 }
 
 const ACCENT_HOVER_CLASSES: Record<CardAccent, string> = {
-  orange:
-    "hover:border-[color:var(--accent-orange)]/60 hover:shadow-[0_20px_40px_-25px_color-mix(in_oklab,var(--accent-orange)_40%,transparent)]",
-  yellow:
-    "hover:border-yellow-400/60 hover:shadow-[0_20px_40px_-25px_rgba(250,204,21,0.35)]",
+  // Certifications/Badges: border-only accent, no colored glow/box-shadow.
+  orange: "hover:border-[color:var(--accent-orange)]/60",
+  yellow: "hover:border-yellow-400/60",
+  // Projects/Publications: unchanged.
   blue: "hover:border-[color:var(--accent-blue)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]",
 };
 
@@ -1513,9 +1519,19 @@ function PortfolioSection() {
 
               {/* Card header */}
               <div className="relative flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-1 items-center gap-2">
-                  <div className="text-3xl shrink-0">{c.icon}</div>
-                  <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  {c.previewImage && (
+                    <img
+                      src={c.previewImage}
+                      alt=""
+                      aria-hidden="true"
+                      className="h-12 w-12 shrink-0 rounded-lg border border-border/60 object-cover"
+                    />
+                  )}
+                  <div className="flex min-w-0 items-center gap-2">
+                    <div className="text-3xl shrink-0">{c.icon}</div>
+                    <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
+                  </div>
                 </div>
                 <span className="surface-3 max-w-[110px] shrink-0 rounded-md border border-border/60 px-2 py-0.5 text-right text-[10px] uppercase leading-tight tracking-wider text-muted-foreground">
                   {c.category.join(" / ")}
