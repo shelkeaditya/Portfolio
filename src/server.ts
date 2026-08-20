@@ -68,7 +68,21 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 
 async function handleAssetRequest(request: Request, env: unknown): Promise<Response> {
   const url = new URL(request.url);
-  const key = url.pathname.replace("/r2/", "");
+  const rawKey = url.pathname.replace("/r2/", "");
+
+  // `url.pathname` preserves percent-encoding (e.g. spaces stay as "%20",
+  // "(" / ")" stay as "%28" / "%29") - it does not decode it. R2 object
+  // keys, however, are stored with their literal characters. Filenames
+  // with no special characters (like "AWS.webp") happen to match either
+  // way, which is why only those worked before this decode step existed.
+  let key: string;
+  try {
+    key = decodeURIComponent(rawKey);
+  } catch {
+    // Malformed percent-encoding in the path - can't be a valid key.
+    return new Response("Not found", { status: 404 });
+  }
+
   const assetsEnv = env as { Assets: R2Bucket };
 
   const obj = await assetsEnv.Assets.get(key);
