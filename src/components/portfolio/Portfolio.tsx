@@ -1418,12 +1418,18 @@ function CertificateModal({
   // Prefer an official verification link (e.g. Credly) if one exists.
   const verifyHref = card.buttons.find((b) => b.href.includes("credly.com"))?.href;
   const accent = getCardAccent(card.category);
-  // The modal always prefers the PDF `document` over the `image` thumbnail
-  // when one is available — `image` is for the card preview/badge only.
-  // Whether the card *also* has a preview `image` (AutoCAD, Udemy AWS,
-  // Linux Foundation) must not affect this: that used to force a fallback
-  // to the webp image instead of the PDF.
-  const isPdf = Boolean(card.document?.toLowerCase().endsWith(".pdf"));
+
+  // AWS is the only card with no `document` — it keeps its original,
+  // untouched image-only viewer below. Every other certificate (PDF or
+  // otherwise) goes through the same clean "document viewer" presentation,
+  // whether the underlying file is a PDF or an image.
+  const hasDocument = Boolean(card.document);
+  const isPdfDocument = Boolean(card.document?.toLowerCase().endsWith(".pdf"));
+  // Suppress the browser's native PDF toolbar/nav/scrollbar chrome and fit
+  // the whole page inside the frame — no cropping, no reader controls.
+  const pdfSrc = isPdfDocument
+    ? `${card.document}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`
+    : card.document;
 
   return (
     <div
@@ -1437,11 +1443,9 @@ function CertificateModal({
         onClick={(e) => e.stopPropagation()}
         className={cn(
           "surface-2 relative flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
-          isPdf
+          hasDocument
             ? "h-[min(96vh,1200px)] max-w-6xl"
-            : card.document
-              ? "max-w-4xl"
-              : "max-w-lg",
+            : "max-w-lg",
           ACCENT_BORDER_CLASSES[accent],
         )}
       >
@@ -1454,24 +1458,34 @@ function CertificateModal({
           <X className="h-4 w-4" />
         </button>
 
-        {isPdf ? (
-          <div className="min-h-0 flex-1 bg-black/20 p-1.5 sm:p-2">
-            <iframe
-              src={card.document}
-              title={card.title}
-              className="h-full w-full rounded-lg bg-white shadow-inner"
-            />
+        {hasDocument ? (
+          // ── Clean certificate viewer (every non-AWS certificate) ──
+          // Same treatment whether the source is a PDF or an image: fills
+          // the enlarged modal, preserves aspect ratio, nothing cropped,
+          // minimal surrounding padding, no reader chrome.
+          <div className="flex min-h-0 flex-1 items-center justify-center bg-black/20 p-2 sm:p-3">
+            {isPdfDocument ? (
+              <iframe
+                src={pdfSrc}
+                title={card.title}
+                className="h-full w-full rounded-lg border-0 bg-white shadow-inner"
+              />
+            ) : (
+              <img
+                src={card.document}
+                alt={card.title}
+                className="h-full w-full rounded-lg object-contain"
+              />
+            )}
           </div>
         ) : (
-          (card.image ?? card.document) && (
+          // ── AWS Certified Cloud Practitioner — untouched original viewer ──
+          card.image && (
             <div className="flex items-center justify-center bg-black/20 p-8 sm:p-10">
               <img
-                src={card.image ?? card.document}
+                src={card.image}
                 alt={card.title}
-                className={cn(
-                  "w-auto max-w-full object-contain",
-                  card.document ? "max-h-[80vh]" : "max-h-[70vh]",
-                )}
+                className="max-h-[70vh] w-auto max-w-full object-contain"
               />
             </div>
           )
