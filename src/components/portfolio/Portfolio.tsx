@@ -536,6 +536,63 @@ function BackgroundFX() {
 //   col-3 : Download CV + email + social icons
 // ═══════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════
+// COMPONENT - CV modal (in-page PDF viewer)
+// Mirrors the certificate modal's visual language (dark surface,
+// rounded corners, subtle border, close button, blurred backdrop,
+// title bar at the bottom) so the CV opens inside the portfolio
+// instead of redirecting to Google Drive.
+// ═══════════════════════════════════════════════════════════
+
+function CvModal({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Curriculum Vitae"
+        onClick={(e) => e.stopPropagation()}
+        className="surface-2 relative flex w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[color:var(--accent-blue)]/40 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white transition-colors hover:bg-black/70"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        <iframe
+          src="/r2/aditya-shelke-cv.pdf"
+          title="Aditya Shelke — CV"
+          className="h-[75vh] w-full bg-black/20"
+        />
+
+        <div className="border-t border-border/60 p-5">
+          <h3 className="text-lg font-semibold text-foreground">Curriculum Vitae</h3>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ProfileHero({
   onJourney,
   theme,
@@ -546,8 +603,10 @@ function ProfileHero({
   toggleTheme: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [cvOpen, setCvOpen] = useState(false);
 
   return (
+    <>
     <section className="relative">
       <div className="surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
         {/* Mobile theme toggle — condensed circular button, shares theme state with the desktop slider */}
@@ -649,15 +708,14 @@ function ProfileHero({
                 <div className="flex items-center justify-between">
                   <div className="shrink-0">
                     <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden">
-                      <a
-                        href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
-                        target="_blank"
-                        rel="noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => setCvOpen(true)}
                         className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-background transition-colors"
                       >
                         <FileText className="h-4 w-4" />
                         CV
-                      </a>
+                      </button>
                       <div className="w-px bg-[color:var(--accent-blue)]/30" />
                       <a
                         href="/r2/aditya-shelke-cv.pdf"
@@ -719,15 +777,14 @@ function ProfileHero({
               <span aria-hidden className="h-px w-full bg-border/60 md:hidden" />
               {/* Download CV */}
               <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden">
-                <a
-                  href="https://drive.google.com/drive/folders/1c0qffoq846ABrArQxjx9GtoB2ROcjkhy"
-                  target="_blank"
-                  rel="noreferrer"
+                <button
+                  type="button"
+                  onClick={() => setCvOpen(true)}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-accent-blue hover:bg-[color:var(--accent-blue)] hover:!text-background transition-colors"
                 >
                   <FileText className="h-4 w-4" />
                   View CV
-                </a>
+                </button>
                 <div className="w-px bg-[color:var(--accent-blue)]/30" />
                 <a
                   href="/r2/aditya-shelke-cv.pdf"
@@ -761,6 +818,9 @@ function ProfileHero({
         </div>
       </div>
     </section>
+
+    {cvOpen && <CvModal onClose={() => setCvOpen(false)} />}
+    </>
   );
 }
 
@@ -1115,11 +1175,6 @@ const CARDS: {
   imageLabel?: string;
   /** Optional metadata shown in the in-page certificate modal. */
   certDetails?: { issued: string; expires: string; issuedBy: string };
-  /** Opt this specific modal view into a larger size (currently only used
-   *  for the Connect2Cure publication's "View Certificate" action). Leaving
-   *  this unset keeps the default modal sizing used by every Certification/
-   *  Badge card and the "Read Paper" PDF view. */
-  modalSize?: "large";
   /** Publications only: a large research-paper preview shown across the top
    *  of the card (certificate-card style). Independent of `image` so this
    *  never triggers the certificate-card (image-first) renderer — the
@@ -1329,16 +1384,6 @@ const ACCENT_BORDER_CLASSES: Record<CardAccent, string> = {
 // COMPONENT - Certificate modal (in-page, image-first cards)
 // ═══════════════════════════════════════════════════════════
 
-/** Extensions the modal will render as a rendered image (large, clear,
- *  object-contain). Anything else with a `.pdf` extension falls back to the
- *  embedded PDF viewer. Shared by every Certification/Badge card — new
- *  cards get the same behavior automatically as long as they set `image`
- *  (or `document`) to one of these. */
-const MODAL_IMAGE_EXTENSIONS = [".webp", ".jpg", ".jpeg", ".png"];
-function isImageAsset(src?: string): src is string {
-  return Boolean(src && MODAL_IMAGE_EXTENSIONS.some((ext) => src.toLowerCase().endsWith(ext)));
-}
-
 function CertificateModal({
   card,
   onClose,
@@ -1362,16 +1407,7 @@ function CertificateModal({
   // Prefer an official verification link (e.g. Credly) if one exists.
   const verifyHref = card.buttons.find((b) => b.href.includes("credly.com"))?.href;
   const accent = getCardAccent(card.category);
-  // Every Certification/Badge routes through this same lookup: a rendered
-  // image (webp/jpg/jpeg/png) always wins when present, regardless of
-  // whether a PDF is also attached to the card. Only cards with a PDF and
-  // no image asset fall back to the embedded PDF viewer.
-  const mediaSrc =
-    (isImageAsset(card.image) && card.image) ||
-    (isImageAsset(card.document) && card.document) ||
-    card.document ||
-    card.image;
-  const isPdf = Boolean(mediaSrc?.toLowerCase().endsWith(".pdf"));
+  const isPdf = Boolean(card.document?.toLowerCase().endsWith(".pdf"));
 
   return (
     <div
@@ -1385,11 +1421,7 @@ function CertificateModal({
         onClick={(e) => e.stopPropagation()}
         className={cn(
           "surface-2 relative flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
-          isPdf
-            ? "max-w-3xl"
-            : card.modalSize === "large"
-              ? "max-h-[92vh] w-[88vw] max-w-[1250px] overflow-y-auto"
-              : "max-h-[90vh] w-[80vw] max-w-[1100px] overflow-y-auto",
+          isPdf ? "max-w-3xl" : "max-w-lg",
           ACCENT_BORDER_CLASSES[accent],
         )}
       >
@@ -1404,17 +1436,17 @@ function CertificateModal({
 
         {isPdf ? (
           <iframe
-            src={mediaSrc}
+            src={card.document}
             title={card.title}
             className="h-[75vh] w-full bg-black/20"
           />
         ) : (
-          mediaSrc && (
-            <div className="flex items-center justify-center bg-black/20 p-6 sm:p-8">
+          (card.document ?? card.image) && (
+            <div className="flex items-center justify-center bg-black/20 p-8 sm:p-10">
               <img
-                src={mediaSrc}
+                src={card.document ?? card.image}
                 alt={card.title}
-                className="h-auto max-h-[75vh] w-full max-w-full object-contain"
+                className="max-h-[70vh] w-auto max-w-full object-contain"
               />
             </div>
           )
@@ -1589,7 +1621,6 @@ function PortfolioSection() {
                           document: c.certificateDocument,
                           buttons: [],
                           certDetails: undefined,
-                          modalSize: "large",
                         })
                       }
                       className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-[color:var(--accent-blue)]/70 hover:bg-black/65"
