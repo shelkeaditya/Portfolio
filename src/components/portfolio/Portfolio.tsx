@@ -568,7 +568,7 @@ function CvModal({ onClose }: { onClose: () => void }) {
         aria-modal="true"
         aria-label="Curriculum Vitae"
         onClick={(e) => e.stopPropagation()}
-        className="surface-2 relative flex w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[color:var(--accent-blue)]/40 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]"
+        className="surface-2 relative flex h-[min(90vh,920px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-[color:var(--accent-blue)]/40 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]"
       >
         <button
           type="button"
@@ -579,11 +579,13 @@ function CvModal({ onClose }: { onClose: () => void }) {
           <X className="h-4 w-4" />
         </button>
 
-        <iframe
-          src="/r2/aditya-shelke-cv.pdf"
-          title="Aditya Shelke — CV"
-          className="h-[75vh] w-full bg-black/20"
-        />
+        <div className="min-h-0 flex-1 bg-black/20 p-3 sm:p-5">
+          <iframe
+            src="/r2/aditya-shelke-cv.pdf"
+            title="Aditya Shelke — CV"
+            className="h-full w-full rounded-lg bg-white shadow-inner"
+          />
+        </div>
 
         <div className="border-t border-border/60 p-5">
           <h3 className="text-lg font-semibold text-foreground">Curriculum Vitae</h3>
@@ -1430,7 +1432,7 @@ function CertificateModal({
         onClick={(e) => e.stopPropagation()}
         className={cn(
           "surface-2 relative flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
-          isPdf ? "max-w-3xl" : "max-w-lg",
+          isPdf ? "h-[min(90vh,920px)] max-w-5xl" : "max-w-lg",
           ACCENT_BORDER_CLASSES[accent],
         )}
       >
@@ -1444,11 +1446,13 @@ function CertificateModal({
         </button>
 
         {isPdf ? (
-          <iframe
-            src={card.document}
-            title={card.title}
-            className="h-[75vh] w-full bg-black/20"
-          />
+          <div className="min-h-0 flex-1 bg-black/20 p-3 sm:p-5">
+            <iframe
+              src={card.document}
+              title={card.title}
+              className="h-full w-full rounded-lg bg-white shadow-inner"
+            />
+          </div>
         ) : (
           (card.document ?? card.image) && (
             <div className="flex items-center justify-center bg-black/20 p-8 sm:p-10">
