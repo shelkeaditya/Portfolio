@@ -1115,9 +1115,11 @@ const CARDS: {
   imageLabel?: string;
   /** Optional metadata shown in the in-page certificate modal. */
   certDetails?: { issued: string; expires: string; issuedBy: string };
-  /** Publications only: a small preview thumbnail shown on the card itself.
-   *  Independent of `image` so this never triggers the certificate-card
-   *  (image-first) renderer — the publication keeps its text-card layout. */
+  /** Publications only: a large research-paper preview shown across the top
+   *  of the card (certificate-card style). Independent of `image` so this
+   *  never triggers the certificate-card (image-first) renderer — the
+   *  publication keeps its own layout with title/subtitle/description/tags
+   *  always visible below the image. */
   previewImage?: string;
   /** Publications only: the research paper PDF opened in the in-page modal
    *  via the "Read Paper" action. Independent of `image`/`document` so this
@@ -1513,39 +1515,22 @@ function PortfolioSection() {
             // ── Publication card (independent of certificate renderer) ──
             <div
               key={c.title}
-              className="surface-2 group relative flex flex-col overflow-hidden rounded-xl border border-border/60 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-blue)]/40 hover:shadow-[0_20px_40px_-25px_rgba(0,0,0,0.7)]"
+              className="surface-2 group flex flex-col overflow-hidden rounded-xl border border-border/60 transition-colors duration-300 hover:-translate-y-0.5 hover:border-[color:var(--accent-blue)]/40"
             >
-              <div className="pointer-events-none absolute inset-0 bg-[color:var(--accent-blue)]/0 transition-colors duration-300 group-hover:bg-[color:var(--accent-blue)]/[0.04]" />
-
-              {/* Card header */}
-              <div className="relative flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-1 items-center gap-3">
-                  {c.previewImage && (
-                    <img
-                      src={c.previewImage}
-                      alt=""
-                      aria-hidden="true"
-                      className="h-12 w-12 shrink-0 rounded-lg border border-border/60 object-cover"
-                    />
-                  )}
-                  <div className="flex min-w-0 items-center gap-2">
-                    <div className="text-3xl shrink-0">{c.icon}</div>
-                    <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
-                  </div>
-                </div>
-                <span className="surface-3 max-w-[110px] shrink-0 rounded-md border border-border/60 px-2 py-0.5 text-right text-[10px] uppercase leading-tight tracking-wider text-muted-foreground">
-                  {c.category.join(" / ")}
+              {/* Large research-paper preview, certificate-card style */}
+              <div className="relative h-44 w-full shrink-0 overflow-hidden bg-black/20 sm:h-56">
+                <span className="surface-3 absolute left-3 top-3 z-10 inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1 text-[10px] font-semibold uppercase leading-tight tracking-wider text-muted-foreground">
+                  📄 {c.category[0]}
                 </span>
-              </div>
-              <div className="relative mt-1 text-xs text-muted-foreground">{c.subtitle}</div>
-
-              {/* Description fades out on hover; actions fade in over the
-                  same slot so the card doesn't jump in height. */}
-              <div className="relative mt-3 min-h-[3.75rem]">
-                <p className="text-sm text-muted-foreground transition-opacity duration-300 group-hover:opacity-0">
-                  {c.description}
-                </p>
-                <div className="absolute inset-0 flex flex-wrap items-start gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                {c.previewImage && (
+                  <img
+                    src={c.previewImage}
+                    alt={c.title}
+                    className="h-full w-full object-cover object-top"
+                  />
+                )}
+                {/* Hover overlay with actions — image and content below stay visible */}
+                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/0 opacity-0 transition-all duration-300 group-hover:bg-black/55 group-hover:opacity-100">
                   {c.paperDocument && (
                     <button
                       type="button"
@@ -1559,7 +1544,7 @@ function PortfolioSection() {
                           certDetails: undefined,
                         })
                       }
-                      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-3 py-1.5 text-xs font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-[color:var(--accent-blue)]/70 hover:bg-black/65"
                     >
                       Read Paper
                       <ExternalLink className="h-3 w-3" />
@@ -1578,7 +1563,7 @@ function PortfolioSection() {
                           certDetails: undefined,
                         })
                       }
-                      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-3 py-1.5 text-xs font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-[color:var(--accent-blue)]/70 hover:bg-black/65"
                     >
                       View Certificate
                       <ExternalLink className="h-3 w-3" />
@@ -1587,14 +1572,22 @@ function PortfolioSection() {
                 </div>
               </div>
 
-              {/* Tech stack */}
-              {c.tech.length > 0 && (
-                <div className="relative mt-3 flex flex-wrap gap-1.5">
-                  {c.tech.map((t) => (
-                    <TechBadge key={t} label={t} />
-                  ))}
+              {/* Title, subtitle, description, tags — always visible */}
+              <div className="flex flex-1 flex-col p-5">
+                <div className="flex items-center gap-2">
+                  <div className="text-3xl shrink-0">{c.icon}</div>
+                  <h4 className="text-base font-semibold text-foreground">{c.title}</h4>
                 </div>
-              )}
+                <div className="mt-1 text-xs text-muted-foreground">{c.subtitle}</div>
+                <p className="mt-3 text-sm text-muted-foreground">{c.description}</p>
+                {c.tech.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {c.tech.map((t) => (
+                      <TechBadge key={t} label={t} />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             // ── Default card ────────────────────────────────
