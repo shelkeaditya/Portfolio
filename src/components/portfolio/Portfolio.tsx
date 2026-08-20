@@ -2738,7 +2738,7 @@ function Contact() {
     <div>
       <SectionHeading title="Let's Connect." />
       <p className="text-muted-foreground max-w-2xl mb-6 text-justify">
-        Whether it's a job opportunity, a project or just a tech conversation - I'd love to hear
+        Whether it's a job opportunity, a project or just a tech conversation - I'd love to hear it
         from you.
       </p>
 
