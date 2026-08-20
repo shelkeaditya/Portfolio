@@ -1361,9 +1361,7 @@ function CertificateModal({
         onClick={(e) => e.stopPropagation()}
         className={cn(
           "surface-2 relative flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
-          isPdf
-            ? "max-w-3xl"
-            : "max-h-[90vh] w-[80vw] max-w-[1100px] overflow-y-auto",
+          isPdf ? "max-w-3xl" : "max-w-lg",
           ACCENT_BORDER_CLASSES[accent],
         )}
       >
@@ -1384,11 +1382,11 @@ function CertificateModal({
           />
         ) : (
           (card.document ?? card.image) && (
-            <div className="flex items-center justify-center bg-black/20 p-6 sm:p-8">
+            <div className="flex items-center justify-center bg-black/20 p-8 sm:p-10">
               <img
                 src={card.document ?? card.image}
                 alt={card.title}
-                className="h-auto max-h-[75vh] w-full max-w-full object-contain"
+                className="max-h-[70vh] w-auto max-w-full object-contain"
               />
             </div>
           )
