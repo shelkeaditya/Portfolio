@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Instagram,
   Linkedin,
@@ -3270,6 +3270,36 @@ export default function Portfolio() {
   const [active, setActive] = useState<SectionKey>("about");
   const { theme, toggle } = useTheme();
 
+  // ─────────────────────────────────────────────────────────
+  // Centralized navigation handler.
+  // Every nav trigger in the app (desktop sidebar, mobile bar,
+  // Journey button, and any future nav entry point) must call
+  // this single function instead of `setActive` directly. It
+  // guarantees the destination section always opens scrolled
+  // to the top — including when navigating between sections
+  // that are already mounted / previously visited — without
+  // requiring scroll logic on individual buttons.
+  // ─────────────────────────────────────────────────────────
+  const resetScroll = useCallback(() => {
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
+
+  const navigateTo = useCallback(
+    (section: SectionKey) => {
+      setActive(section);
+      // Reset immediately for instant feel...
+      resetScroll();
+      // ...and again on the next frame in case content height
+      // changes (e.g. animate-in) shift the scroll position
+      // after this render commits.
+      requestAnimationFrame(resetScroll);
+    },
+    [resetScroll],
+  );
+
   return (
     <div className="ambient-bg relative min-h-screen text-foreground">
       <BackgroundFX />
@@ -3277,7 +3307,7 @@ export default function Portfolio() {
 
       {/* ── Main layout ── */}
       <div className="relative mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12">
-        <ProfileHero onJourney={() => setActive("journey")} theme={theme} toggleTheme={toggle} />
+        <ProfileHero onJourney={() => navigateTo("journey")} theme={theme} toggleTheme={toggle} />
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]">
           <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0">
@@ -3285,7 +3315,7 @@ export default function Portfolio() {
           </main>
 
           <div className="hidden md:block">
-            <NavPanel active={active} setActive={setActive} theme={theme} toggleTheme={toggle} />
+            <NavPanel active={active} setActive={navigateTo} theme={theme} toggleTheme={toggle} />
           </div>
         </div>
 
@@ -3302,7 +3332,7 @@ export default function Portfolio() {
             return (
               <button
                 key={key}
-                onClick={() => setActive(key)}
+                onClick={() => navigateTo(key)}
                 className={cn(
                   "flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200",
                   isActive
