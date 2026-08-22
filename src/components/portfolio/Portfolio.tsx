@@ -38,6 +38,7 @@ import {
   Monitor,
   MessageSquare,
   X,
+  ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -1191,6 +1192,26 @@ const CARDS: {
    *  in-page modal via the "View Certificate" action. Independent of
    *  `image`/`document` so this never triggers the certificate-card renderer. */
   certificateDocument?: string;
+  /** Projects only: unique slug used to route to this project's detail page. */
+  slug?: string;
+  /** Projects only: role / project type shown near the top of the detail page.
+   *  Falls back to `subtitle` when omitted. */
+  role?: string;
+  /** Projects only: small badge shown next to the title (e.g. "Team Project"). */
+  label?: string;
+  /** Projects only: contributors credited on the detail page, shown directly
+   *  below the description and before Tech Stack. Omit for solo projects. */
+  contributors?: { name: string; github: string }[];
+  /** Projects only: short architecture summary shown on the detail page. */
+  architecture?: string;
+  /** Projects only: notable challenges & how they were solved. Omitted
+   *  entirely (not forced) when a project has nothing meaningful to show. */
+  challenges?: { title: string; description: string }[];
+  /** Projects only: any other relevant info shown at the end of the detail page. */
+  otherInfo?: string;
+  /** Heading shown above `otherInfo` (e.g. "Project Focus", "My Contribution").
+   *  Falls back to "Notes" when omitted. */
+  otherInfoTitle?: string;
 }[] = [
   // ── Certifications ──────────────────────────────────────
   {
@@ -1272,28 +1293,91 @@ const CARDS: {
   },
 
   // ── Projects ────────────────────────────────────────────
+  // WebP thumbnails are served from the "portfolio-assets" R2 bucket under
+  // the "thumbnail/" object prefix, through the existing /r2/ Worker route
+  // (same convention as the Certificates and Research Paper assets above).
   {
     category: ["Projects"],
     icon: <ShieldCheck className="h-5 w-5 text-green-400" />,
     title: "DevSecOps Flask Platform",
     subtitle: "Secure CI/CD Application",
+    role: "Secure CI/CD Application",
     description:
-      "Flask application with integrated DevSecOps practices - containerised with Docker, scanned with Trivy & SonarQube, and deployed via GitHub Actions.",
-    tech: ["Python", "Flask", "Docker", "GitHub Actions", "Trivy", "SonarQube"],
+      "A security-focused Flask application implementing DevSecOps practices throughout the development and deployment lifecycle. The platform combines containerization, automated CI/CD, vulnerability scanning, and code-quality analysis to identify security and quality issues before deployment.",
+    tech: ["Python", "Flask", "Docker", "Git", "GitHub", "GitHub Actions", "Trivy", "SonarQube"],
     buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }],
+    slug: "devsecops",
+    image: "/r2/thumbnail/devsecops.webp",
+    architecture:
+      "The Flask application is containerized with Docker and pushed through version control on GitHub. A GitHub Actions pipeline builds the image, runs Trivy to scan it for known vulnerabilities, and runs SonarQube to analyze code quality — surfacing security and quality issues before the build is ever deployed.",
+    challenges: [
+      {
+        title: "Security in CI/CD",
+        description:
+          "Security checks needed to happen before deployment, not after the application reached the deployment environment. Trivy was integrated directly into the CI/CD workflow to catch vulnerabilities before deployment.",
+      },
+      {
+        title: "Code Quality vs. Security",
+        description:
+          "Security alone doesn't guarantee maintainable software. SonarQube was added to the pipeline to analyze code quality and surface maintainability issues alongside the security checks.",
+      },
+      {
+        title: "Automated Security Gates",
+        description:
+          "Manual security scans are inconsistent and easy to skip. GitHub Actions automates the security and quality checks as a required part of the development workflow.",
+      },
+    ],
   },
   {
     category: ["Projects"],
     icon: <Activity className="h-5 w-5 text-blue-400" />,
     title: "Resilient Server Monitoring Platform",
-    subtitle: "Infrastructure Monitoring",
+    subtitle: "Infrastructure Monitoring & Self-Healing",
+    role: "Infrastructure Monitoring & Self-Healing",
     description:
-      "Monitoring platform that tracks server health, CPU/memory metrics, and system availability with alerting for reliable infra management.",
-    tech: ["Linux", "Python", "Bash", "Networking", "Nginx"],
+      "A cloud-native server monitoring and self-healing platform that continuously monitors system resources, services, containers, and Kubernetes workloads. It detects infrastructure failures and performs automated recovery actions to improve service availability and reliability.",
+    tech: [
+      "Python",
+      "Flask",
+      "Linux",
+      "Bash",
+      "psutil",
+      "Prometheus",
+      "Node Exporter",
+      "Grafana",
+      "Docker",
+      "Kubernetes",
+      "Nginx",
+      "Networking",
+      "Cron",
+      "Git",
+      "GitHub",
+    ],
     buttons: [
       {
         label: "GitHub",
         href: "https://github.com/shelkeaditya/Resilient-Server-Monitoring-Platform",
+      },
+    ],
+    slug: "resilient-server-monitoring",
+    image: "/r2/thumbnail/resilient-server-monitoring.webp",
+    architecture:
+      "A Python/Flask service uses psutil to continuously poll system resources, services, containers, and Kubernetes workloads, exposing metrics to Prometheus (via Node Exporter) and visualizing them in Grafana. Scheduled checks run through Cron, and detected failures trigger automated recovery actions to keep services available.",
+    challenges: [
+      {
+        title: "Automated Failure Recovery",
+        description:
+          "Monitoring alone only tells you something failed. A recovery layer identifies the affected resource and performs the right action, such as restarting a service, Docker container, or Kubernetes workload.",
+      },
+      {
+        title: "Multi-Level Health Monitoring",
+        description:
+          "CPU and memory metrics alone don't indicate whether an application is actually healthy. The platform combines system metrics, process checks, service availability, network checks, container status, and Kubernetes workload health.",
+      },
+      {
+        title: "Infrastructure Observability",
+        description:
+          "Raw infrastructure metrics are difficult to interpret on their own. Prometheus, Node Exporter, and Grafana provide centralized metric collection and visualization for the whole platform.",
       },
     ],
   },
@@ -1302,21 +1386,31 @@ const CARDS: {
     icon: <Workflow className="h-5 w-5 text-blue-400" />,
     title: "CI/CD Platform",
     subtitle: "Automation Pipeline",
+    role: "Automation Pipeline",
     description:
-      "End-to-end automated build, test, and deployment pipeline that streamlines software delivery and infrastructure provisioning.",
-    tech: ["GitHub Actions", "Docker", "Jenkins", "Linux", "Shell Scripting"],
+      "An end-to-end CI/CD platform that automates the software delivery lifecycle from source-code changes through build, testing, containerization, and deployment. It combines GitHub Actions and Jenkins with Docker and Linux-based automation to create a repeatable deployment workflow.",
+    tech: ["Git", "GitHub", "GitHub Actions", "YAML", "Jenkins", "Docker", "Linux", "Shell/Bash"],
     buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/CICD-Platform" }],
-  },
-  {
-    category: ["Projects"],
-    icon: <Bot className="h-5 w-5 text-cyan-400" />,
-    title: "AI-Based Backup Management",
-    subtitle: "Intelligent Backup Automation",
-    description:
-      "Backup management solution using Python automation for scheduling, recovery planning, and efficient data protection workflows.",
-    tech: ["Python", "Linux", "Bash", "Cron", "Automation"],
-    buttons: [
-      { label: "GitHub", href: "https://github.com/shelkeaditya/Ai-based-backup-management" },
+    slug: "cicd-platform",
+    image: "/r2/thumbnail/cicd-platform.webp",
+    architecture:
+      "Source changes on GitHub trigger a GitHub Actions workflow that hands off to Jenkins for orchestration. Jenkins builds and containerizes the application with Docker, runs automated tests, and drives Linux-based shell automation to deploy the build — producing a repeatable pipeline from commit to deployment.",
+    challenges: [
+      {
+        title: "Pipeline Coordination",
+        description:
+          "Build, testing, containerization, and deployment needed to execute in the correct sequence. GitHub Actions and Jenkins were used to orchestrate the stages and enforce dependencies between them.",
+      },
+      {
+        title: "Environment Consistency",
+        description:
+          "Applications can behave differently across environments. Docker packages the application and its dependencies into consistent containers so the deployed build matches what was tested.",
+      },
+      {
+        title: "Reliable Delivery",
+        description:
+          "A failed build or validation step should never reach deployment. Pipeline validation gates each stage so unsuccessful builds are stopped before they can progress.",
+      },
     ],
   },
   {
@@ -1324,10 +1418,60 @@ const CARDS: {
     icon: <Cloud className="h-5 w-5 text-sky-400" />,
     title: "Nextcloud on Linux",
     subtitle: "Self-Hosted Private Cloud",
+    role: "Self-Hosted Private Cloud",
     description:
-      "Deployed and configured Nextcloud on a Linux server for secure self-hosted file sharing, storage, and team collaboration.",
-    tech: ["Linux", "Nextcloud", "Docker", "Nginx", "Networking"],
+      "A self-hosted private cloud deployed on a Linux server using Nextcloud, providing centralized file storage, synchronization, sharing, and remote access while maintaining control over the underlying infrastructure and data.",
+    tech: ["Linux", "Nextcloud", "Nginx", "PHP", "MariaDB/MySQL", "WebDAV", "SSL/TLS", "Bash"],
     buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/Nextcloud-on-Linux" }],
+    slug: "nextcloud-on-linux",
+    image: "/r2/thumbnail/nextcloud-on-linux.webp",
+    architecture:
+      "Nextcloud runs on a Linux server behind Nginx, with PHP handling the application layer and MariaDB/MySQL as the backing database. WebDAV enables file sync and remote access, SSL/TLS secures traffic end-to-end, and Bash scripts handle server setup and maintenance.",
+    otherInfo:
+      "This project demonstrates practical experience with self-hosted cloud infrastructure, Linux server administration, web-stack configuration, persistent storage, database integration, secure remote access, and independently managing a cloud application.",
+    otherInfoTitle: "Project Focus",
+  },
+  {
+    category: ["Projects"],
+    icon: <FileText className="h-5 w-5 text-indigo-400" />,
+    title: "Connect2Cure",
+    subtitle: "A Telemedicine Platform",
+    role: "A Telemedicine Platform",
+    label: "Team Project",
+    description:
+      "A full-stack telemedicine platform connecting patients and healthcare professionals through a digital healthcare system. The platform provides appointment management, medical records, prescriptions, patient/doctor dashboards, and AI-assisted symptom analysis.",
+    tech: [
+      "React.js",
+      "JavaScript",
+      "HTML5",
+      "CSS3",
+      "Bootstrap",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "REST API",
+      "JWT",
+      "Bcrypt",
+      "Git",
+      "GitHub",
+      "Postman",
+    ],
+    buttons: [{ label: "GitHub", href: "" }],
+    slug: "connect2cure",
+    image: "/r2/thumbnail/connect2cure.webp",
+    contributors: [{ name: "Divyam Oswal", github: "https://github.com/DivyamOswal" }],
+    architecture:
+      "A React.js front end talks to a Node.js/Express.js REST API, with MongoDB as the data store. JWT and Bcrypt handle authentication and credential security across separate patient and doctor dashboards, covering appointment management, medical records, prescriptions, and AI-assisted symptom analysis.",
+    challenges: [
+      {
+        title: "Role-Based Access & Healthcare Data",
+        description:
+          "Patients and doctors require different permissions, and healthcare-related information needs controlled access. JWT authentication, Bcrypt password hashing, and role-based authorization separate the two workflows and restrict access to protected functionality.",
+      },
+    ],
+    otherInfo:
+      "Built as part of a team. My contribution covered full-stack application development, frontend/backend integration, REST API integration, authentication workflows, MongoDB integration, patient/doctor functionality, and Git/GitHub collaboration alongside my co-contributor.",
+    otherInfoTitle: "My Contribution",
   },
 
   // ── Publications ─────────────────────────────────────────
@@ -1535,6 +1679,7 @@ function CertificateModal({
 function PortfolioSection() {
   const [filter, setFilter] = useState<PortfolioFilter>("All");
   const [activeCert, setActiveCert] = useState<(typeof CARDS)[number] | null>(null);
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   const filtered = useMemo(
     () => (filter === "All" ? CARDS : CARDS.filter((c) => c.category.includes(filter))),
@@ -1548,6 +1693,26 @@ function PortfolioSection() {
     "Badges",
     "Publications",
   ];
+
+  const selectedProject = useMemo(
+    () => CARDS.find((c) => c.slug === selectedSlug) ?? null,
+    [selectedSlug],
+  );
+
+  // Internal navigation to a project's detail page — never opens a new tab,
+  // and scrolls back to the top so the detail page opens from the top.
+  const openProject = useCallback((slug: string) => {
+    setSelectedSlug(slug);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    }
+  }, []);
+
+  if (selectedProject) {
+    return (
+      <ProjectDetailPage project={selectedProject} onBack={() => setSelectedSlug(null)} />
+    );
+  }
 
   return (
     <div>
@@ -1574,7 +1739,61 @@ function PortfolioSection() {
       {/* Cards grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {filtered.map((c) =>
-          c.image ? (
+          c.category.includes("Projects") && c.image ? (
+            // ── Project card (thumbnail, clean by default, reveals on hover) ──
+            <div
+              key={c.title}
+              className={cn(
+                "surface-2 group flex flex-col overflow-hidden rounded-xl border border-border/60",
+                CARD_ELEVATION_CLASSES,
+                ACCENT_HOVER_CLASSES.blue,
+              )}
+            >
+              <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-black/20">
+                <img
+                  src={c.image}
+                  alt={c.title}
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                />
+
+                {/* PROJECTS badge — always visible */}
+                <span className="surface-3 absolute left-3 top-3 z-10 inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1 text-[10px] font-semibold uppercase leading-tight tracking-wider text-muted-foreground">
+                  Projects
+                </span>
+
+                {/* Subtle dark/gradient overlay — appears on hover only */}
+                <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/55 to-transparent p-4 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100">
+                  <p className="mb-3 line-clamp-3 text-sm text-white/90">{c.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openProject(c.slug!)}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                    >
+                      View Project
+                      <span aria-hidden>→</span>
+                    </button>
+                    {c.buttons[0]?.href && (
+                      <a
+                        href={c.buttons[0].href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                      >
+                        GitHub
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Title — always visible, card stays clean by default */}
+              <div className="surface-3 border-t border-border/60 px-4 py-3">
+                <h4 className="text-sm font-semibold text-foreground">{c.title}</h4>
+              </div>
+            </div>
+          ) : c.image ? (
             // ── Image-first certificate card ──────────────────
             <div
               key={c.title}
@@ -1754,6 +1973,185 @@ function PortfolioSection() {
 
       {activeCert && (
         <CertificateModal card={activeCert} onClose={() => setActiveCert(null)} />
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPONENT - Project detail page
+// Clean case-study layout (HideMail reference): pill back-link, hero
+// image (untouched), title/subtitle/metadata, description, then
+// generously-spaced sections — Contributors (only where applicable),
+// Tech Stack, Architecture, Challenges & Solutions (only when
+// meaningful), any closing notes, and a GitHub button.
+// ═══════════════════════════════════════════════════════════
+
+/** Section heading style shared by Tech Stack / Architecture / Challenges &
+ *  Solutions / closing-notes sections — normal title case, bold, no
+ *  uppercase transform, no icons. */
+function DetailHeading({ children }: { children: React.ReactNode }) {
+  return <h3 className="mb-4 text-2xl font-bold text-foreground">{children}</h3>;
+}
+
+/** Compact blue-accent tech pill used only on the project detail page —
+ *  distinct from the shared TechBadge used by Certifications/Publications,
+ *  which stays exactly as-is elsewhere. */
+function ProjectTechPill({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-[color:var(--accent-blue)]/30 bg-[color:var(--accent-blue)]/10 px-3 py-1 text-xs font-medium text-accent-blue">
+      {label}
+    </span>
+  );
+}
+
+function ProjectDetailPage({
+  project,
+  onBack,
+}: {
+  project: (typeof CARDS)[number];
+  onBack: () => void;
+}) {
+  const githubHref = project.buttons[0]?.href;
+
+  return (
+    <div>
+      {/* 1. Back to Portfolio — pill, dark/transparent, thin border, no blue fill */}
+      <button
+        type="button"
+        onClick={onBack}
+        className="mb-8 inline-flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-foreground/[0.03] px-4 text-sm text-muted-foreground transition-colors hover:border-border hover:bg-foreground/[0.06] hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to Portfolio
+      </button>
+
+      {/* 2. Large project WebP — untouched, do not modify */}
+      {project.image && (
+        <div className="mb-6 overflow-hidden rounded-2xl border border-border/60 surface-2">
+          <img
+            src={project.image}
+            alt={project.title}
+            className="max-h-[440px] w-full object-cover"
+          />
+        </div>
+      )}
+
+      {/* 3. Title + subtitle */}
+      <h2 className="mb-2 text-[32px] font-bold leading-tight tracking-tight text-foreground md:text-[36px]">
+        {project.title}
+      </h2>
+      <div className="mb-4 text-base text-muted-foreground md:text-lg">
+        {project.subtitle}
+      </div>
+
+      {/* 4. Metadata — role pill, or "Team Project" for team projects */}
+      <div className="mb-8 flex flex-wrap gap-2">
+        {project.label ? (
+          <span className="inline-flex items-center rounded-full border border-[color:var(--accent-blue)]/40 bg-[color:var(--accent-blue)]/10 px-3 py-1 text-xs font-medium text-accent-blue">
+            {project.label}
+          </span>
+        ) : (
+          <span className="inline-flex items-center rounded-full border border-[color:var(--accent-blue)]/40 bg-[color:var(--accent-blue)]/10 px-3 py-1 text-xs font-medium text-accent-blue">
+            {project.role ?? project.subtitle}
+          </span>
+        )}
+      </div>
+
+      {/* 5. Description */}
+      <p className="mb-12 max-w-2xl text-[15px] leading-[1.7] text-muted-foreground md:text-base">
+        {project.description}
+      </p>
+
+      {/* 6. Contributors — only where applicable, directly below description */}
+      {project.contributors && project.contributors.length > 0 && (
+        <div className="mb-12">
+          <DetailHeading>Contributors</DetailHeading>
+          <div className="flex flex-wrap gap-2">
+            {project.contributors.map((c) => (
+              <a
+                key={c.name}
+                href={c.github}
+                target="_blank"
+                rel="noreferrer"
+                className="surface-3 inline-flex items-center gap-1.5 rounded-full border border-border/60 px-3.5 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-border"
+              >
+                <Github className="h-3.5 w-3.5" />
+                {c.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 7. Tech Stack */}
+      {project.tech.length > 0 && (
+        <div className="mb-12">
+          <DetailHeading>Tech Stack</DetailHeading>
+          <div className="flex flex-wrap gap-2">
+            {project.tech.map((t) => (
+              <ProjectTechPill key={t} label={t} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 8. Architecture — plain paragraph, no card */}
+      {project.architecture && (
+        <div className="mb-12">
+          <DetailHeading>Architecture</DetailHeading>
+          <p className="max-w-2xl text-[15px] leading-[1.7] text-muted-foreground md:text-base">
+            {project.architecture}
+          </p>
+        </div>
+      )}
+
+      {/* 9. Challenges & Solutions — only when meaningful, never forced, max ~3 cards */}
+      {project.challenges && project.challenges.length > 0 && (
+        <div className="mb-12">
+          <DetailHeading>Challenges &amp; Solutions</DetailHeading>
+          <div className="space-y-3">
+            {project.challenges.slice(0, 3).map((ch, i) => (
+              <div
+                key={ch.title}
+                className="surface-2 flex gap-3.5 rounded-xl border border-border/60 p-5"
+              >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[color:var(--accent-blue)]/10 text-xs font-semibold text-accent-blue">
+                  {i + 1}
+                </span>
+                <div>
+                  <div className="mb-1 text-sm font-semibold text-foreground">{ch.title}</div>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {ch.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 10. Other relevant project information */}
+      {project.otherInfo && (
+        <div className="mb-12">
+          <DetailHeading>{project.otherInfoTitle ?? "Notes"}</DetailHeading>
+          <p className="max-w-2xl text-[15px] leading-[1.7] text-muted-foreground md:text-base">
+            {project.otherInfo}
+          </p>
+        </div>
+      )}
+
+      {/* GitHub button */}
+      {githubHref && (
+        <a
+          href={githubHref}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+        >
+          View on GitHub
+          <ExternalLink className="h-4 w-4" />
+        </a>
       )}
     </div>
   );
