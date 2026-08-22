@@ -1212,6 +1212,10 @@ const CARDS: {
   /** Heading shown above `otherInfo` (e.g. "Project Focus", "My Contribution").
    *  Falls back to "Notes" when omitted. */
   otherInfoTitle?: string;
+  /** Projects only: live deployed app URL. When present, the card and detail
+   *  page show an extra "View Project ↗" button that opens it in a new tab.
+   *  Only set this for projects with a verified live URL. */
+  liveUrl?: string;
 }[] = [
   // ── Certifications ──────────────────────────────────────
   {
@@ -1452,13 +1456,15 @@ const CARDS: {
       "REST API",
       "JWT",
       "Bcrypt",
+      "AWS",
       "Git",
       "GitHub",
       "Postman",
     ],
-    buttons: [{ label: "GitHub", href: "" }],
+    buttons: [{ label: "GitHub", href: "https://github.com/DivyamOswal/Connect2Cure" }],
     slug: "connect2cure",
     image: "/r2/thumbnail/connect2cure.webp",
+    liveUrl: "https://connect2-cure-dedu.vercel.app/",
     contributors: [{ name: "Divyam Oswal", github: "https://github.com/DivyamOswal" }],
     architecture:
       "A React.js front end talks to a Node.js/Express.js REST API, with MongoDB as the data store. JWT and Bcrypt handle authentication and credential security across separate patient and doctor dashboards, covering appointment management, medical records, prescriptions, and AI-assisted symptom analysis.",
@@ -1470,7 +1476,7 @@ const CARDS: {
       },
     ],
     otherInfo:
-      "Built as part of a team. My contribution covered full-stack application development, frontend/backend integration, REST API integration, authentication workflows, MongoDB integration, patient/doctor functionality, and Git/GitHub collaboration alongside my co-contributor.",
+      "Deployment & Infrastructure — managed frontend and backend deployment, kept the application live and operational, and managed the deployed application's availability. Also managed the production database containing patient and doctor user data, used AWS services as part of the project infrastructure, and handled deployment/infrastructure configuration to support the platform's ongoing operation and maintenance. Built as part of a team alongside Divyam Oswal.",
     otherInfoTitle: "My Contribution",
   },
 
@@ -1753,7 +1759,7 @@ function PortfolioSection() {
                 <img
                   src={c.image}
                   alt={c.title}
-                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  className="h-full w-full object-cover"
                 />
 
                 {/* PROJECTS badge — always visible */}
@@ -1761,30 +1767,38 @@ function PortfolioSection() {
                   Projects
                 </span>
 
-                {/* Subtle dark/gradient overlay — appears on hover only */}
-                <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/55 to-transparent p-4 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100">
-                  <p className="mb-3 line-clamp-3 text-sm text-white/90">{c.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => openProject(c.slug!)}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                {/* Subtle dark overlay + centered action buttons — same treatment as the Certification hover */}
+                <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-2 bg-black/0 p-4 opacity-0 transition-all duration-300 group-hover:bg-black/60 group-hover:opacity-100">
+                  <button
+                    type="button"
+                    onClick={() => openProject(c.slug!)}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
+                  >
+                    Details
+                    <span aria-hidden>→</span>
+                  </button>
+                  {c.buttons[0]?.href && (
+                    <a
+                      href={c.buttons[0].href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
+                    >
+                      GitHub
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                  {c.liveUrl && (
+                    <a
+                      href={c.liveUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
                     >
                       View Project
-                      <span aria-hidden>→</span>
-                    </button>
-                    {c.buttons[0]?.href && (
-                      <a
-                        href={c.buttons[0].href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
-                      >
-                        GitHub
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    )}
-                  </div>
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -1818,7 +1832,7 @@ function PortfolioSection() {
                   className="h-full w-full object-contain p-6"
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover/img:bg-black/60 group-hover/img:opacity-100">
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-white">
+                  <span className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors group-hover/img:border-white/40 group-hover/img:bg-black/65">
                     View Certificate
                     <ExternalLink className="h-3.5 w-3.5" />
                   </span>
@@ -2026,14 +2040,25 @@ function ProjectDetailPage({
         Back to Portfolio
       </button>
 
-      {/* 2. Large project WebP — untouched, do not modify */}
+      {/* 2. Large project WebP — img tag itself untouched, do not modify */}
       {project.image && (
-        <div className="mb-6 overflow-hidden rounded-2xl border border-border/60 surface-2">
+        <div className="relative mb-6 overflow-hidden rounded-2xl border border-border/60 surface-2">
           <img
             src={project.image}
             alt={project.title}
             className="max-h-[440px] w-full object-cover"
           />
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-5 right-5 inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/60 px-3.5 py-2 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/75"
+            >
+              View Project
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          )}
         </div>
       )}
 
@@ -2141,18 +2166,31 @@ function ProjectDetailPage({
         </div>
       )}
 
-      {/* GitHub button */}
-      {githubHref && (
-        <a
-          href={githubHref}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
-        >
-          View on GitHub
-          <ExternalLink className="h-4 w-4" />
-        </a>
-      )}
+      {/* GitHub button (+ live-project button when a verified live URL exists) */}
+      <div className="flex flex-wrap gap-3">
+        {githubHref && (
+          <a
+            href={githubHref}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+          >
+            View on GitHub
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        )}
+        {project.liveUrl && (
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+          >
+            View Live Project
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        )}
+      </div>
     </div>
   );
 }
