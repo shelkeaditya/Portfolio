@@ -473,6 +473,248 @@ function VerticalSlide({ words }: { words: string[] }) {
   );
 }
 
+// ═══════════════════════════════════════════════════════════
+// GEOMETRIC PATTERN 1 — upper-left triangle-mosaic mark
+// (exact code as provided; component renamed from `GeometricPattern`
+// to `GeometricPatternMark1` only to avoid colliding with Pattern 2's
+// export name, since both now live in this one file. Polygon points,
+// palette, grid constants, and viewBox are untouched.)
+// ═══════════════════════════════════════════════════════════
+
+type Pattern1Point = {
+  x: number;
+  y: number;
+};
+
+type Pattern1Polygon = {
+  points: Pattern1Point[];
+  fill: string;
+  stroke?: string;
+  strokeWidth?: number;
+};
+
+const pt = (x: number, y: number): Pattern1Point => ({ x, y });
+
+/** Serializes a Point[] into the SVG `points` attribute format. */
+function toPointsAttrPattern1(points: Pattern1Point[]): string {
+  return points.map((p) => `${p.x},${p.y}`).join(" ");
+}
+
+/** Darkens a hex color by `amount` (0–1) — used for each polygon's
+ *  hairline edge, so facets read as distinct even when two adjacent
+ *  triangles share the exact same fill. */
+function darken(hex: string, amount: number): string {
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.max(0, Math.round(((n >> 16) & 0xff) * (1 - amount)));
+  const g = Math.max(0, Math.round(((n >> 8) & 0xff) * (1 - amount)));
+  const b = Math.max(0, Math.round((n & 0xff) * (1 - amount)));
+  return `#${[r, g, b].map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+}
+
+// ── Palette — sampled directly from the reference image ──
+const PATTERN1_PALETTE = {
+  maroon: "#A4151B",
+  red: "#ED3138",
+  orangeDeep: "#F77211", // saturated top-peak orange
+  orangeBurnt: "#F36B33", // muted mid-column orange
+  orange: "#F59629", // main bright orange
+  teal: "#01C2C7",
+  blue: "#0D77A2",
+  peach: "#FBCA84",
+} as const;
+
+// Source canvas the coordinates below were measured against.
+const PATTERN1_CANVAS_W = 507;
+const PATTERN1_CANVAS_H = 625;
+
+// ── Shared grid ──
+// Columns (x): C0..C4 are the main vertical grid lines; the two
+// C_FAR* values are only used by the small detached orange chip.
+const C0 = 0;
+const C1 = 56;
+const C2 = 111;
+const C3 = 167;
+const C4 = 222;
+const C_FAR1 = 241;
+const C_FAR2 = 259;
+
+// Rows (y): consistent 32px step from the top apex down.
+const R0 = 2;
+const R1 = 34;
+const R2 = 66;
+const R3 = 98;
+const R4 = 130;
+const R5 = 162;
+const R6 = 194;
+const R7 = 226;
+const R8 = 258;
+const R9 = 290;
+
+// ── The mosaic, piece by piece ──
+// Grouped top-to-bottom, matching how the shapes stack in the reference.
+const PATTERN1_TRIANGLES: Pattern1Polygon[] = [
+  // Small maroon triangle capping the very top of the mark.
+  { points: [pt(C2, R0), pt(C1, R1), pt(C2, R2)], fill: PATTERN1_PALETTE.maroon },
+
+  // Saturated orange peak, right of the maroon cap.
+  { points: [pt(C2, R0), pt(C2, R2), pt(C3, R1)], fill: PATTERN1_PALETTE.orangeDeep },
+
+  // Large red piece, clipped by the left edge of the canvas —
+  // shares its top-right vertex with the maroon/orange peak and
+  // its upper-left vertex with the maroon cap.
+  { points: [pt(C2, R2), pt(C1, R1), pt(C0, R2), pt(C0, R4)], fill: PATTERN1_PALETTE.red },
+
+  // Big bright-orange field — the widest piece in the composition.
+  { points: [pt(C4, R2), pt(C3, R1), pt(C1, R3), pt(C2, R4)], fill: PATTERN1_PALETTE.orange },
+
+  // Small detached orange triangle, floating free to the right.
+  { points: [pt(C_FAR2, R2), pt(C_FAR1, 55), pt(C_FAR1 - 1, 78)], fill: PATTERN1_PALETTE.orange },
+
+  // Burnt-orange vertical band running down the middle of the mark.
+  { points: [pt(C3, R3), pt(C2, R4), pt(C2, R6), pt(C3, R5)], fill: PATTERN1_PALETTE.orangeBurnt },
+
+  // Blue parallelogram, middle-left of the composition.
+  { points: [pt(C1, R3), pt(C1, R5), pt(C2, R6), pt(C2, R4)], fill: PATTERN1_PALETTE.blue },
+
+  // Tiny detached blue triangle, just below-right of the blue field.
+  { points: [pt(91, 225), pt(76, 234), pt(90, 244)], fill: PATTERN1_PALETTE.blue },
+
+  // Teal triangle touching the left edge, upper-middle height.
+  { points: [pt(C0, R4), pt(C1, R5), pt(C1, R3)], fill: PATTERN1_PALETTE.teal },
+
+  // Teal triangle pointing right, beside the blue field.
+  { points: [pt(C1, R5), pt(C1, R7), pt(C2, R6)], fill: PATTERN1_PALETTE.teal },
+
+  // Small detached teal triangle, lower-left, touching the canvas edge.
+  { points: [pt(C1, R7), pt(C0, R8), pt(C1, R9)], fill: PATTERN1_PALETTE.teal },
+
+  // Orange triangle beside the peach piece, lower portion of the mark.
+  { points: [pt(C2, R6), pt(C3, R7), pt(C3, R5)], fill: PATTERN1_PALETTE.orange },
+
+  // Light peach triangle — the lightest tone, bottom-right of the mosaic.
+  { points: [pt(C3, R5), pt(C3, R7), pt(C4, R6)], fill: PATTERN1_PALETTE.peach },
+];
+
+type GeometricPatternMark1Props = {
+  /** Extra classes for the outer container. */
+  className?: string;
+};
+
+/**
+ * Full-bleed dark canvas with the triangle mosaic anchored to the
+ * upper-left corner — the rest of the canvas is intentionally left
+ * empty, matching the reference's asymmetric composition.
+ */
+function GeometricPatternMark1({ className }: GeometricPatternMark1Props) {
+  return (
+    <div className={`relative h-full min-h-screen w-full overflow-hidden ${className ?? ""}`}>
+      <svg
+        viewBox={`0 0 ${PATTERN1_CANVAS_W} ${PATTERN1_CANVAS_H}`}
+        preserveAspectRatio="xMinYMin meet"
+        className="absolute inset-0 h-full w-full"
+        style={{ transform: "scale(1.6)", transformOrigin: "top left" }}
+        aria-hidden="true"
+      >
+        {PATTERN1_TRIANGLES.map((polygon, i) => (
+          <polygon
+            key={i}
+            points={toPointsAttrPattern1(polygon.points)}
+            fill={polygon.fill}
+            stroke={polygon.stroke ?? darken(polygon.fill, 0.22)}
+            strokeWidth={polygon.strokeWidth ?? 1}
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// GEOMETRIC PATTERN 2 — irregular triangle mosaic
+// (exact code as provided; component renamed from `GeometricPattern`
+// to `GeometricPatternMark2` only to avoid colliding with Pattern 1's
+// export name, since both now live in this one file. Polygon points,
+// fills, and viewBox are untouched.)
+// ═══════════════════════════════════════════════════════════
+
+type Pattern2Polygon = {
+  points: [number, number][];
+  fill: string;
+};
+
+const PATTERN2_STROKE = "rgba(0,0,0,0.15)";
+const PATTERN2_STROKE_WIDTH = 0.7;
+
+const PATTERN2_POLYGONS: Pattern2Polygon[] = [
+  // -------- main mosaic body --------
+  { points: [[394, 516], [247, 600], [247, 431]], fill: "#EF3239" }, // large red base triangle
+  { points: [[470, 302], [470, 386], [395, 429], [323, 387]], fill: "#EF4D29" }, // orange-red kite
+  { points: [[395, 344], [247, 429], [247, 345], [322, 302]], fill: "#F7972A" }, // mid orange kite
+  { points: [[396, 430], [470, 472], [470, 558], [395, 516]], fill: "#0C78A3" }, // lower blue kite
+  { points: [[322, 387], [395, 430], [395, 515], [321, 473]], fill: "#A5161C" }, // dark red kite
+  { points: [[321, 217], [321, 300], [247, 343], [247, 259]], fill: "#F97211" }, // bright orange kite (upper)
+  { points: [[470, 217], [470, 300], [396, 343], [396, 260]], fill: "#01BBBE" }, // teal kite
+  { points: [[397, 258], [396, 343], [322, 301], [322, 216]], fill: "#0C78A3" }, // upper blue kite
+  { points: [[470, 558], [397, 600], [323, 558], [395, 517]], fill: "#01C3C7" }, // bottom-right cyan kite
+  { points: [[321, 388], [321, 471], [248, 430]], fill: "#F97211" }, // bright orange triangle (lower)
+  { points: [[247, 174], [320, 216], [247, 257]], fill: "#F7972A" }, // orange peak triangle
+  { points: [[470, 388], [470, 471], [397, 430]], fill: "#01C3C7" }, // cyan triangle (mid-right)
+  { points: [[245, 174], [246, 257], [175, 216]], fill: "#FBCB86" }, // peach peak triangle
+  { points: [[323, 216], [395, 174], [395, 257]], fill: "#02D4D8" }, // bright cyan triangle
+  { points: [[246, 515], [175, 472], [246, 431]], fill: "#F36246" }, // coral triangle
+  { points: [[469, 130], [397, 171], [397, 89]], fill: "#02D4D8" }, // large cyan triangle (top)
+
+  // -------- detached / floating triangles --------
+  { points: [[195, 301], [163, 320], [163, 283]], fill: "#F97211" }, // small orange detached triangle
+  { points: [[173, 167], [194, 180], [173, 192]], fill: "#FBCB86" }, // small peach detached triangle
+  { points: [[442, 41], [442, 62], [423, 52]], fill: "#02D4D8" }, // small cyan detached triangle (top-right)
+  { points: [[171, 558], [99, 600], [99, 517]], fill: "#EF3239" }, // large red detached triangle (bottom-left)
+];
+
+function toPointsAttrPattern2(points: [number, number][]): string {
+  return points.map(([x, y]) => `${x},${y}`).join(" ");
+}
+
+type GeometricPatternMark2Props = {
+  className?: string;
+};
+
+function GeometricPatternMark2({ className }: GeometricPatternMark2Props) {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+      className={className}
+    >
+      <svg
+        viewBox="0 0 475 603"
+        preserveAspectRatio="xMinYMin meet"
+        width="90%"
+        height="90%"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ display: "block" }}
+      >
+        {PATTERN2_POLYGONS.map((poly, i) => (
+          <polygon
+            key={i}
+            points={toPointsAttrPattern2(poly.points)}
+            fill={poly.fill}
+            stroke={PATTERN2_STROKE}
+            strokeWidth={PATTERN2_STROKE_WIDTH}
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 // ═════════════════════════════════════════════════════════════
 // COMPONENT - BackgroundFX
 // ═════════════════════════════════════════════════════════════
@@ -482,49 +724,20 @@ function BackgroundFX() {
     <>
       <div aria-hidden className="pointer-events-none absolute inset-0 grid-texture opacity-40" />
 
-      {/* ── Decorative corner triangles ── */}
-      <div className="poly-bg-left">
-        <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="0,0 165,0 0,165" fill="#7C3AED" opacity="0.80" />
-          <polygon points="165,0 215,0 0,215 0,165" fill="#BE123C" opacity="0.65" />
-          <polygon points="215,0 260,0 0,260 0,215" fill="#7C3AED" opacity="0.32" />
-          <polygon points="260,0 300,0 0,300 0,260" fill="#BE123C" opacity="0.16" />
-          <polygon points="300,0 335,0 0,335 0,300" fill="#7C3AED" opacity="0.08" />
-          <defs>
-            <linearGradient id="fxL" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="40%" stopColor="var(--background)" stopOpacity="0" />
-              <stop offset="100%" stopColor="var(--background)" stopOpacity="1" />
-            </linearGradient>
-            <linearGradient id="fyL" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="40%" stopColor="var(--background)" stopOpacity="0" />
-              <stop offset="100%" stopColor="var(--background)" stopOpacity="1" />
-            </linearGradient>
-          </defs>
-          <rect width="420" height="420" fill="url(#fxL)" />
-          <rect width="420" height="420" fill="url(#fyL)" />
-        </svg>
+      {/* ── Decorative corner mosaics ──
+          poly-bg-left / poly-bg-right (defined in styles.css) are the
+          existing fixed-size corner boxes — upper-left and lower-right
+          respectively — that this decoration has always lived in.
+          GeometricPatternMark1 (upper-left mosaic) and GeometricPatternMark2
+          (lower-right irregular mosaic) are defined above in this same
+          file, with their exact polygon data, palette, and viewBox
+          untouched from what was provided. */}
+      <div className="poly-bg-left" aria-hidden="true">
+        <GeometricPatternMark1 />
       </div>
 
-      <div className="poly-bg-right">
-        <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="420,420 255,420 420,255" fill="#7C3AED" opacity="0.70" />
-          <polygon points="255,420 205,420 420,205 420,255" fill="#5B21B6" opacity="0.55" />
-          <polygon points="205,420 162,420 420,162 420,205" fill="#7C3AED" opacity="0.28" />
-          <polygon points="162,420 124,420 420,124 420,162" fill="#5B21B6" opacity="0.14" />
-          <polygon points="124,420 90,420  420,90  420,124" fill="#7C3AED" opacity="0.07" />
-          <defs>
-            <linearGradient id="fxR" x1="1" y1="0" x2="0" y2="0">
-              <stop offset="40%" stopColor="var(--background)" stopOpacity="0" />
-              <stop offset="100%" stopColor="var(--background)" stopOpacity="1" />
-            </linearGradient>
-            <linearGradient id="fyR" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="40%" stopColor="var(--background)" stopOpacity="0" />
-              <stop offset="100%" stopColor="var(--background)" stopOpacity="1" />
-            </linearGradient>
-          </defs>
-          <rect width="420" height="420" fill="url(#fxR)" />
-          <rect width="420" height="420" fill="url(#fyR)" />
-        </svg>
+      <div className="poly-bg-right" aria-hidden="true">
+        <GeometricPatternMark2 />
       </div>
     </>
   );
