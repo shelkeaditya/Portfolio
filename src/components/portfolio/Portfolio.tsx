@@ -2405,7 +2405,7 @@ function ProjectDetailPage({
       <button
         type="button"
         onClick={onBack}
-        className="mb-8 inline-flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-foreground/[0.03] px-4 text-sm text-muted-foreground transition-colors hover:border-border hover:bg-foreground/[0.06] hover:text-foreground"
+        className="mb-8 inline-flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-foreground/[0.03] px-4 text-sm text-muted-foreground transition-colors hover:border-[color:var(--accent-blue)] hover:text-accent-blue active:bg-[color:var(--accent-blue)] active:border-[color:var(--accent-blue)] active:!text-background"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Portfolio
