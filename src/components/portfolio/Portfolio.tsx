@@ -1514,40 +1514,6 @@ const CARDS: {
     },
   },
   {
-    category: ["Certifications"],
-    icon: <Award className="h-5 w-5 text-rose-400" />,
-    title: "AutoCAD 3D Professional Certification",
-    subtitle: "3D Modelling & Design",
-    description:
-      "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
-    tech: ["AutoCAD", "3D Modelling"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing",
-      },
-    ],
-    image: "/r2/Certificates/AutoCAD%203D%20Professional%20Certification.webp",
-    document: "/r2/Certificates/AutoCAD%203D%20Professional%20Certification.pdf",
-  },
-  {
-    category: ["Certifications"],
-    icon: <Cloud className="h-5 w-5 text-blue-300" />,
-    title: "AWS Certificate: Udemy",
-    subtitle: "AWS Fundamentals",
-    description:
-      "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
-    tech: ["AWS", "Cloud Computing"],
-    buttons: [
-      {
-        label: "Certificate",
-        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing",
-      },
-    ],
-    image: "/r2/Certificates/Udemy%20AWS%20Certificate-4.webp",
-    document: "/r2/Certificates/Udemy%20AWS%20Certificate-4.pdf",
-  },
-  {
     category: ["Certifications", "Badges"],
     icon: <Terminal className="h-5 w-5 text-blue-400" />,
     title: "The Linux Foundation: LFD-103",
@@ -1568,8 +1534,46 @@ const CARDS: {
     image: "/r2/Certificates/The%20Linux%20Foundation%20%28LFD-103%29.webp",
     document: "/r2/Certificates/The%20Linux%20Foundation%20%28LFD-103%29.pdf",
   },
+  {
+    category: ["Certifications"],
+    icon: <Cloud className="h-5 w-5 text-blue-300" />,
+    title: "AWS Certificate: Udemy",
+    subtitle: "AWS Fundamentals",
+    description:
+      "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
+    tech: ["AWS", "Cloud Computing"],
+    buttons: [
+      {
+        label: "Certificate",
+        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing",
+      },
+    ],
+    image: "/r2/Certificates/Udemy%20AWS%20Certificate-4.webp",
+    document: "/r2/Certificates/Udemy%20AWS%20Certificate-4.pdf",
+  },
+  {
+    category: ["Certifications"],
+    icon: <Award className="h-5 w-5 text-rose-400" />,
+    title: "AutoCAD 3D Professional Certification",
+    subtitle: "3D Modelling & Design",
+    description:
+      "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
+    tech: ["AutoCAD", "3D Modelling"],
+    buttons: [
+      {
+        label: "Certificate",
+        href: "https://drive.google.com/drive/folders/1j7UBUMgmKiIIVevSTeGcag9fqXZlOhZJ?usp=sharing",
+      },
+    ],
+    image: "/r2/Certificates/AutoCAD%203D%20Professional%20Certification.webp",
+    document: "/r2/Certificates/AutoCAD%203D%20Professional%20Certification.pdf",
+  },
 
   // ── Projects ────────────────────────────────────────────
+  // Ordered by relevance to Cloud / DevOps / Cloud Security / Infrastructure:
+  // DevSecOps (security+CI/CD) > Resilient Server Monitoring (infra/observability)
+  // > CI/CD Platform (automation pipeline) > Nextcloud on Linux (self-hosted infra)
+  // > Connect2Cure (full-stack app; least Cloud/DevOps-specific).
   // WebP thumbnails are served from the "portfolio-assets" R2 bucket under
   // the "thumbnail/" object prefix, through the existing /r2/ Worker route
   // (same convention as the Certificates and Research Paper assets above).
@@ -1884,10 +1888,16 @@ function CertificateModal({
         aria-label={card.title}
         onClick={(e) => e.stopPropagation()}
         className={cn(
-          "surface-2 relative flex w-full flex-col overflow-hidden rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
+          "surface-2 relative flex w-full flex-col rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
           hasDocument
-            ? "h-[min(96vh,1200px)] max-w-6xl"
-            : "max-w-lg",
+            ? // Mobile: wrap tightly around the certificate content instead of
+              // forcing a near-full-height modal — height comes from the
+              // aspect-ratio'd document box + footer below, capped so it
+              // never exceeds the viewport, with internal scroll as a safety
+              // net for very long content. Desktop keeps the original fixed
+              // 96vh viewer exactly as before via the md: overrides.
+              "max-h-[90vh] max-w-md overflow-y-auto overflow-x-hidden md:h-[min(96vh,1200px)] md:max-w-6xl md:overflow-hidden"
+            : "max-w-lg overflow-hidden",
           ACCENT_BORDER_CLASSES[accent],
         )}
       >
@@ -1905,20 +1915,29 @@ function CertificateModal({
           // Same treatment whether the source is a PDF or an image: fills
           // the enlarged modal, preserves aspect ratio, nothing cropped,
           // minimal surrounding padding, no reader chrome.
-          <div className="flex min-h-0 flex-1 items-center justify-center bg-black/20 p-2 sm:p-3">
-            {isPdfDocument ? (
-              <iframe
-                src={pdfSrc}
-                title={card.title}
-                className="h-full w-full rounded-lg border-0 bg-white shadow-inner"
-              />
-            ) : (
-              <img
-                src={card.document}
-                alt={card.title}
-                className="h-full w-full rounded-lg object-contain"
-              />
-            )}
+          //
+          // Mobile: the document sits in a fixed aspect-ratio box (matching
+          // the aspect used for certificate thumbnails elsewhere) so the
+          // viewer's height is derived from its width instead of stretching
+          // to fill leftover modal height — this is what eliminates the
+          // empty space below the certificate. Desktop (md:) drops the
+          // aspect ratio and fills the flex-1 area exactly as before.
+          <div className="flex min-h-0 flex-1 items-center justify-center bg-black/20 p-2 sm:p-3 md:min-h-0">
+            <div className="relative aspect-[4/3] w-full max-h-full md:aspect-auto md:h-full md:w-full">
+              {isPdfDocument ? (
+                <iframe
+                  src={pdfSrc}
+                  title={card.title}
+                  className="absolute inset-0 h-full w-full rounded-lg border-0 bg-white shadow-inner"
+                />
+              ) : (
+                <img
+                  src={card.document}
+                  alt={card.title}
+                  className="absolute inset-0 h-full w-full rounded-lg object-contain"
+                />
+              )}
+            </div>
           </div>
         ) : (
           // ── AWS Certified Cloud Practitioner — untouched original viewer ──
@@ -2093,12 +2112,13 @@ function PortfolioSection() {
                     OR-s in the same visible classes — same overlay, same buttons, same styling either way. */}
                 <div
                   className={cn(
-                    "absolute inset-0 flex flex-wrap items-center justify-center gap-2 bg-black/0 p-4 opacity-0 transition-all duration-300 group-hover:bg-black/60 group-hover:opacity-100",
-                    openOverlayKey === c.title && "bg-black/60 opacity-100",
+                    "absolute inset-0 flex flex-wrap items-center justify-center gap-2 bg-black/0 p-4 opacity-0 pointer-events-none transition-all duration-300 group-hover:pointer-events-auto group-hover:bg-black/60 group-hover:opacity-100",
+                    openOverlayKey === c.title && "pointer-events-auto bg-black/60 opacity-100",
                   )}
                 >
                   <button
                     type="button"
+                    onPointerDown={(e) => e.stopPropagation()}
                     onClick={(e) => {
                       e.stopPropagation();
                       openProject(c.slug!);
@@ -2113,6 +2133,7 @@ function PortfolioSection() {
                       href={c.buttons[0].href}
                       target="_blank"
                       rel="noreferrer"
+                      onPointerDown={(e) => e.stopPropagation()}
                       onClick={(e) => e.stopPropagation()}
                       className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
                     >
@@ -2125,6 +2146,7 @@ function PortfolioSection() {
                       href={c.liveUrl}
                       target="_blank"
                       rel="noreferrer"
+                      onPointerDown={(e) => e.stopPropagation()}
                       onClick={(e) => e.stopPropagation()}
                       className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
                     >
@@ -2179,17 +2201,18 @@ function PortfolioSection() {
                     overlay, same button, same styling either way. */}
                 <div
                   className={cn(
-                    "absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover/img:bg-black/60 group-hover/img:opacity-100",
-                    openOverlayKey === c.title && "bg-black/60 opacity-100",
+                    "absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 pointer-events-none transition-all duration-300 group-hover/img:pointer-events-auto group-hover/img:bg-black/60 group-hover/img:opacity-100",
+                    openOverlayKey === c.title && "pointer-events-auto bg-black/60 opacity-100",
                   )}
                 >
                   <button
                     type="button"
+                    onPointerDown={(e) => e.stopPropagation()}
                     onClick={(e) => {
                       e.stopPropagation();
                       setActiveCert(c);
                     }}
-                    className="pointer-events-auto inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
                   >
                     View Certificate
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -2233,13 +2256,14 @@ function PortfolioSection() {
                     overlay, same buttons, same styling either way. */}
                 <div
                   className={cn(
-                    "absolute inset-0 flex items-center justify-center gap-2 bg-black/0 opacity-0 transition-all duration-300 group-hover:bg-black/55 group-hover:opacity-100",
-                    openOverlayKey === c.title && "bg-black/55 opacity-100",
+                    "absolute inset-0 flex items-center justify-center gap-2 bg-black/0 opacity-0 pointer-events-none transition-all duration-300 group-hover:pointer-events-auto group-hover:bg-black/55 group-hover:opacity-100",
+                    openOverlayKey === c.title && "pointer-events-auto bg-black/55 opacity-100",
                   )}
                 >
                   {c.paperDocument && (
                     <button
                       type="button"
+                      onPointerDown={(e) => e.stopPropagation()}
                       onClick={(e) => {
                         e.stopPropagation();
                         setActiveCert({
@@ -2260,6 +2284,7 @@ function PortfolioSection() {
                   {c.certificateDocument && (
                     <button
                       type="button"
+                      onPointerDown={(e) => e.stopPropagation()}
                       onClick={(e) => {
                         e.stopPropagation();
                         setActiveCert({
