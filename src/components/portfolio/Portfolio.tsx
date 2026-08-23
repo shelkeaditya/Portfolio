@@ -655,10 +655,17 @@ function GeometricPatternMark1({ className }: GeometricPatternMark1Props) {
 
 // ═══════════════════════════════════════════════════════════
 // GEOMETRIC PATTERN 2 — irregular triangle mosaic
-// (exact code as provided; component renamed from `GeometricPattern`
-// to `GeometricPatternMark2` only to avoid colliding with Pattern 1's
-// export name, since both now live in this one file. Polygon points,
-// fills, and viewBox are untouched.)
+// (component renamed from `GeometricPattern` to `GeometricPatternMark2`
+// only to avoid colliding with Pattern 1's export name, since both
+// live in this one file. Colors and viewBox are untouched.
+//
+// Shared-vertex pass: every junction where two or more of these
+// polygons meet was clustered (vertices within 3px of each other —
+// well under the ~74-86px grid spacing, so no unrelated vertices
+// were merged) and snapped to one canonical [x, y] value per
+// junction, so adjoining edges line up exactly with no gaps or
+// overlap. The four detached triangles are intentionally untouched
+// — they aren't meant to touch anything.)
 // ═══════════════════════════════════════════════════════════
 
 type Pattern2Polygon = {
@@ -671,24 +678,24 @@ const PATTERN2_STROKE_WIDTH = 0.7;
 
 const PATTERN2_POLYGONS: Pattern2Polygon[] = [
   // -------- main mosaic body --------
-  { points: [[394, 516], [247, 600], [247, 431]], fill: "#EF3239" }, // large red base triangle
-  { points: [[470, 302], [470, 386], [395, 429], [323, 387]], fill: "#EF4D29" }, // orange-red kite
-  { points: [[395, 344], [247, 429], [247, 345], [322, 302]], fill: "#F7972A" }, // mid orange kite
+  { points: [[395, 516], [247, 600], [247, 430]], fill: "#EF3239" }, // large red base triangle
+  { points: [[470, 301], [470, 387], [396, 430], [322, 387]], fill: "#EF4D29" }, // orange-red kite
+  { points: [[396, 343], [247, 430], [247, 344], [322, 301]], fill: "#F7972A" }, // mid orange kite
   { points: [[396, 430], [470, 472], [470, 558], [395, 516]], fill: "#0C78A3" }, // lower blue kite
-  { points: [[322, 387], [395, 430], [395, 515], [321, 473]], fill: "#A5161C" }, // dark red kite
-  { points: [[321, 217], [321, 300], [247, 343], [247, 259]], fill: "#F97211" }, // bright orange kite (upper)
-  { points: [[470, 217], [470, 300], [396, 343], [396, 260]], fill: "#01BBBE" }, // teal kite
-  { points: [[397, 258], [396, 343], [322, 301], [322, 216]], fill: "#0C78A3" }, // upper blue kite
-  { points: [[470, 558], [397, 600], [323, 558], [395, 517]], fill: "#01C3C7" }, // bottom-right cyan kite
-  { points: [[321, 388], [321, 471], [248, 430]], fill: "#F97211" }, // bright orange triangle (lower)
-  { points: [[247, 174], [320, 216], [247, 257]], fill: "#F7972A" }, // orange peak triangle
-  { points: [[470, 388], [470, 471], [397, 430]], fill: "#01C3C7" }, // cyan triangle (mid-right)
-  { points: [[245, 174], [246, 257], [175, 216]], fill: "#FBCB86" }, // peach peak triangle
-  { points: [[323, 216], [395, 174], [395, 257]], fill: "#02D4D8" }, // bright cyan triangle
-  { points: [[246, 515], [175, 472], [246, 431]], fill: "#F36246" }, // coral triangle
-  { points: [[469, 130], [397, 171], [397, 89]], fill: "#02D4D8" }, // large cyan triangle (top)
+  { points: [[322, 387], [396, 430], [395, 516], [321, 472]], fill: "#A5161C" }, // dark red kite
+  { points: [[322, 216], [322, 301], [247, 344], [247, 258]], fill: "#F97211" }, // bright orange kite (upper)
+  { points: [[470, 217], [470, 301], [396, 343], [396, 258]], fill: "#01BBBE" }, // teal kite
+  { points: [[396, 258], [396, 343], [322, 301], [322, 216]], fill: "#0C78A3" }, // upper blue kite
+  { points: [[470, 558], [397, 600], [323, 558], [395, 516]], fill: "#01C3C7" }, // bottom-right cyan kite
+  { points: [[322, 387], [321, 472], [247, 430]], fill: "#F97211" }, // bright orange triangle (lower)
+  { points: [[246, 174], [322, 216], [247, 258]], fill: "#F7972A" }, // orange peak triangle
+  { points: [[470, 387], [470, 472], [396, 430]], fill: "#01C3C7" }, // cyan triangle (mid-right)
+  { points: [[246, 174], [247, 258], [175, 216]], fill: "#FBCB86" }, // peach peak triangle
+  { points: [[322, 216], [396, 172], [396, 258]], fill: "#02D4D8" }, // bright cyan triangle
+  { points: [[246, 515], [175, 472], [247, 430]], fill: "#F36246" }, // coral triangle
+  { points: [[469, 130], [396, 172], [397, 89]], fill: "#02D4D8" }, // large cyan triangle (top)
 
-  // -------- detached / floating triangles --------
+  // -------- detached / floating triangles (unchanged, kept separate) --------
   { points: [[195, 301], [163, 320], [163, 283]], fill: "#F97211" }, // small orange detached triangle
   { points: [[173, 167], [194, 180], [173, 192]], fill: "#FBCB86" }, // small peach detached triangle
   { points: [[442, 41], [442, 62], [423, 52]], fill: "#02D4D8" }, // small cyan detached triangle (top-right)
