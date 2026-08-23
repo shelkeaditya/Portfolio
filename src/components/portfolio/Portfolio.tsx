@@ -354,13 +354,27 @@ function SectionHeading({ title }: { title: string }) {
   const base = hasDot ? title.slice(0, -1) : title;
   return (
     <div className="mb-8">
-      <h2 className="text-2xl md:text-4xl font-semibold tracking-tight text-foreground">
-        {base}
-        {hasDot && <span className="text-accent-violet">.</span>}
+      <h2 className="flex items-baseline whitespace-nowrap text-2xl font-semibold tracking-tight text-foreground md:text-4xl">
+        <span>{base}</span>
+        {hasDot && (
+          <span
+            aria-hidden
+            className="ml-[0.1em] inline-block shrink-0 rounded-full"
+            style={{
+              width: "0.22em",
+              height: "0.22em",
+              marginBottom: "0.01em",
+              backgroundColor: "var(--accent-blue)",
+            }}
+          />
+        )}
       </h2>
-      <span className="heading-bar mt-3">
-        <span />
-        <span />
+      <span className="mt-3 flex h-[5px] w-[55px] overflow-hidden rounded-full">
+        <span
+          className="h-full"
+          style={{ width: "18px", flexShrink: 0, backgroundColor: "var(--accent-orange)" }}
+        />
+        <span className="h-full flex-1" style={{ backgroundColor: "var(--accent-blue)" }} />
       </span>
     </div>
   );
@@ -370,6 +384,14 @@ function XIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+function DiscordIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.036 19.736 19.736 0 0 0-4.885 1.49.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 2.98.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.121.098.247.195.373.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.076.076 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.077.077 0 0 0 .084.029 19.836 19.836 0 0 0 6.002-2.981.077.077 0 0 0 .032-.055c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028ZM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.311-.956 2.38-2.157 2.38Zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.311-.947 2.38-2.157 2.38Z" />
     </svg>
   );
 }
@@ -3679,6 +3701,7 @@ function Contact() {
                 <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
                 <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
                 <IconLink href="https://x.com/shelke__aditya" icon={XIcon} label="Twitter" />
+                <IconLink href="https://discord.com/users/792731006171611157" icon={DiscordIcon} label="Discord" />
               </div>
             </div>
 
