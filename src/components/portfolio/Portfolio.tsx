@@ -102,6 +102,37 @@ function useTheme() {
 }
 
 // ═══════════════════════════════════════════════════════════
+// HOOK - useIsMobile
+// Used by the certificate PDF viewer (see CertificateModal) to pick
+// a rendering strategy that actually works on the current device.
+// Desktop browsers have a built-in PDF plugin that renders a PDF
+// dropped into an <iframe>; most mobile browsers (iOS Safari, Chrome
+// for Android, etc.) do NOT — they fall back to a bare "can't
+// display this file" prompt with a raw link, which is the bug this
+// hook exists to work around. SSR-safe (matches the `typeof window
+// === "undefined"` guard already used by useTheme above) and kept in
+// sync with viewport changes/rotation via matchMedia's change event.
+// ═══════════════════════════════════════════════════════════
+
+function useIsMobile(breakpointPx = 768) {
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia(`(max-width: ${breakpointPx - 1}px)`).matches;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia(`(max-width: ${breakpointPx - 1}px)`);
+    const onChange = () => setIsMobile(mql.matches);
+    onChange();
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, [breakpointPx]);
+
+  return isMobile;
+}
+
+// ═══════════════════════════════════════════════════════════
 // COMPONENT - ThemeToggleDesktop (premium sliding pill switch)
 // Used on md: and above.
 // ═══════════════════════════════════════════════════════════
@@ -1817,10 +1848,29 @@ function CertificateModal({
   // whether the underlying file is a PDF or an image.
   const hasDocument = Boolean(card.document);
   const isPdfDocument = Boolean(card.document?.toLowerCase().endsWith(".pdf"));
-  // Suppress the browser's native PDF toolbar/nav/scrollbar chrome and fit
-  // the whole page inside the frame — no cropping, no reader controls.
+
+  // Desktop browsers render a PDF dropped straight into an <iframe> using
+  // their built-in PDF plugin. Most mobile browsers have no such plugin,
+  // so the exact same <iframe src="...pdf"> silently falls back to a bare
+  // "can't display this file" prompt with a raw link to the asset —
+  // that's the mobile bug this block fixes.
+  //
+  // The fix keeps the same iframe-based viewer on both platforms (nothing
+  // new to render, no download-only fallback, no raw path ever shown) and
+  // only changes what URL is fed into it on mobile: the existing PDF
+  // asset — same R2-served file, same `card.document` — is handed to
+  // Google's public document-viewer endpoint, which renders it as an
+  // image-paginated view inside our iframe, which mobile browsers *can*
+  // display. Desktop keeps using the direct asset URL exactly as before.
+  const isMobile = useIsMobile();
   const pdfSrc = isPdfDocument
-    ? `${card.document}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`
+    ? isMobile
+      ? `https://docs.google.com/viewer?url=${encodeURIComponent(
+          typeof window !== "undefined"
+            ? new URL(card.document as string, window.location.origin).href
+            : (card.document as string),
+        )}&embedded=true`
+      : `${card.document}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`
     : card.document;
 
   return (
@@ -1929,6 +1979,31 @@ function PortfolioSection() {
   const [activeCert, setActiveCert] = useState<(typeof CARDS)[number] | null>(null);
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
+  // ── Mobile/touch parity for the hover-reveal card overlays ──
+  // The Project / Certificate-and-Badge / Publication cards below all
+  // reveal their black detail overlay via CSS `group-hover:`, which
+  // only exists on devices with a real pointer — on touch, hover never
+  // fires, so the overlay (and the buttons inside it) was effectively
+  // unreachable. `openOverlayKey` tracks which single card's overlay is
+  // toggled open by a tap; each card's overlay className OR-s this
+  // state in alongside its existing `group-hover:` classes, so desktop
+  // hover behavior is completely unchanged and this only adds a second,
+  // independent way to reach the exact same overlay. A tap outside the
+  // open card (see the effect below) or on a different card closes it.
+  const [openOverlayKey, setOpenOverlayKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!openOverlayKey) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target as Element | null;
+      const cardEl = target?.closest("[data-overlay-card]");
+      const cardKey = cardEl?.getAttribute("data-overlay-card") ?? null;
+      if (cardKey !== openOverlayKey) setOpenOverlayKey(null);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [openOverlayKey]);
+
   const filtered = useMemo(
     () => (filter === "All" ? CARDS : CARDS.filter((c) => c.category.includes(filter))),
     [filter],
@@ -1975,8 +2050,8 @@ function PortfolioSection() {
             className={cn(
               "rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors",
               filter === f
-                ? "border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 text-accent-violet"
-                : "surface-2 border-border/60 text-muted-foreground hover:text-foreground",
+                ? "border-[color:var(--accent-blue)] bg-[color:var(--accent-blue)] text-background"
+                : "surface-2 border-border/60 text-muted-foreground hover:border-[color:var(--accent-blue)]/50 hover:bg-[color:var(--accent-blue)]/10 hover:text-accent-violet",
             )}
           >
             {f}
@@ -1991,6 +2066,10 @@ function PortfolioSection() {
             // ── Project card (thumbnail, clean by default, reveals on hover) ──
             <div
               key={c.title}
+              data-overlay-card={c.title}
+              onClick={() =>
+                setOpenOverlayKey((prev) => (prev === c.title ? null : c.title))
+              }
               className={cn(
                 "surface-2 group flex flex-col overflow-hidden rounded-xl border border-border/60",
                 CARD_ELEVATION_CLASSES,
@@ -2009,11 +2088,21 @@ function PortfolioSection() {
                   Projects
                 </span>
 
-                {/* Subtle dark overlay + centered action buttons — same treatment as the Certification hover */}
-                <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-2 bg-black/0 p-4 opacity-0 transition-all duration-300 group-hover:bg-black/60 group-hover:opacity-100">
+                {/* Subtle dark overlay + centered action buttons — same treatment as the Certification hover.
+                    Desktop: group-hover: reveals it. Mobile: tapping the card sets openOverlayKey and this
+                    OR-s in the same visible classes — same overlay, same buttons, same styling either way. */}
+                <div
+                  className={cn(
+                    "absolute inset-0 flex flex-wrap items-center justify-center gap-2 bg-black/0 p-4 opacity-0 transition-all duration-300 group-hover:bg-black/60 group-hover:opacity-100",
+                    openOverlayKey === c.title && "bg-black/60 opacity-100",
+                  )}
+                >
                   <button
                     type="button"
-                    onClick={() => openProject(c.slug!)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openProject(c.slug!);
+                    }}
                     className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
                   >
                     Details
@@ -2024,6 +2113,7 @@ function PortfolioSection() {
                       href={c.buttons[0].href}
                       target="_blank"
                       rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                       className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
                     >
                       GitHub
@@ -2035,6 +2125,7 @@ function PortfolioSection() {
                       href={c.liveUrl}
                       target="_blank"
                       rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                       className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
                     >
                       View Project
@@ -2059,11 +2150,21 @@ function PortfolioSection() {
                 ACCENT_HOVER_CLASSES[getCardAccent(c.category)],
               )}
             >
-              <button
-                type="button"
-                onClick={() => setActiveCert(c)}
+              <div
+                data-overlay-card={c.title}
+                onClick={() =>
+                  setOpenOverlayKey((prev) => (prev === c.title ? null : c.title))
+                }
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setActiveCert(c);
+                  }
+                }}
                 aria-label={`View ${c.imageLabel ?? c.title} certificate`}
-                className="group/img relative block aspect-[4/3] w-full overflow-hidden bg-black/20"
+                className="group/img relative block aspect-[4/3] w-full cursor-pointer overflow-hidden bg-black/20"
               >
                 <span className="surface-3 absolute left-3 top-3 z-10 inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1 text-[10px] font-semibold uppercase leading-tight tracking-wider text-muted-foreground">
                   🏆 {c.category[0]}
@@ -2073,13 +2174,28 @@ function PortfolioSection() {
                   alt={c.title}
                   className="h-full w-full object-contain p-6"
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover/img:bg-black/60 group-hover/img:opacity-100">
-                  <span className="inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors group-hover/img:border-white/40 group-hover/img:bg-black/65">
+                {/* Desktop: group-hover/img: reveals it. Mobile: tapping the card sets
+                    openOverlayKey and this OR-s in the same visible classes — same
+                    overlay, same button, same styling either way. */}
+                <div
+                  className={cn(
+                    "absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-300 group-hover/img:bg-black/60 group-hover/img:opacity-100",
+                    openOverlayKey === c.title && "bg-black/60 opacity-100",
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveCert(c);
+                    }}
+                    className="pointer-events-auto inline-flex items-center gap-1.5 rounded-md border border-white/25 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-white/40 hover:bg-black/65"
+                  >
                     View Certificate
                     <ExternalLink className="h-3.5 w-3.5" />
-                  </span>
+                  </button>
                 </div>
-              </button>
+              </div>
               <div className="surface-3 border-t border-border/60 px-4 py-3">
                 <h4 className="text-sm font-semibold text-foreground">
                   {c.imageLabel ?? c.title}
@@ -2090,6 +2206,10 @@ function PortfolioSection() {
             // ── Publication card (independent of certificate renderer) ──
             <div
               key={c.title}
+              data-overlay-card={c.title}
+              onClick={() =>
+                setOpenOverlayKey((prev) => (prev === c.title ? null : c.title))
+              }
               className={cn(
                 "surface-2 group flex flex-col overflow-hidden rounded-xl border border-border/60",
                 CARD_ELEVATION_CLASSES,
@@ -2108,12 +2228,20 @@ function PortfolioSection() {
                     className="h-full w-full object-cover object-top"
                   />
                 )}
-                {/* Hover overlay with actions — image and content below stay visible */}
-                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/0 opacity-0 transition-all duration-300 group-hover:bg-black/55 group-hover:opacity-100">
+                {/* Desktop: group-hover: reveals it. Mobile: tapping the card sets
+                    openOverlayKey and this OR-s in the same visible classes — same
+                    overlay, same buttons, same styling either way. */}
+                <div
+                  className={cn(
+                    "absolute inset-0 flex items-center justify-center gap-2 bg-black/0 opacity-0 transition-all duration-300 group-hover:bg-black/55 group-hover:opacity-100",
+                    openOverlayKey === c.title && "bg-black/55 opacity-100",
+                  )}
+                >
                   {c.paperDocument && (
                     <button
                       type="button"
-                      onClick={() =>
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setActiveCert({
                           ...c,
                           title: `${c.title} — Research Paper`,
@@ -2121,8 +2249,8 @@ function PortfolioSection() {
                           document: c.paperDocument,
                           buttons: [],
                           certDetails: undefined,
-                        })
-                      }
+                        });
+                      }}
                       className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-[color:var(--accent-blue)]/70 hover:bg-black/65"
                     >
                       Read Paper
@@ -2132,7 +2260,8 @@ function PortfolioSection() {
                   {c.certificateDocument && (
                     <button
                       type="button"
-                      onClick={() =>
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setActiveCert({
                           ...c,
                           title: `${c.title} — Certificate`,
@@ -2140,8 +2269,8 @@ function PortfolioSection() {
                           document: c.certificateDocument,
                           buttons: [],
                           certDetails: undefined,
-                        })
-                      }
+                        });
+                      }}
                       className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors hover:border-[color:var(--accent-blue)]/70 hover:bg-black/65"
                     >
                       View Certificate
