@@ -950,7 +950,7 @@ function ProfileHero({
                 : "max-h-0 opacity-0 md:opacity-100",
             )}
           >
-            <div className="md:w-[32%] md:px-19 md:pt-7 md:border-r md:border-border/50">
+            <div className="md:w-[32%] md:px-19 md:flex md:flex-col md:justify-center md:border-r md:border-border/50">
               {/* Mobile */}
               <div className="md:hidden space-y-3">
                 <div className="flex items-center justify-between text-[13px]">
@@ -968,7 +968,7 @@ function ProfileHero({
 
                   <div className="flex items-center gap-1">
                     <span className="text-muted-foreground/60">Location :</span>
-                    <span className="text-foreground/70">Pune, India</span>
+                    <span className="text-foreground/70">Pune, IN</span>
                   </div>
                 </div>
 
@@ -1017,32 +1017,35 @@ function ProfileHero({
               </div>
               {/* Desktop */}
               <div className="hidden md:block">
+                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                  Current Status
+                </div>
                 <div className="gap-1 font-mono text-sm">
                   <div className="flex items-center gap-3">
-                    <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">
-                      Job Status :
+                    <span className="w-16 shrink-0 text-[11px] text-foreground/70">
+                      status:
                     </span>
                     <span className="flex items-center gap-1.5 whitespace-nowrap text-emerald-400 font-medium text-[13px]">
                       <span className="relative inline-flex h-1.5 w-1.5">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
                       </span>
-                      Open to Work
+                      available
                     </span>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">
-                      Time Zone :
+                    <span className="w-16 shrink-0 text-[11px] text-foreground/70">
+                      tz:
                     </span>
                     <span className="text-[13px] text-foreground/70">GMT+5:30</span>
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="w-[72px] shrink-0 text-[11px] text-muted-foreground/50">
-                      Location :
+                    <span className="w-16 shrink-0 text-[11px] text-foreground/70">
+                      location:
                     </span>
-                    <span className="text-[13px] text-foreground/70">Pune, India</span>
+                    <span className="text-[13px] text-foreground/70">Pune, IN</span>
                   </div>
                 </div>
               </div>
@@ -1072,14 +1075,19 @@ function ProfileHero({
                 </a>
               </div>
 
-              {/* Email */}
-              <a
-                href="mailto:shelkeaditya@proton.me"
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors"
-              >
-                <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-                shelkeaditya@proton.me
-              </a>
+              {/* Email — wrapped in a flex-1 spacer so it centers vertically
+                  in whatever space is available between the CV button above
+                  and the social icons below, instead of sitting flush under
+                  the button. */}
+              <div className="flex flex-1 items-center">
+                <a
+                  href="mailto:shelkeaditya@proton.me"
+                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors"
+                >
+                  <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+                  shelkeaditya@proton.me
+                </a>
+              </div>
 
               {/* Social icons + theme toggle */}
               <div className="flex items-center gap-0.3">
