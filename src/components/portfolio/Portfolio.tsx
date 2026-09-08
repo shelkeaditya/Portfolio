@@ -531,7 +531,7 @@ function VerticalSlide({ words }: { words: string[] }) {
 // (exact code as provided; component renamed from `GeometricPattern`
 // to `GeometricPatternMark1` only to avoid colliding with Pattern 2's
 // export name, since both now live in this one file. Polygon points,
-// palette, grid constants, and viewBox are untouched.)
+// palette, grid constants and viewBox are untouched.)
 // ═══════════════════════════════════════════════════════════
 
 type Pattern1Point = {
@@ -790,7 +790,7 @@ function BackgroundFX() {
           respectively — that this decoration has always lived in.
           GeometricPatternMark1 (upper-left mosaic) and GeometricPatternMark2
           (lower-right irregular mosaic) are defined above in this same
-          file, with their exact polygon data, palette, and viewBox
+          file, with their exact polygon data, palette and viewBox
           untouched from what was provided. */}
       <div className="poly-bg-left" aria-hidden="true">
         <GeometricPatternMark1 />
@@ -1203,13 +1203,13 @@ function About() {
         <p>
           My work revolves around designing cloud infrastructure, automating deployment pipelines,
           and building scalable systems. I enjoy working with Kubernetes, Docker, CI/CD,
-          Infrastructure as Code, and cloud platforms to create reliable and secure solutions.
+          Infrastructure as Code and cloud platforms to create reliable and secure solutions.
         </p>
 
         <p>
           What excites me most is building the systems behind modern applications. Whether it's
           provisioning infrastructure, automating deployments, or orchestrating containers, I enjoy
-          solving the engineering challenges that make software reliable, scalable, and secure.
+          solving the engineering challenges that make software reliable, scalable and secure.
         </p>
       </div>
       <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -1353,18 +1353,18 @@ function Resume() {
             organization="E-Sutra Technologies"
             year="Jun 2026 – Present"
             location="Remote"
-            description="Working on real-world DevOps and cloud tasks including CI/CD pipeline management, infrastructure automation, and security practices in an Agile team environment."
+            description="Working on real-world DevOps and cloud tasks including CI/CD pipeline management, infrastructure automation and security practices in an Agile team environment."
             points={[
               "Managed end-to-end deployment of production applications across Linux-based cloud environments.",
-              "Designed, built, and maintained CI/CD pipelines using Jenkins to automate build, quality checks, and deployment workflows.",
+              "Designed, built and maintained CI/CD pipelines using Jenkins to automate build, quality checks and deployment workflows.",
               "Provisioned and administered Oracle Cloud Infrastructure (OCI) virtual machines and deployment environments.",
               "Performed secure server administration and deployment activities using SSH on remote Linux servers.",
               "Integrated SonarQube into CI/CD pipelines to automate static code analysis and enforce quality gates before deployment.",
               "Containerized and deployed applications using Docker and Docker Compose for consistent production environments.",
               "Configured and maintained Nginx as a reverse proxy for application routing and production hosting.",
-              "Executed deployment validation, monitored application health, analyzed logs, and resolved production deployment issues.",
+              "Executed deployment validation, monitored application health, analyzed logs and resolved production deployment issues.",
               "Performed functional automation testing using Selenium and conducted performance testing with Apache JMeter as part of release validation.",
-              "Collaborated with development teams to coordinate releases, troubleshoot deployment issues, and ensure reliable production deployments.",
+              "Collaborated with development teams to coordinate releases, troubleshoot deployment issues and ensure reliable production deployments.",
             ]}
           />
           <div className="mt-4">
@@ -1372,7 +1372,7 @@ function Resume() {
               heading="Cloud Labs & Projects"
               year="Mar 2023 – Aug 2025"
               location=""
-              description="Built and managed personal cloud and DevOps projects involving AWS services, Linux administration, containerisation, CI/CD workflows, and infrastructure automation."
+              description="Built and managed personal cloud and DevOps projects involving AWS services, Linux administration, containerisation, CI/CD workflows and infrastructure automation."
               points={[
                 "Deployed AWS EC2, S3, IAM, VPC, ELB, EKS, ECR, CloudWatch configurations",
                 "Built CI/CD pipelines using GitHub Actions and Jenkins",
@@ -1505,7 +1505,7 @@ const CARDS: {
     title: "AWS Certified Cloud Practitioner",
     subtitle: "Amazon Web Services · CLF-C02",
     description:
-      "Foundational AWS certification validating cloud concepts, architecture, pricing, security, and core AWS services.",
+      "Foundational AWS certification validating cloud concepts, architecture, pricing, security and core AWS services.",
     tech: ["AWS", "Cloud Concepts", "IAM", "EC2", "S3", "Pricing & Support"],
     buttons: [
       {
@@ -1527,7 +1527,7 @@ const CARDS: {
     title: "The Linux Foundation: LFD-103",
     subtitle: "A Beginner's Guide to Linux Kernel Development",
     description:
-      "Foundational course covering Linux kernel architecture, development workflow, and contribution basics.",
+      "Foundational course covering Linux kernel architecture, development workflow and contribution basics.",
     tech: ["Linux", "Kernel", "Open Source"],
     buttons: [
       {
@@ -1548,7 +1548,7 @@ const CARDS: {
     title: "AWS Certificate: Udemy",
     subtitle: "AWS Fundamentals",
     description:
-      "Hands-on coursework covering core AWS services, deployment patterns, and cloud architecture fundamentals.",
+      "Hands-on coursework covering core AWS services, deployment patterns and cloud architecture fundamentals.",
     tech: ["AWS", "Cloud Computing"],
     buttons: [
       {
@@ -1565,7 +1565,7 @@ const CARDS: {
     title: "AutoCAD 3D Professional Certification",
     subtitle: "3D Modelling & Design",
     description:
-      "Certification validating proficiency in 3D modelling, design workflows, and AutoCAD tools.",
+      "Certification validating proficiency in 3D modelling, design workflows and AutoCAD tools.",
     tech: ["AutoCAD", "3D Modelling"],
     buttons: [
       {
@@ -1592,13 +1592,13 @@ const CARDS: {
     subtitle: "Secure CI/CD Application",
     role: "Secure CI/CD Application",
     description:
-      "A security-focused Flask application implementing DevSecOps practices throughout the development and deployment lifecycle. The platform combines containerization, automated CI/CD, vulnerability scanning, and code-quality analysis to identify security and quality issues before deployment.",
+      "A security-focused Flask application implementing DevSecOps practices throughout the development and deployment lifecycle. The platform combines containerization, automated CI/CD, vulnerability scanning and code-quality analysis to identify security and quality issues before deployment.",
     tech: ["Python", "Flask", "Docker", "Git", "GitHub", "GitHub Actions", "Trivy", "SonarQube"],
     buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }],
     slug: "devsecops",
     image: "/r2/thumbnail/devsecops.webp",
     architecture:
-      "The Flask application is containerized with Docker and pushed through version control on GitHub. A GitHub Actions pipeline builds the image, runs Trivy to scan it for known vulnerabilities, and runs SonarQube to analyze code quality — surfacing security and quality issues before the build is ever deployed.",
+      "The Flask application is containerized with Docker and pushed through version control on GitHub. A GitHub Actions pipeline builds the image, runs Trivy to scan it for known vulnerabilities and runs SonarQube to analyze code quality — surfacing security and quality issues before the build is ever deployed.",
     challenges: [
       {
         title: "Security in CI/CD",
@@ -1624,7 +1624,7 @@ const CARDS: {
     subtitle: "Infrastructure Monitoring & Self-Healing",
     role: "Infrastructure Monitoring & Self-Healing",
     description:
-      "A cloud-native server monitoring and self-healing platform that continuously monitors system resources, services, containers, and Kubernetes workloads. It detects infrastructure failures and performs automated recovery actions to improve service availability and reliability.",
+      "A cloud-native server monitoring and self-healing platform that continuously monitors system resources, services, containers and Kubernetes workloads. It detects infrastructure failures and performs automated recovery actions to improve service availability and reliability.",
     tech: [
       "Python",
       "Flask",
@@ -1651,7 +1651,7 @@ const CARDS: {
     slug: "resilient-server-monitoring",
     image: "/r2/thumbnail/resilient-server-monitoring.webp",
     architecture:
-      "A Python/Flask service uses psutil to continuously poll system resources, services, containers, and Kubernetes workloads, exposing metrics to Prometheus (via Node Exporter) and visualizing them in Grafana. Scheduled checks run through Cron, and detected failures trigger automated recovery actions to keep services available.",
+      "A Python/Flask service uses psutil to continuously poll system resources, services, containers and Kubernetes workloads, exposing metrics to Prometheus (via Node Exporter) and visualizing them in Grafana. Scheduled checks run through Cron and detected failures trigger automated recovery actions to keep services available.",
     challenges: [
       {
         title: "Automated Failure Recovery",
@@ -1661,12 +1661,12 @@ const CARDS: {
       {
         title: "Multi-Level Health Monitoring",
         description:
-          "CPU and memory metrics alone don't indicate whether an application is actually healthy. The platform combines system metrics, process checks, service availability, network checks, container status, and Kubernetes workload health.",
+          "CPU and memory metrics alone don't indicate whether an application is actually healthy. The platform combines system metrics, process checks, service availability, network checks, container status and Kubernetes workload health.",
       },
       {
         title: "Infrastructure Observability",
         description:
-          "Raw infrastructure metrics are difficult to interpret on their own. Prometheus, Node Exporter, and Grafana provide centralized metric collection and visualization for the whole platform.",
+          "Raw infrastructure metrics are difficult to interpret on their own. Prometheus, Node Exporter and Grafana provide centralized metric collection and visualization for the whole platform.",
       },
     ],
   },
@@ -1677,18 +1677,18 @@ const CARDS: {
     subtitle: "Automation Pipeline",
     role: "Automation Pipeline",
     description:
-      "An end-to-end CI/CD platform that automates the software delivery lifecycle from source-code changes through build, testing, containerization, and deployment. It combines GitHub Actions and Jenkins with Docker and Linux-based automation to create a repeatable deployment workflow.",
+      "An end-to-end CI/CD platform that automates the software delivery lifecycle from source-code changes through build, testing, containerization and deployment. It combines GitHub Actions and Jenkins with Docker and Linux-based automation to create a repeatable deployment workflow.",
     tech: ["Git", "GitHub", "GitHub Actions", "YAML", "Jenkins", "Docker", "Linux", "Shell/Bash"],
     buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/CICD-Platform" }],
     slug: "cicd-platform",
     image: "/r2/thumbnail/cicd-platform.webp",
     architecture:
-      "Source changes on GitHub trigger a GitHub Actions workflow that hands off to Jenkins for orchestration. Jenkins builds and containerizes the application with Docker, runs automated tests, and drives Linux-based shell automation to deploy the build — producing a repeatable pipeline from commit to deployment.",
+      "Source changes on GitHub trigger a GitHub Actions workflow that hands off to Jenkins for orchestration. Jenkins builds and containerizes the application with Docker, runs automated tests and drives Linux-based shell automation to deploy the build — producing a repeatable pipeline from commit to deployment.",
     challenges: [
       {
         title: "Pipeline Coordination",
         description:
-          "Build, testing, containerization, and deployment needed to execute in the correct sequence. GitHub Actions and Jenkins were used to orchestrate the stages and enforce dependencies between them.",
+          "Build, testing, containerization and deployment needed to execute in the correct sequence. GitHub Actions and Jenkins were used to orchestrate the stages and enforce dependencies between them.",
       },
       {
         title: "Environment Consistency",
@@ -1709,15 +1709,15 @@ const CARDS: {
     subtitle: "Self-Hosted Private Cloud",
     role: "Self-Hosted Private Cloud",
     description:
-      "A self-hosted private cloud deployed on a Linux server using Nextcloud, providing centralized file storage, synchronization, sharing, and remote access while maintaining control over the underlying infrastructure and data.",
+      "A self-hosted private cloud deployed on a Linux server using Nextcloud, providing centralized file storage, synchronization, sharing and remote access while maintaining control over the underlying infrastructure and data.",
     tech: ["Linux", "Nextcloud", "Nginx", "PHP", "MariaDB/MySQL", "WebDAV", "SSL/TLS", "Bash"],
     buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/Nextcloud-on-Linux" }],
     slug: "nextcloud-on-linux",
     image: "/r2/thumbnail/nextcloud-on-linux.webp",
     architecture:
-      "Nextcloud runs on a Linux server behind Nginx, with PHP handling the application layer and MariaDB/MySQL as the backing database. WebDAV enables file sync and remote access, SSL/TLS secures traffic end-to-end, and Bash scripts handle server setup and maintenance.",
+      "Nextcloud runs on a Linux server behind Nginx, with PHP handling the application layer and MariaDB/MySQL as the backing database. WebDAV enables file sync and remote access, SSL/TLS secures traffic end-to-end and Bash scripts handle server setup and maintenance.",
     otherInfo:
-      "This project demonstrates practical experience with self-hosted cloud infrastructure, Linux server administration, web-stack configuration, persistent storage, database integration, secure remote access, and independently managing a cloud application.",
+      "This project demonstrates practical experience with self-hosted cloud infrastructure, Linux server administration, web-stack configuration, persistent storage, database integration, secure remote access and independently managing a cloud application.",
     otherInfoTitle: "Project Focus",
   },
   {
@@ -1728,7 +1728,7 @@ const CARDS: {
     role: "A Telemedicine Platform",
     label: "Team Project",
     description:
-      "A full-stack telemedicine platform connecting patients and healthcare professionals through a digital healthcare system. The platform provides appointment management, medical records, prescriptions, patient/doctor dashboards, and AI-assisted symptom analysis.",
+      "A full-stack telemedicine platform connecting patients and healthcare professionals through a digital healthcare system. The platform provides appointment management, medical records, prescriptions, patient/doctor dashboards and AI-assisted symptom analysis.",
     tech: [
       "React.js",
       "JavaScript",
@@ -1752,16 +1752,16 @@ const CARDS: {
     liveUrl: "https://connect2-cure-dedu.vercel.app/",
     contributors: [{ name: "Divyam Oswal", github: "https://github.com/DivyamOswal" }],
     architecture:
-      "A React.js front end talks to a Node.js/Express.js REST API, with MongoDB as the data store. JWT and Bcrypt handle authentication and credential security across separate patient and doctor dashboards, covering appointment management, medical records, prescriptions, and AI-assisted symptom analysis.",
+      "A React.js front end talks to a Node.js/Express.js REST API, with MongoDB as the data store. JWT and Bcrypt handle authentication and credential security across separate patient and doctor dashboards, covering appointment management, medical records, prescriptions and AI-assisted symptom analysis.",
     challenges: [
       {
         title: "Role-Based Access & Healthcare Data",
         description:
-          "Patients and doctors require different permissions, and healthcare-related information needs controlled access. JWT authentication, Bcrypt password hashing, and role-based authorization separate the two workflows and restrict access to protected functionality.",
+          "Patients and doctors require different permissions and healthcare-related information needs controlled access. JWT authentication, Bcrypt password hashing and role-based authorization separate the two workflows and restrict access to protected functionality.",
       },
     ],
     otherInfo:
-      "Deployment & Infrastructure — managed frontend and backend deployment, kept the application live and operational, and managed the deployed application's availability. Also managed the production database containing patient and doctor user data, used AWS services as part of the project infrastructure, and handled deployment/infrastructure configuration to support the platform's ongoing operation and maintenance. Built as part of a team alongside Divyam Oswal.",
+      "Deployment & Infrastructure — managed frontend and backend deployment, kept the application live and operational and managed the deployed application's availability. Also managed the production database containing patient and doctor user data, used AWS services as part of the project infrastructure and handled deployment/infrastructure configuration to support the platform's ongoing operation and maintenance. Built as part of a team alongside Divyam Oswal.",
     otherInfoTitle: "My Contribution",
   },
 
@@ -2402,7 +2402,7 @@ function PortfolioSection() {
 // image (untouched), title/subtitle/metadata, description, then
 // generously-spaced sections — Contributors (only where applicable),
 // Tech Stack, Architecture, Challenges & Solutions (only when
-// meaningful), any closing notes, and a GitHub button.
+// meaningful), any closing notes and a GitHub button.
 // ═══════════════════════════════════════════════════════════
 
 /** Section heading style shared by Tech Stack / Architecture / Challenges &
@@ -2908,7 +2908,7 @@ const INFRA_NODES: InfraNode[] = [
   },
 ];
 
-// Strict left → right pipeline: Build feeds the Worker, and the Worker's live request line
+// Strict left → right pipeline: Build feeds the Worker and the Worker's live request line
 // runs straight through the DNS card (inside Observability) on its way to the User Browser
 // — DNS is on the main line, not a side branch. R2 is fed separately by a bold arrow off
 // Observability's own right border (drawn directly in the SVG below, not as a node edge).
@@ -3098,7 +3098,7 @@ function infraRoundedPath(points: InfraPoint[], radius: number): string {
 
 // Finds the longest straight run in the polyline (the whole thing, for a simple 2-point
 // line) and returns a label anchor centered on that segment, offset a fixed distance to
-// the side so the label clears the line itself, any arrowhead, and the nodes at either end.
+// the side so the label clears the line itself, any arrowhead and the nodes at either end.
 function infraLabelAnchor(points: InfraPoint[], offset: number): InfraPoint {
   let bestLen = -1;
   let bestMid: InfraPoint = points[0];
@@ -3116,7 +3116,7 @@ function infraLabelAnchor(points: InfraPoint[], offset: number): InfraPoint {
   return bestHorizontal ? { x: bestMid.x, y: bestMid.y - offset } : { x: bestMid.x + offset, y: bestMid.y };
 }
 
-// Which side of `from` an edge exits, and which side of `to` it enters — same
+// Which side of `from` an edge exits and which side of `to` it enters — same
 // horizontal/vertical-dominant rule used by infraOrthogonalPoints, exposed separately so
 // the fan-out grouping below can key edges by (node, side) before any points are built.
 function infraExitSide(from: InfraNode, to: InfraNode): "left" | "right" | "top" | "bottom" {
@@ -3149,8 +3149,8 @@ const INFRA_BUS_OFFSET = 26; // px the shared trunk runs before it's allowed to 
 
 // Computes the routed waypoints for every edge in one pass. Edges that share the same
 // exit side of the same source node (e.g. the Cloudflare Worker fanning out to DNS, R2,
-// Logs, Traces, and the Browser, all off its right edge) are grouped into a single shared
-// trunk: one line leaves the node, runs INFRA_BUS_OFFSET px clear of it, and only THEN
+// Logs, Traces and the Browser, all off its right edge) are grouped into a single shared
+// trunk: one line leaves the node, runs INFRA_BUS_OFFSET px clear of it and only THEN
 // splits into a bus that the individual branches tap off of — so nothing crosses or
 // bundles right at the node boundary, the way Cloudflare's own reference diagrams draw
 // fan-out. Edges that don't share an exit side with any sibling fall back to the plain
@@ -3459,7 +3459,7 @@ function InfraBuild() {
                       )}
                       style={{
                         // Content-sized width (see estimateInfraNodeWidth) — same value the
-                        // connector ports use, and px-4/px-5 above keeps padding symmetrical
+                        // connector ports use and px-4/px-5 above keeps padding symmetrical
                         // so there's never leftover space stacked on just the right edge. The
                         // Worker is the one "lg" node — the diagram's center of gravity — so
                         // it renders visibly larger than every other card (see INFRA_LG_SCALE).
@@ -3716,7 +3716,7 @@ function InfraBuild() {
 // ═══════════════════════════════════════════════════════════
 
 // Chrome/Edge re-apply their own black-text + colored-background override on
-// autofill separately for the base state, :hover, :focus, and :active — fixing
+// autofill separately for the base state, :hover, :focus and :active — fixing
 // only the bare `:-webkit-autofill` state means it silently reappears the
 // moment the field is focused (e.g. clicking back in to edit a pasted value).
 const AUTOFILL_FIX =
@@ -3890,119 +3890,134 @@ function Contact() {
 // CONSTANTS - Journey timeline
 // ═════════════════════════════════════════════════════════════
 
-type JourneyEvent = {
-  date: string; // "Mon D"
+type JourneyMilestone = {
   year: number;
-  desc: React.ReactNode;
+  title: string;
+  events: string[];
 };
 
-const JOURNEY: JourneyEvent[] = [
+const JOURNEY: JourneyMilestone[] = [
   {
-    date: "May 29",
-    year: 2026,
-    desc: (
-      <>
-        Portfolio launched as a server-rendered application on <strong>TanStack Start</strong>,{" "}
-        <strong>TanStack Router</strong>, and Vite, deployed on <strong>Cloudflare Workers</strong>.
-      </>
-    ),
+    year: 2008,
+    title: "First Exposure to Technology",
+    events: [
+      "Started exploring mobile phones and the different features they offered.",
+      "Experimented with different devices and their interfaces.",
+      "Enjoyed discovering how different phones could offer different experiences.",
+    ],
   },
   {
-    date: "Jun 1",
-    year: 2026,
-    desc: "Contact section and mobile layout refined for better usability.",
+    year: 2014,
+    title: "Discovering Digital Animation",
+    events: [
+      "Started exploring animation through Adobe Flash.",
+      "Experimented with creating movement and combining different elements into digital content.",
+      "Learned how animations were built and controlled through a timeline.",
+    ],
   },
   {
-    date: "Jun 2",
-    year: 2026,
-    desc: "Project cards, contact section, and resume skills tab restructured for clarity; Search Console verification added to support SEO.",
+    year: 2016,
+    title: "Exploring Computer Hardware",
+    events: [
+      "Started opening and exploring computers to understand what was inside them.",
+      "Learned about RAM, storage, CPU and the role of different hardware components.",
+      "Experimented with cleaning and handling components while learning how they work together.",
+    ],
   },
   {
-    date: "Jun 9",
-    year: 2026,
-    desc: "Homepage tile layout and typography refined.",
+    year: 2017,
+    title: "Exploring Software & Computer Fundamentals",
+    events: [
+      "Expanded from hardware into software and computer fundamentals.",
+      "Learned about operating systems, applications, files and basic computer concepts.",
+      "Experimented with different software and system configurations.",
+    ],
   },
   {
-    date: "Jun 14",
-    year: 2026,
-    desc: "Resume content updated.",
+    year: 2018,
+    title: "First Steps into Web Development",
+    events: [
+      "Started learning HTML and CSS.",
+      "Created my first basic webpage and loaded it in a browser.",
+      "Began exploring how websites are structured and displayed on the web.",
+    ],
   },
   {
-    date: "Jun 25",
-    year: 2026,
-    desc: (
-      <>
-        Contact form integrated with <strong>EmailJS</strong> for direct, serverless messaging.
-      </>
-    ),
+    year: 2019,
+    title: "Exploring Operating Systems",
+    events: [
+      "Started experimenting with different operating systems and software environments.",
+      "Explored Android-based systems such as Phoenix OS and different user interfaces.",
+      "Compared how different operating systems looked, behaved and interacted with hardware.",
+      "Continued exploring system configuration and customization.",
+    ],
   },
   {
-    date: "Jun 29",
-    year: 2026,
-    desc: "Journey timeline introduced, and the resume section restructured with refined layout and transitions.",
+    year: 2020,
+    title: "Exploring Digital Media & Content Production",
+    events: [
+      "Explored how video and photo content is edited and assembled.",
+      "Worked with OBS Studio to understand scenes, overlays, green-screen setups, audio and video sources.",
+      "Experimented with how different media elements are combined to produce the final content seen on streaming platforms.",
+    ],
   },
   {
-    date: "Jun 30",
-    year: 2026,
-    desc: "Certifications linked directly to their verifiable sources, with resume actions split for clarity.",
+    year: 2021,
+    title: "Exploring How Data Is Stored",
+    events: [
+      "Started exploring how data is stored and managed locally on computers and devices.",
+      "Learned about local storage, file systems and how applications access and manage data.",
+      "Began exploring cloud storage and how data can be stored and accessed remotely.",
+      "Compared local data storage with cloud-based storage and infrastructure.",
+    ],
   },
   {
-    date: "Jul 1",
-    year: 2026,
-    desc: "Favicon and brand touches added for visual consistency across pages.",
+    year: 2022,
+    title: "Beginning My B.Tech Journey",
+    events: [
+      "Started my B.Tech in Cloud Technology & Information Security at Ajeenkya DY Patil University.",
+      "Moved from self-driven exploration into structured technical education.",
+      "Began building a stronger foundation in computing, cloud technology and security.",
+    ],
   },
   {
-    date: "Jul 9",
-    year: 2026,
-    desc: "Bio copy refined.",
+    year: 2023,
+    title: "Building Technical Foundations",
+    events: [
+      "Strengthened my understanding of programming, Linux, networking and computer systems.",
+      "Started working more extensively with cloud technologies and infrastructure.",
+      "Applied what I learned through hands-on labs and technical projects.",
+    ],
   },
   {
-    date: "Jul 10",
-    year: 2026,
-    desc: "Color palette and mobile presentation adjusted ahead of the full design pass.",
+    year: 2024,
+    title: "Moving Deeper into Cloud & Security",
+    events: [
+      "Expanded my hands-on experience with cloud platforms, Linux, virtualization, networking and security.",
+      "Started working with services and tools used to build and manage modern infrastructure.",
+      "Built practical projects to apply cloud and security concepts beyond coursework.",
+      "Began moving toward infrastructure and automation-focused engineering.",
+    ],
   },
   {
-    date: "Jul 11",
-    year: 2026,
-    desc: "Design system overhaul completed — dark and light themes rebuilt, iconography refreshed, and layouts made mobile-first.",
+    year: 2025,
+    title: "Moving Into DevOps",
+    events: [
+      "Started focusing more deeply on Docker, Kubernetes, CI/CD, Git and Terraform.",
+      "Built and experimented with automated deployment workflows and cloud infrastructure.",
+      "Worked with Linux servers and containerized applications.",
+      "Shifted from learning individual technologies toward understanding how applications are built, deployed and maintained.",
+    ],
   },
   {
-    date: "Jul 12",
     year: 2026,
-    desc: (
-      <>
-        Deployment pipeline refined, with observability enabled on the <strong>Cloudflare Worker</strong>.
-      </>
-    ),
-  },
-  {
-    date: "Jul 13",
-    year: 2026,
-    desc: "Codebase reorganized and repository hygiene improved; professional title updated to Cloud & DevOps Engineer.",
-  },
-  {
-    date: "Jul 15",
-    year: 2026,
-    desc: "Social icon updated to the official X logomark.",
-  },
-  {
-    date: "Jul 21",
-    year: 2026,
-    desc: "Theme adjustments and internal reorganization, including status indicators and authentication testing.",
-  },
-  {
-    date: "Jul 22",
-    year: 2026,
-    desc: "Theme finalized and documentation updated to reflect the current build.",
-  },
-  {
-    date: "Jul 26",
-    year: 2026,
-    desc: (
-      <>
-        <strong>Proton Mail</strong> integrated as the primary professional contact address.
-      </>
-    ),
+    title: "From Education to Real-World Engineering",
+    events: [
+      "Completed my B.Tech in Cloud Technology & Information Security.",
+      "Began gaining hands-on industry experience as a Cloud & DevOps Engineer Intern.",
+      "Applied my knowledge of cloud infrastructure, DevOps, automation, deployment, Linux and security in real-world environments.",
+      "Continued developing practical engineering skills through production-focused tasks and projects.",
+    ],
   },
 ];
 
@@ -4011,15 +4026,6 @@ const JOURNEY: JourneyEvent[] = [
 // ═══════════════════════════════════════════════════════════
 
 function Journey() {
-  const years = useMemo(() => {
-    const map = new Map<number, JourneyEvent[]>();
-    for (const ev of JOURNEY) {
-      if (!map.has(ev.year)) map.set(ev.year, []);
-      map.get(ev.year)!.push(ev);
-    }
-    return Array.from(map.entries()).sort((a, b) => a[0] - b[0]);
-  }, []);
-
   const first = JOURNEY[0];
   const last = JOURNEY[JOURNEY.length - 1];
 
@@ -4027,14 +4033,14 @@ function Journey() {
     <div>
       <SectionHeading title="Journey." />
 
-      <div className="mb-8 text-sm text-muted-foreground">
+      <div className="mb-16 text-sm text-muted-foreground">
         <span className="font-semibold text-accent-blue">{JOURNEY.length}</span> milestones ·{" "}
-        {first.year} – {last.year}
+        {first.year}–{last.year}
       </div>
 
       <div className="space-y-10">
-        {years.map(([year, events]) => (
-          <div key={year}>
+        {JOURNEY.map((milestone) => (
+          <div key={milestone.year}>
             {/* Year header with ghost numeral */}
             <div className="relative mb-5 flex items-center justify-between">
               <div className="relative">
@@ -4043,36 +4049,54 @@ function Journey() {
                   className="pointer-events-none absolute -top-6 left-0 select-none text-6xl font-black leading-none text-foreground md:text-7xl"
                   style={{ opacity: "var(--ghost-year-opacity)" }}
                 >
-                  {year}
+                  {milestone.year}
                 </span>
                 <div className="relative">
-                  <h3 className="text-xl font-bold text-foreground md:text-2xl">{year}</h3>
+                  <h3 className="text-xl font-bold text-foreground md:text-2xl">{milestone.year}</h3>
                   <span className="mt-1 block h-[2px] w-56 rounded-full bg-gradient-to-r from-accent-blue to-transparent" />
                 </div>
               </div>
-              <span className="rounded-full border border-border/60 bg-card px-3 py-1 font-mono text-xs text-muted-foreground">
-                {events.length} events
+              <span className="rounded-full border border-border/60 bg-foreground/[0.03] px-3 py-1 font-mono text-xs text-muted-foreground/70">
+                {milestone.events.length} events
               </span>
             </div>
 
-            {/* Rail of events for this year */}
-            <ol className="relative ml-[7px] pl-6">
-              {events.map((ev, i) => (
-                <li key={i} className="group relative pb-6 last:pb-0">
-                  {i !== events.length - 1 && (
+            {/* Rail: milestone marker, connecting line and event markers all
+                share the same timeline x-coordinate (left: 6px), so the
+                blue milestone dot, the gray event dots and the vertical
+                line are perfectly centered on the same axis. */}
+            <ol className="relative">
+              <li className="group relative pb-5 pl-7">
+                <span
+                  aria-hidden
+                  className="absolute top-3 bottom-0 w-px -translate-x-1/2 bg-border/60"
+                  style={{ left: "6px" }}
+                />
+                <span
+                  aria-hidden
+                  className="absolute top-1 h-3 w-3 -translate-x-1/2 rounded-full bg-accent-blue shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent-blue)_18%,transparent)] transition-transform group-hover:scale-125"
+                  style={{ left: "6px" }}
+                />
+                <h4 className="text-base font-semibold leading-snug text-foreground md:text-lg">
+                  {milestone.title}
+                </h4>
+              </li>
+
+              {milestone.events.map((event, i) => (
+                <li key={i} className="relative pb-3 pl-7 last:pb-0">
+                  {i !== milestone.events.length - 1 && (
                     <span
                       aria-hidden
-                      className="absolute -left-[25px] top-3 bottom-0 w-px bg-border/60"
+                      className="absolute top-2 bottom-0 w-px -translate-x-1/2 bg-border/40"
+                      style={{ left: "6px" }}
                     />
                   )}
                   <span
                     aria-hidden
-                    className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-accent-blue shadow-[0_0_0_4px_color-mix(in_oklab,var(--accent-blue)_18%,transparent)] transition-transform group-hover:scale-125"
+                    className="absolute top-[7px] h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-muted-foreground/50"
+                    style={{ left: "6px" }}
                   />
-                  <span className="mb-2 inline-block rounded-md border border-border/60 bg-card px-2 py-0.5 font-mono text-xs text-muted-foreground">
-                    {ev.date}
-                  </span>
-                  <div className="text-sm leading-relaxed text-foreground/90">{ev.desc}</div>
+                  <span className="text-sm leading-relaxed text-foreground/80">{event}</span>
                 </li>
               ))}
             </ol>
@@ -4114,7 +4138,7 @@ export default function Portfolio() {
   // ─────────────────────────────────────────────────────────
   // Centralized navigation handler.
   // Every nav trigger in the app (desktop sidebar, mobile bar,
-  // Journey button, and any future nav entry point) must call
+  // Journey button and any future nav entry point) must call
   // this single function instead of `setActive` directly. It
   // guarantees the destination section always opens scrolled
   // to the top — including when navigating between sections
