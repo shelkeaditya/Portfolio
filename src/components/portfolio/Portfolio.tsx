@@ -3907,125 +3907,84 @@ type JourneyMilestone = {
 
 const JOURNEY: JourneyMilestone[] = [
   {
-    year: 2008,
-    title: "First Exposure to Technology",
-    events: [
-      "Started exploring mobile phones and the different features they offered.",
-      "Experimented with different devices and their interfaces.",
-      "Enjoyed discovering how different phones could offer different experiences.",
-    ],
-  },
-  {
     year: 2014,
-    title: "Discovering Digital Animation",
+    title: "First Steps Into Creation",
     events: [
-      "Started exploring animation through Adobe Flash.",
-      "Experimented with creating movement and combining different elements into digital content.",
-      "Learned how animations were built and controlled through a timeline.",
-    ],
-  },
-  {
-    year: 2016,
-    title: "Exploring Computer Hardware",
-    events: [
-      "Started opening and exploring computers to understand what was inside them.",
-      "Learned about RAM, storage, CPU, and the role of different hardware components.",
-      "Experimented with cleaning and handling components while learning how they work together.",
-    ],
-  },
-  {
-    year: 2017,
-    title: "Exploring Software & Computer Fundamentals",
-    events: [
-      "Expanded from hardware into software and computer fundamentals.",
-      "Learned about operating systems, applications, files, and basic computer concepts.",
-      "Experimented with different software and system configurations.",
+      "Experimented with animation in Adobe Flash, combining timelines, objects, and movement.",
+      "The first shift from using technology to actually building something with it.",
     ],
   },
   {
     year: 2018,
-    title: "First Steps into Web Development",
+    title: "First Web Development",
     events: [
-      "Started learning HTML and CSS.",
-      "Created my first basic webpage and loaded it in a browser.",
-      "Began exploring how websites are structured and displayed on the web.",
+      "Learned HTML and CSS and built a first basic webpage.",
+      "The point curiosity turned into an actual, buildable skill.",
     ],
   },
   {
     year: 2019,
-    title: "Exploring Operating Systems",
+    title: "Systems Exploration",
     events: [
-      "Started experimenting with different operating systems and software environments.",
-      "Explored Android-based systems such as Phoenix OS and different user interfaces.",
-      "Compared how different operating systems looked, behaved, and interacted with hardware.",
-      "Continued exploring system configuration and customization.",
+      "Installed and ran Phoenix OS, an Android-based OS built for PCs.",
+      "Early hands-on exposure to how an operating system interacts with hardware.",
     ],
   },
   {
     year: 2020,
-    title: "Exploring Digital Media & Content Production",
+    title: "Digital Content Production",
     events: [
-      "Explored how video and photo content is edited and assembled.",
-      "Worked with OBS Studio to understand scenes, overlays, green-screen setups, audio, and video sources.",
-      "Experimented with how different media elements are combined to produce the final content seen on streaming platforms.",
+      "Experimented with OBS Studio — scenes, overlays, live audio/video sources.",
+      "No direction toward tech yet, just continued hands-on curiosity.",
     ],
   },
   {
     year: 2021,
-    title: "Exploring How Data Is Stored",
+    title: "First Real Interest in Cloud",
     events: [
-      "Started exploring how data is stored and managed locally on computers and devices.",
-      "Learned about local storage, file systems, and how applications access and manage data.",
-      "Began exploring cloud storage and how data can be stored and accessed remotely.",
-      "Compared local data storage with cloud-based storage and infrastructure.",
+      "Compared local storage against cloud storage and remote access.",
+      "The specific question that led directly into choosing a cloud-focused degree.",
     ],
   },
   {
     year: 2022,
-    title: "Beginning My B.Tech Journey",
+    title: "Starting My B.Tech",
     events: [
-      "Started my B.Tech in Cloud Technology & Information Security at Ajeenkya DY Patil University.",
-      "Moved from self-driven exploration into structured technical education.",
-      "Began building a stronger foundation in computing, cloud technology, and security.",
+      "Began a B.Tech in Cloud Technology & Information Security at Ajeenkya DY Patil University.",
+      "Moved from self-directed exploration into structured technical education.",
     ],
   },
   {
     year: 2023,
     title: "Building Technical Foundations",
     events: [
-      "Strengthened my understanding of programming, Linux, networking, and computer systems.",
-      "Started working more extensively with cloud technologies and infrastructure.",
-      "Applied what I learned through hands-on labs and technical projects.",
+      "Strengthened Linux, networking, and cloud fundamentals through labs and coursework.",
+      "Cloud stopped being an academic subject and started being something to build with.",
     ],
   },
   {
     year: 2024,
-    title: "Moving Deeper into Cloud & Security",
+    title: "Infrastructure & Security in Practice",
     events: [
-      "Expanded my hands-on experience with cloud platforms, Linux, virtualization, networking, and security.",
-      "Started working with services and tools used to build and manage modern infrastructure.",
-      "Built practical projects to apply cloud and security concepts beyond coursework.",
-      "Began moving toward infrastructure and automation-focused engineering.",
+      "Built a DevSecOps CI/CD pipeline and a Kubernetes-based server monitoring platform.",
+      "Infrastructure, automation, and security stopped being separate topics and became one discipline.",
     ],
   },
   {
     year: 2025,
     title: "Moving Into DevOps",
     events: [
-      "Started focusing more deeply on Docker, Kubernetes, CI/CD, Git, and Terraform.",
-      "Built and experimented with automated deployment workflows and cloud infrastructure.",
-      "Worked with Linux servers and containerized applications.",
-      "Shifted from learning individual technologies toward understanding how applications are built, deployed, and maintained.",
+      "Focused seriously on Docker, Kubernetes, CI/CD, Git, and Terraform.",
+      "Shifted from learning individual tools to understanding how software is built, deployed, and maintained end to end.",
     ],
   },
   {
-    year: 2026,
-    title: "From Education to Real-World Engineering",
-    events: [
-      "Completed my B.Tech in Cloud Technology & Information Security.",
-      "Began gaining hands-on industry experience as a Cloud & DevOps Engineer Intern.",
-      "Applied my knowledge of cloud infrastructure, DevOps, automation, deployment, Linux, and security in real-world environments.",
-      "Continued developing practical engineering skills through production-focused tasks and projects.",
+  year: 2026,
+  title: "From Education to Real-World Engineering",
+  events: [
+    "Earned AWS Certified Cloud Practitioner (CLF-C02) in April 2026.",
+    "Completed the B.Tech in Cloud Technology & Information Security (CGPA 8.66).",
+    "Began working as a Cloud & DevOps Intern at E-Sutra Technologies, applying it inside a real production pipeline.",
     ],
   },
 ];
