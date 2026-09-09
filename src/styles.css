@@ -152,11 +152,7 @@
   .bg-accent-orange { background-color: var(--accent-orange); }
 
   .ambient-bg {
-    background:
-      radial-gradient(1200px 600px at 15% -10%, color-mix(in oklab, var(--accent-blue) 14%, transparent), transparent 60%),
-      radial-gradient(900px 500px at 110% 10%, color-mix(in oklab, var(--accent-purple) 12%, transparent), transparent 60%),
-      radial-gradient(700px 400px at 50% 110%, color-mix(in oklab, var(--accent-blue) 8%, transparent), transparent 60%),
-      var(--background);
+    background: var(--background);
   }
 
   .grid-texture {
