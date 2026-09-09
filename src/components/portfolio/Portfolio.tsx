@@ -471,48 +471,6 @@ function IconButton({
   );
 }
 
-/** Lightweight fade-in wrapper for images served from R2 (profile photo,
- *  certificate/project thumbnails, certificate viewer). Shows a soft
- *  pulsing placeholder in place of the image until it has actually
- *  finished loading, then crossfades to the real image instead of the
- *  image popping in abruptly once the network request resolves.
- *
- *  `containerClassName` controls sizing/position of the wrapper (the
- *  space the image occupies in layout); `className` controls the
- *  image's own visual treatment (object-fit, rounding, ring, etc.) —
- *  matches whatever the original bare <img> className was, since this
- *  is a drop-in replacement, not a visual redesign. */
-function FadeImage({
-  src,
-  alt,
-  className,
-  containerClassName,
-}: {
-  src?: string;
-  alt: string;
-  className?: string;
-  containerClassName?: string;
-}) {
-  const [loaded, setLoaded] = useState(false);
-  return (
-    <div className={cn("relative overflow-hidden", containerClassName)}>
-      {!loaded && (
-        <div aria-hidden className="absolute inset-0 motion-safe:animate-pulse bg-foreground/[0.06]" />
-      )}
-      <img
-        src={src}
-        alt={alt}
-        onLoad={() => setLoaded(true)}
-        className={cn(
-          "absolute inset-0 h-full w-full transition-opacity duration-300",
-          loaded ? "opacity-100" : "opacity-0",
-          className,
-        )}
-      />
-    </div>
-  );
-}
-
 function TechBadge({ label }: { label: string }) {
   return (
     <span className="surface-3 rounded-md border border-border/60 px-2 py-0.5 text-[11px] text-muted-foreground">
@@ -876,7 +834,7 @@ function CvModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
@@ -884,7 +842,7 @@ function CvModal({ onClose }: { onClose: () => void }) {
         aria-modal="true"
         aria-label="Curriculum Vitae"
         onClick={(e) => e.stopPropagation()}
-        className="surface-2 relative flex h-[min(90vh,920px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-[color:var(--accent-blue)]/40 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)] motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200 motion-safe:ease-out"
+        className="surface-2 relative flex h-[min(90vh,920px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-[color:var(--accent-blue)]/40 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]"
       >
         <button
           type="button"
@@ -948,11 +906,10 @@ function ProfileHero({
                   }}
                 />
 
-                <FadeImage
+                <img
                   src="/r2/images/profile.jpeg"
                   alt="Aditya Shelke"
-                  containerClassName="h-20 w-20 md:h-24 md:w-24 rounded-xl"
-                  className="rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-[opacity,box-shadow] duration-300 group-hover:ring-[color:var(--accent-orange)]"
+                  className="relative h-20 w-20 md:h-24 md:w-24 rounded-xl object-cover ring-2 ring-[color:var(--accent-orange)]/70 transition-all duration-300 group-hover:ring-[color:var(--accent-orange)]"
                 />
               </div>
               <div className="min-w-0">
@@ -1930,7 +1887,7 @@ function CertificateModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
@@ -1939,7 +1896,7 @@ function CertificateModal({
         aria-label={card.title}
         onClick={(e) => e.stopPropagation()}
         className={cn(
-          "surface-2 relative flex w-full flex-col rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)] motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200 motion-safe:ease-out",
+          "surface-2 relative flex w-full flex-col rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)]",
           hasDocument
             ? // Mobile: wrap tightly around the certificate content instead of
               // forcing a near-full-height modal — height comes from the
@@ -1982,11 +1939,10 @@ function CertificateModal({
                   className="absolute inset-0 h-full w-full rounded-lg border-0 bg-white shadow-inner"
                 />
               ) : (
-                <FadeImage
+                <img
                   src={card.document}
                   alt={card.title}
-                  containerClassName="absolute inset-0 h-full w-full"
-                  className="rounded-lg object-contain"
+                  className="absolute inset-0 h-full w-full rounded-lg object-contain"
                 />
               )}
             </div>
@@ -2148,11 +2104,10 @@ function PortfolioSection() {
               )}
             >
               <div className="relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-black/20">
-                <FadeImage
+                <img
                   src={c.image}
                   alt={c.title}
-                  containerClassName="h-full w-full"
-                  className="object-cover"
+                  className="h-full w-full object-cover"
                 />
 
                 {/* PROJECTS badge — always visible */}
@@ -2244,11 +2199,10 @@ function PortfolioSection() {
                 <span className="surface-3 absolute left-3 top-3 z-10 inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1 text-[10px] font-semibold uppercase leading-tight tracking-wider text-muted-foreground">
                   🏆 {c.category[0]}
                 </span>
-                <FadeImage
+                <img
                   src={c.image}
                   alt={c.title}
-                  containerClassName="h-full w-full"
-                  className="object-contain p-6"
+                  className="h-full w-full object-contain p-6"
                 />
                 {/* Desktop: group-hover/img: reveals it. Mobile: tapping the card sets
                     openOverlayKey and this OR-s in the same visible classes — same
@@ -2299,11 +2253,10 @@ function PortfolioSection() {
                   📄 {c.category[0]}
                 </span>
                 {c.previewImage && (
-                  <FadeImage
+                  <img
                     src={c.previewImage}
                     alt={c.title}
-                    containerClassName="h-full w-full"
-                    className="object-cover object-top"
+                    className="h-full w-full object-cover object-top"
                   />
                 )}
                 {/* Desktop: group-hover: reveals it. Mobile: tapping the card sets
