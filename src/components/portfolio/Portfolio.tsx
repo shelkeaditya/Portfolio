@@ -2149,7 +2149,7 @@ function PortfolioSection() {
               "rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors",
               filter === f
                 ? "border-[color:var(--accent-blue)] bg-[color:var(--accent-blue)] text-background"
-                : "surface-2 border-border/60 text-muted-foreground hover:border-[color:var(--accent-blue)]/50 hover:text-accent-blue",
+                : "surface-2 border-border/60 text-muted-foreground hover:border-[color:var(--accent-blue)]/50 hover:text-[color:var(--accent-blue)]",
             )}
           >
             {f}
@@ -2512,7 +2512,7 @@ function ProjectDetailPage({
       <button
         type="button"
         onClick={onBack}
-        className="mb-8 inline-flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-foreground/[0.03] px-4 text-sm text-muted-foreground transition-colors hover:border-[color:var(--accent-blue)]/50 hover:text-accent-blue"
+        className="mb-8 inline-flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-foreground/[0.03] px-4 text-sm text-muted-foreground transition-colors hover:border-[color:var(--accent-blue)]/50 hover:text-[color:var(--accent-blue)]"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Portfolio
@@ -2651,7 +2651,7 @@ function ProjectDetailPage({
             href={githubHref}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+            className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-transparent px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)] hover:!text-background"
           >
             View on GitHub
             <ExternalLink className="h-4 w-4" />
@@ -2662,7 +2662,7 @@ function ProjectDetailPage({
             href={project.liveUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
+            className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-transparent px-4 py-2 text-sm font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)] hover:!text-background"
           >
             View Live Project
             <ExternalLink className="h-4 w-4" />
