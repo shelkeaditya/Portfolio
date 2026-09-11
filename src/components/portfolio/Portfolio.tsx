@@ -1257,7 +1257,7 @@ function About() {
 
       <div className="max-w-5xl space-y-5 text-[15px] leading-relaxed text-muted-foreground">
         <p>
-          I'm currently working as a Cloud & DevOps Engineering Intern while building cloud-native
+          I'm currently working as a Cloud & DevOps Engineer while building cloud-native
           applications and infrastructure-focused projects in my free time. I enjoy applying what I
           learn to real-world projects and continuously expanding my knowledge of modern cloud
           technologies.
@@ -1412,7 +1412,7 @@ function Resume() {
           icon={<Briefcase className="h-5 w-5 text-blue-400" />}
         >
           <ResumeItem
-            heading="Cloud & DevOps Intern"
+            heading="Cloud & DevOps Engineer"
             organization="E-Sutra Technologies"
             year="Jun 2026 – Present"
             location="Remote"
@@ -1657,7 +1657,7 @@ const CARDS: {
     description:
       "A security-focused Flask application implementing DevSecOps practices throughout the development and deployment lifecycle. The platform combines containerization, automated CI/CD, vulnerability scanning, and code-quality analysis to identify security and quality issues before deployment.",
     tech: ["Python", "Flask", "Docker", "Git", "GitHub", "GitHub Actions", "Trivy", "SonarQube"],
-    buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops-flask" }],
+    buttons: [{ label: "GitHub", href: "https://github.com/shelkeaditya/devsecops" }],
     slug: "devsecops",
     image: "/r2/thumbnail/devsecops.webp",
     architecture:
@@ -4058,7 +4058,7 @@ const JOURNEY: JourneyMilestone[] = [
   events: [
     "Earned AWS Certified Cloud Practitioner (CLF-C02) in April 2026.",
     "Completed the B.Tech in Cloud Technology & Information Security (CGPA 8.66).",
-    "Began working as a Cloud & DevOps Intern at E-Sutra Technologies, applying it inside a real production pipeline.",
+    "Began working as a Cloud & DevOps Engineer at E-Sutra Technologies, applying it inside a real production pipeline.",
     ],
   },
 ];
