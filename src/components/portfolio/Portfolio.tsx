@@ -967,19 +967,11 @@ function ProfileHero({
           {/* ── COL 1 - Photo + name + role + mobile chevron ── */}
           <div className="flex flex-col justify-center md:flex-1 md:pr-8 md:border-r md:border-border/50">
             <div className="flex items-center gap-4 min-w-0">
-              <div className="group relative shrink-0">
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 rounded-xl opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-100"
-                  style={{
-                    background: "color-mix(in oklab, var(--accent-orange) 40%, transparent)",
-                  }}
-                />
-
+              <div className="relative shrink-0">
                 <FadeImage
                   src="/r2/images/profile.jpeg"
                   alt="Aditya Shelke"
-                  containerClassName="h-20 w-20 md:h-24 md:w-24 rounded-xl ring-2 ring-[color:var(--accent-orange)]/70 transition-[box-shadow] duration-300 group-hover:ring-[color:var(--accent-orange)]"
+                  containerClassName="h-20 w-20 md:h-24 md:w-24 rounded-xl ring-2 ring-[color:var(--accent-orange)]/70"
                   className="rounded-xl object-cover"
                 />
               </div>
@@ -1969,13 +1961,18 @@ function CertificateModal({
         className={cn(
           "surface-2 relative flex w-full flex-col rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)] motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200 motion-safe:ease-out",
           hasDocument
-            ? // Mobile: wrap tightly around the certificate content instead of
-              // forcing a near-full-height modal — height comes from the
-              // aspect-ratio'd document box + footer below, capped so it
-              // never exceeds the viewport, with internal scroll as a safety
-              // net for very long content. Desktop keeps the original fixed
-              // 96vh viewer exactly as before via the md: overrides.
-              "max-h-[90vh] max-w-md overflow-y-auto overflow-x-hidden md:h-[min(96vh,1200px)] md:max-w-6xl md:overflow-hidden"
+            ? isPdfDocument
+              ? // PDFs: an iframe has no intrinsic content size to shrink-wrap
+                // to, so it keeps the original fixed viewer box exactly as
+                // before (mobile: tight aspect-ratio wrapper + footer,
+                // capped to viewport; desktop: fixed 96vh/6xl viewer).
+                "max-h-[90vh] max-w-md overflow-y-auto overflow-x-hidden md:h-[min(96vh,1200px)] md:max-w-6xl md:overflow-hidden"
+              : // Certificate images: the panel hugs the image's own size
+                // (min-width so the footer text/details never look
+                // squeezed) instead of forcing every certificate into the
+                // same wide fixed box — that fixed box is what left blank
+                // space on the sides for certificates narrower than 6xl.
+                "h-fit max-h-[90vh] w-fit min-w-[min(92vw,380px)] max-w-[92vw] overflow-y-auto"
             : "max-w-lg overflow-hidden",
           ACCENT_BORDER_CLASSES[accent],
         )}
@@ -2002,22 +1999,24 @@ function CertificateModal({
           // empty space below the certificate. Desktop (md:) drops the
           // aspect ratio and fills the flex-1 area exactly as before.
           <div className="flex min-h-0 flex-1 items-center justify-center bg-black/20 p-2 sm:p-3 md:min-h-0">
-            <div className="relative aspect-[4/3] w-full max-h-full md:aspect-auto md:h-full md:w-full">
-              {isPdfDocument ? (
+            {isPdfDocument ? (
+              <div className="relative aspect-[4/3] w-full max-h-full md:aspect-auto md:h-full md:w-full">
                 <iframe
                   src={pdfSrc}
                   title={card.title}
                   className="absolute inset-0 h-full w-full rounded-lg border-0 bg-white shadow-inner"
                 />
-              ) : (
-                <FadeImage
-                  src={card.document}
-                  alt={card.title}
-                  containerClassName="absolute inset-0 h-full w-full"
-                  className="rounded-lg object-contain"
-                />
-              )}
-            </div>
+              </div>
+            ) : (
+              // Sized to the image's own aspect ratio (capped by viewport),
+              // same pattern as the AWS viewer below — no forced box, so no
+              // empty space on the sides for certificates that aren't 4:3.
+              <img
+                src={card.document}
+                alt={card.title}
+                className="max-h-[75vh] max-w-full h-auto w-auto rounded-lg object-contain"
+              />
+            )}
           </div>
         ) : (
           // ── AWS Certified Cloud Practitioner — untouched original viewer ──
@@ -2150,7 +2149,7 @@ function PortfolioSection() {
               "rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors",
               filter === f
                 ? "border-[color:var(--accent-blue)] bg-[color:var(--accent-blue)] text-background"
-                : "surface-2 border-border/60 text-muted-foreground hover:border-[color:var(--accent-blue)]/50 hover:bg-[color:var(--accent-blue)]/10 hover:text-accent-violet",
+                : "surface-2 border-border/60 text-muted-foreground hover:border-[color:var(--accent-blue)]/50 hover:text-accent-blue",
             )}
           >
             {f}
@@ -2513,7 +2512,7 @@ function ProjectDetailPage({
       <button
         type="button"
         onClick={onBack}
-        className="mb-8 inline-flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-foreground/[0.03] px-4 text-sm text-muted-foreground transition-colors hover:border-[color:var(--accent-blue)] hover:text-accent-blue active:bg-[color:var(--accent-blue)] active:border-[color:var(--accent-blue)] active:!text-background"
+        className="mb-8 inline-flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-foreground/[0.03] px-4 text-sm text-muted-foreground transition-colors hover:border-[color:var(--accent-blue)]/50 hover:text-accent-blue"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Portfolio
