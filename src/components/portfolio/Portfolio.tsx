@@ -47,8 +47,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import emailjs from "@emailjs/browser";
-import profileImg from "/r2/images/profile.jpeg" ;
-import { on } from "events";
+import profileImg from "/r2/images/profile.jpeg";
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
@@ -56,6 +55,45 @@ import { on } from "events";
 
 type SectionKey = "about" | "resume" | "portfolio" | "infra" | "contact" | "journey";
 type PortfolioFilter = "All" | "Projects" | "Certifications" | "Publications" | "Badges";
+
+// ═══════════════════════════════════════════════════════════
+// SEO - Person structured data (schema.org)
+//
+// This is a client-rendered fallback: it works, but a script tag
+// injected by React only lands in the DOM after hydration, so a
+// crawler that doesn't execute JS won't see it. Since this app runs
+// on TanStack Start (SSR), the more robust home for this block is
+// the route's `head()` export (e.g. in your route file:
+// `head: () => ({ scripts: [{ type: "application/ld+json",
+// children: PORTFOLIO_JSON_LD }] })`), so it's present in the
+// server-rendered HTML before any JS runs. Keeping it here too is
+// harmless — duplicate identical JSON-LD blocks are ignored by
+// crawlers — but move it there when you get to it.
+// ═══════════════════════════════════════════════════════════
+
+const PORTFOLIO_JSON_LD = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Aditya Shelke",
+  jobTitle: "Cloud & DevOps Engineer",
+  url: "https://aditya.shelkeaditya.workers.dev/",
+  image: "https://aditya.shelkeaditya.workers.dev/r2/images/profile.jpeg",
+  email: "mailto:shelkeaditya@proton.me",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Pune",
+    addressCountry: "IN",
+  },
+  sameAs: [
+    "https://linkedin.com/in/shelkeaditya",
+    "https://github.com/shelkeaditya",
+    "https://x.com/shelke__aditya",
+  ],
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Ajeenkya DY Patil University",
+  },
+});
 
 // ═══════════════════════════════════════════════════════════
 // HOOK - Theme
@@ -79,6 +117,25 @@ function getInitialTheme(): "dark" | "light" {
 function useTheme() {
   const [theme, setTheme] = useState<"dark" | "light">(() => getInitialTheme());
 
+  // The server always guesses "dark" (no access to localStorage), so the
+  // very first client render can briefly disagree with the real saved
+  // preference. `mounted` flips true right after hydration — consumers
+  // that render theme-dependent visuals (e.g. the toggle's slider
+  // position) should hold off on the "real" render until this is true,
+  // instead of showing the server's guess and then snapping to correct.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    // Re-resolve on mount rather than trusting the lazy initializer's
+    // result blindly. If anything outside this hook — a blocking
+    // no-flash script in the document head, a service worker replay,
+    // bfcache restoring a previous page state — already touched
+    // localStorage or the `dark` class before this effect runs, this
+    // re-read guarantees the hook's state actually matches what's on
+    // screen instead of drifting from it.
+    setTheme(getInitialTheme());
+    setMounted(true);
+  }, []);
+
   // Keep the `dark` class in sync (covers the initial value too, in case
   // something else touched the class before this hook mounted).
   useEffect(() => {
@@ -98,7 +155,7 @@ function useTheme() {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   };
 
-  return { theme, toggle };
+  return { theme, toggle, mounted };
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -140,10 +197,17 @@ function useIsMobile(breakpointPx = 768) {
 function ThemeToggleDesktop({
   theme,
   toggle,
+  mounted = true,
   className,
 }: {
   theme: "dark" | "light";
   toggle: () => void;
+  // The server can't know the real saved theme (no localStorage access),
+  // so it always guesses "dark". Until the client has mounted and
+  // resolved the actual value, we render an inert placeholder instead
+  // of the server's guess — otherwise the slider would briefly show the
+  // wrong position on every load and look like it "resets" itself.
+  mounted?: boolean;
   className?: string;
 }) {
   const isDark = theme === "dark";
@@ -162,6 +226,15 @@ function ThemeToggleDesktop({
   }, [theme]);
 
   const releasePress = () => setIsPressed(false);
+
+  if (!mounted) {
+    return (
+      <span
+        aria-hidden
+        className={cn("inline-block h-9 w-[104px] shrink-0 rounded-full", className)}
+      />
+    );
+  }
 
   return (
     <button
@@ -299,13 +372,24 @@ function ThemeToggleDesktop({
 function ThemeToggleMobile({
   theme,
   toggleTheme,
+  mounted = true,
   className,
 }: {
   theme: "dark" | "light";
   toggleTheme: () => void;
+  // See ThemeToggleDesktop's `mounted` comment — same reasoning applies
+  // here for the mobile icon button.
+  mounted?: boolean;
   className?: string;
 }) {
   const isDark = theme === "dark";
+
+  if (!mounted) {
+    return (
+      <span aria-hidden className={cn("inline-block h-11 w-11 rounded-full", className)} />
+    );
+  }
+
   return (
     <button
       type="button"
@@ -943,10 +1027,12 @@ function ProfileHero({
   onJourney,
   theme,
   toggleTheme,
+  mounted,
 }: {
   onJourney: () => void;
   theme: "dark" | "light";
   toggleTheme: () => void;
+  mounted: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [cvOpen, setCvOpen] = useState(false);
@@ -959,6 +1045,7 @@ function ProfileHero({
         <ThemeToggleMobile
           theme={theme}
           toggleTheme={toggleTheme}
+          mounted={mounted}
           className="absolute top-3 right-3 z-20 md:hidden"
         />
 
@@ -1196,11 +1283,13 @@ function NavPanel({
   setActive,
   theme,
   toggleTheme,
+  mounted,
 }: {
   active: SectionKey;
   setActive: (s: SectionKey) => void;
   theme: "dark" | "light";
   toggleTheme: () => void;
+  mounted: boolean;
 }) {
   return (
     <aside className="surface-1 sticky top-7 h-fit rounded-3xl border border-border/60 p-5 shadow-[0_10px_30px_-20px_rgba(0,0,0,0.6)]">
@@ -1240,7 +1329,7 @@ function NavPanel({
       {/* Theme toggle — left-aligned to match the nav buttons' px-4 rhythm,
           with breathing room above/below rather than being centered. */}
       <div className="px-6 pt-2 pb-.5">
-        <ThemeToggleDesktop theme={theme} toggle={toggleTheme} />
+        <ThemeToggleDesktop theme={theme} toggle={toggleTheme} mounted={mounted} />
       </div>
     </aside>
   );
@@ -3799,11 +3888,61 @@ const AUTOFILL_FIX =
   "[&:-webkit-autofill:focus]:[-webkit-text-fill-color:var(--foreground)] [&:-webkit-autofill:focus]:shadow-[0_0_0px_1000px_var(--surface-3)_inset] " +
   "[&:-webkit-autofill:active]:[-webkit-text-fill-color:var(--foreground)] [&:-webkit-autofill:active]:shadow-[0_0_0px_1000px_var(--surface-3)_inset]";
 
+// ─────────────────────────────────────────────────────────
+// Contact form spam/rate-limit guards
+//
+// The old cooldown lived only in React state, so refreshing the
+// page (trivial for a bot or a script) reset it instantly and gave
+// zero real protection against burning the EmailJS monthly quota.
+// This version persists across reloads via localStorage and adds
+// two cheap, no-backend bot filters:
+//   - a honeypot field invisible to humans (a real bot filling
+//     forms via markup will fill it; a person never sees it)
+//   - a minimum time-on-page before submit is accepted (bots that
+//     submit within ~2s of the form mounting are almost certainly
+//     scripted rather than a person actually typing)
+// None of this is bulletproof — a targeted attacker can defeat any
+// client-side check — but it stops the common case (naive scrapers/
+// form bots) without needing a server. For real protection, add
+// Cloudflare Turnstile (you're already on Workers, so it's a
+// natural fit) in front of the submit handler.
+// ─────────────────────────────────────────────────────────
+const CONTACT_STORAGE_KEY = "contact_form_guard";
+const CONTACT_MAX_SENDS = 2;
+const CONTACT_WINDOW_MS = 10 * 60 * 1000; // 2 sends per 10 minutes
+const CONTACT_MIN_FILL_MS = 2500; // ignore submits faster than this
+
+type ContactGuardState = {
+  sends: number[]; // timestamps of recent successful sends
+};
+
+function readContactGuard(): ContactGuardState {
+  try {
+    const raw = localStorage.getItem(CONTACT_STORAGE_KEY);
+    if (!raw) return { sends: [] };
+    const parsed = JSON.parse(raw) as ContactGuardState;
+    const cutoff = Date.now() - CONTACT_WINDOW_MS;
+    return { sends: (parsed.sends || []).filter((t) => t > cutoff) };
+  } catch {
+    return { sends: [] };
+  }
+}
+
+function writeContactGuard(state: ContactGuardState) {
+  try {
+    localStorage.setItem(CONTACT_STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // ignore write failures (privacy mode, etc.)
+  }
+}
+
 function Contact() {
   const [sending, setSending] = useState(false);
   const [cooldown, setCooldown] = useState(false);
-  const [msgCount, setMsgCount] = useState(0);
+  const [cooldownRemaining, setCooldownRemaining] = useState(0);
   const [time, setTime] = useState("");
+  const mountedAtRef = useRef(Date.now());
+  const cooldownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Live IST clock
   useEffect(() => {
@@ -3822,27 +3961,71 @@ function Contact() {
     return () => clearInterval(id);
   }, []);
 
+  // Re-derive cooldown from localStorage on mount, so a refresh
+  // mid-cooldown doesn't hand the limit back to a spammer/bot.
+  useEffect(() => {
+    const { sends } = readContactGuard();
+    if (sends.length >= CONTACT_MAX_SENDS) {
+      const oldestInWindow = Math.min(...sends);
+      const until = oldestInWindow + CONTACT_WINDOW_MS;
+      const remaining = until - Date.now();
+      if (remaining > 0) startCooldown(remaining);
+    }
+    return () => {
+      if (cooldownTimerRef.current) clearInterval(cooldownTimerRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function startCooldown(durationMs: number) {
+    setCooldown(true);
+    setCooldownRemaining(Math.ceil(durationMs / 1000));
+    if (cooldownTimerRef.current) clearInterval(cooldownTimerRef.current);
+    cooldownTimerRef.current = setInterval(() => {
+      setCooldownRemaining((prev) => {
+        if (prev <= 1) {
+          if (cooldownTimerRef.current) clearInterval(cooldownTimerRef.current);
+          setCooldown(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+
+    // Honeypot: a real visitor never sees or fills this field. If it
+    // has a value, silently drop the submission — no error shown, so
+    // a bot gets no signal that it was caught.
+    const honeypot = (form.elements.namedItem("company") as HTMLInputElement | null)?.value;
+    if (honeypot) return;
+
+    // Too-fast submit is almost certainly a script, not a person.
+    if (Date.now() - mountedAtRef.current < CONTACT_MIN_FILL_MS) return;
+
+    const { sends } = readContactGuard();
+    if (sends.length >= CONTACT_MAX_SENDS) {
+      const remaining = Math.min(...sends) + CONTACT_WINDOW_MS - Date.now();
+      if (remaining > 0) {
+        startCooldown(remaining);
+        toast.warning("You've hit the send limit for now — please try again shortly.");
+        return;
+      }
+    }
+
     setSending(true);
     emailjs
-      .sendForm(
-        "service_fdq7bwf",
-        "template_jpawssn",
-        e.target as HTMLFormElement,
-        "X7cczgqlSFWmadFLE",
-      )
+      .sendForm("service_fdq7bwf", "template_jpawssn", form, "X7cczgqlSFWmadFLE")
       .then(() => {
         setSending(false);
-        const next = msgCount + 1;
-        setMsgCount(next);
-        if (next >= 2) {
-          setCooldown(true);
-          setTimeout(() => {
-            setCooldown(false);
-            setMsgCount(0);
-          }, 60_000);
-          toast.warning("Message sent! Please wait 60 seconds before sending again.");
+        const next = { sends: [...sends, Date.now()] };
+        writeContactGuard(next);
+        if (next.sends.length >= CONTACT_MAX_SENDS) {
+          startCooldown(CONTACT_WINDOW_MS);
+          toast.warning("Message sent! Please wait a few minutes before sending another.");
         } else {
           toast.success("Message sent! I'll get back to you shortly.");
         }
@@ -3868,6 +4051,16 @@ function Contact() {
           onSubmit={onSubmit}
           className="surface-2 flex-1 grid gap-4 rounded-2xl border border-border/60 p-6"
         >
+          {/* Honeypot — hidden from sighted users and screen readers,
+              but present in the DOM/tab order for naive bots that fill
+              every field they find. A real person will never touch it. */}
+          <div aria-hidden className="absolute left-[-9999px] top-auto h-0 w-0 overflow-hidden">
+            <label>
+              Company
+              <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
+
           <Field label="Name">
             <Input
               required
@@ -3911,7 +4104,11 @@ function Contact() {
           <div className="pt-1">
             <Button type="submit" disabled={sending || cooldown} className="gap-2">
               <Send className="h-4 w-4" />
-              {sending ? "Sending…" : cooldown ? "Please wait…" : "Send Message"}
+              {sending
+                ? "Sending…"
+                : cooldown
+                  ? `Please wait ${Math.floor(cooldownRemaining / 60)}:${String(cooldownRemaining % 60).padStart(2, "0")}`
+                  : "Send Message"}
             </Button>
           </div>
         </form>
@@ -4178,7 +4375,7 @@ function SectionRenderer({ active }: { active: SectionKey }) {
 
 export default function Portfolio() {
   const [active, setActive] = useState<SectionKey>("about");
-  const { theme, toggle } = useTheme();
+  const { theme, toggle, mounted } = useTheme();
 
   // ─────────────────────────────────────────────────────────
   // Centralized navigation handler.
@@ -4268,12 +4465,26 @@ export default function Portfolio() {
 
   return (
     <div className="ambient-bg relative min-h-screen text-foreground">
+      {/* JSON-LD — Person structured data for search engines / AI answer
+          engines. This is a client-side fallback so it ships without a
+          backend change; see the note in PORTFOLIO_JSON_LD above for
+          why moving this into the TanStack Start route's `head()` is
+          the better long-term home for it. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: PORTFOLIO_JSON_LD }}
+      />
       <BackgroundFX />
       <Toaster />
 
       {/* ── Main layout ── */}
       <div className="relative mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12">
-        <ProfileHero onJourney={() => navigateTo("journey")} theme={theme} toggleTheme={toggle} />
+        <ProfileHero
+          onJourney={() => navigateTo("journey")}
+          theme={theme}
+          toggleTheme={toggle}
+          mounted={mounted}
+        />
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]">
           <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0">
@@ -4281,7 +4492,13 @@ export default function Portfolio() {
           </main>
 
           <div className="hidden md:block">
-            <NavPanel active={active} setActive={navigateTo} theme={theme} toggleTheme={toggle} />
+            <NavPanel
+              active={active}
+              setActive={navigateTo}
+              theme={theme}
+              toggleTheme={toggle}
+              mounted={mounted}
+            />
           </div>
         </div>
 
