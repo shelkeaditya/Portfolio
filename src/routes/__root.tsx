@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
+import { SITE_URL } from "@/lib/site";
 
 function NotFoundComponent() {
   return (
@@ -67,20 +68,48 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+// schema.org Person data. Emitted from head() so it's in the server-rendered
+// HTML that crawlers read, rather than injected after hydration.
+const PERSON_JSON_LD = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Aditya Shelke",
+  jobTitle: "Cloud & DevOps Engineer",
+  url: SITE_URL,
+  image: `${SITE_URL}/r2/images/profile.jpeg`,
+  email: "mailto:shelkeaditya@proton.me",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Pune",
+    addressCountry: "IN",
+  },
+  sameAs: [
+    "https://linkedin.com/in/shelkeaditya",
+    "https://github.com/shelkeaditya",
+    "https://x.com/shelke__aditya",
+  ],
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "Ajeenkya DY Patil University",
+  },
+});
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Aditya Shelke | Cloud and DevOps Engineer " },
+      { title: "Aditya Shelke | Cloud and DevOps Engineer" },
       { name: "description", content: "Aditya Shelke - AWS Certified Cloud Practitioner. Cloud, DevOps, Linux and Cybersecurity portfolio." },
       { name: "author", content: "Aditya Shelke" },
-      { property: "og:title", content: "Aditya Shelke | Cloud and DevOps Engineer " },
+      { property: "og:title", content: "Aditya Shelke | Cloud and DevOps Engineer" },
       { property: "og:description", content: "Cloud, DevOps, Linux and Cybersecurity portfolio." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: `${SITE_URL}/r2/images/profile.jpeg` },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@shelkeaditya" },
     ],
+    scripts: [{ type: "application/ld+json", children: PERSON_JSON_LD }],
     links: [
       {
         rel: "stylesheet",

@@ -40,6 +40,7 @@ import {
   X,
   ArrowLeft,
 } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,43 +58,74 @@ type SectionKey = "about" | "resume" | "portfolio" | "infra" | "contact" | "jour
 type PortfolioFilter = "All" | "Projects" | "Certifications" | "Publications" | "Badges";
 
 // ═══════════════════════════════════════════════════════════
-// SEO - Person structured data (schema.org)
+// ROUTING - section <-> URL path
 //
-// This is a client-rendered fallback: it works, but a script tag
-// injected by React only lands in the DOM after hydration, so a
-// crawler that doesn't execute JS won't see it. Since this app runs
-// on TanStack Start (SSR), the more robust home for this block is
-// the route's `head()` export (e.g. in your route file:
-// `head: () => ({ scripts: [{ type: "application/ld+json",
-// children: PORTFOLIO_JSON_LD }] })`), so it's present in the
-// server-rendered HTML before any JS runs. Keeping it here too is
-// harmless — duplicate identical JSON-LD blocks are ignored by
-// crawlers — but move it there when you get to it.
+// Each section is its own URL (/about, /resume, /portfolio, /build,
+// /contact, /journey), served by routes/$section.tsx. The route passes
+// the section in as a prop, so the server renders the right section
+// directly (no flash, and crawlers get real content per URL) and the
+// browser back/forward buttons work through the router.
 // ═══════════════════════════════════════════════════════════
 
-const PORTFOLIO_JSON_LD = JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "Person",
-  name: "Aditya Shelke",
-  jobTitle: "Cloud & DevOps Engineer",
-  url: "https://aditya.shelkeaditya.workers.dev/",
-  image: "https://aditya.shelkeaditya.workers.dev/r2/images/profile.jpeg",
-  email: "mailto:shelkeaditya@proton.me",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Pune",
-    addressCountry: "IN",
-  },
-  sameAs: [
-    "https://linkedin.com/in/shelkeaditya",
-    "https://github.com/shelkeaditya",
-    "https://x.com/shelke__aditya",
-  ],
-  alumniOf: {
-    "@type": "CollegeOrUniversity",
-    name: "Ajeenkya DY Patil University",
-  },
-});
+export const SECTION_SLUG: Record<SectionKey, string> = {
+  about: "about",
+  resume: "resume",
+  portfolio: "portfolio",
+  infra: "build", // matches the "Build" label in the nav
+  contact: "contact",
+  journey: "journey",
+};
+
+export function sectionFromSlug(slug: string): SectionKey | null {
+  const match = (Object.keys(SECTION_SLUG) as SectionKey[]).find((k) => SECTION_SLUG[k] === slug);
+  return match ?? null;
+}
+
+// ═══════════════════════════════════════════════════════════
+// URL SYNC - map each section to a real, shareable path
+//
+// This makes the active section reflect in the address bar (so a
+// link to /contact opens straight on Contact), makes browser
+// back/forward move between sections instead of doing nothing, and
+// survives a refresh instead of always dumping the visitor back on
+// About.
+//
+// IMPORTANT — this only covers client-side navigation (pushState +
+// popstate), which is all a single component file can do on its
+// own. For a *hard* refresh or a freshly opened link to /resume to
+// actually work, the server needs a matching route that renders
+// this same page — i.e. you need route entries for /resume,
+// /portfolio, /build, /contact, and /journey in your TanStack
+// Start `src/routes/` folder (each can just render <Portfolio />).
+// Without those, a direct load of e.g. /contact will 404 at the
+// server before this component ever runs.
+// ═══════════════════════════════════════════════════════════
+
+const SECTION_PATHS: Record<SectionKey, string> = {
+  about: "/",
+  resume: "/resume",
+  portfolio: "/portfolio",
+  infra: "/build",
+  contact: "/contact",
+  journey: "/journey",
+};
+
+const PATH_TO_SECTION: Record<string, SectionKey> = Object.fromEntries(
+  Object.entries(SECTION_PATHS).map(([key, path]) => [path, key as SectionKey]),
+);
+
+function sectionFromPath(pathname: string): SectionKey {
+  return PATH_TO_SECTION[pathname] ?? "about";
+}
+
+const SECTION_TITLES: Record<SectionKey, string> = {
+  about: "Aditya Shelke | Cloud and DevOps Engineer",
+  resume: "Resume | Aditya Shelke",
+  portfolio: "Portfolio | Aditya Shelke",
+  infra: "Build | Aditya Shelke",
+  contact: "Contact | Aditya Shelke",
+  journey: "Journey | Aditya Shelke",
+};
 
 // ═══════════════════════════════════════════════════════════
 // HOOK - Theme
@@ -1023,6 +1055,74 @@ function CvModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+// ═══════════════════════════════════════════════════════════
+// COMPONENT - HeroSkeleton
+//
+// Softens the gap between "blank page" and "hydrated app" on slow
+// connections. This does NOT replace the real hero markup in the
+// server-rendered HTML — the actual content (name, role, bio,
+// socials) always renders normally underneath, so crawlers and
+// no-JS clients still get the full content and nothing regresses
+// on SEO. This is purely a visual overlay, absolutely positioned
+// on top of the real hero, shown by default (present in the SSR
+// HTML, so it paints immediately, before any JS has run) and faded
+// out once `mounted` flips true post-hydration. On a slow
+// connection that gap can be a beat or more; without this, users
+// see either nothing styled yet or a flash of unstyled content —
+// with this, they see a clean, intentional-looking placeholder
+// instead.
+// ═══════════════════════════════════════════════════════════
+
+function HeroSkeleton({ mounted }: { mounted: boolean }) {
+  return (
+    <>
+    {/* No-JS fallback: the overlay only fades out once React mounts, so
+        without JavaScript it would cover the real hero forever. <noscript>
+        content is rendered in the server HTML and ignored by the client,
+        so this only ever applies when scripts are blocked or failed. */}
+    <noscript>
+      <style>{".hero-skeleton{display:none !important}"}</style>
+    </noscript>
+    <div
+      aria-hidden
+      className={cn(
+        "hero-skeleton absolute inset-0 z-30 rounded-2xl bg-[var(--surface-2,inherit)] transition-opacity duration-300 motion-reduce:transition-none",
+        mounted ? "opacity-0 pointer-events-none" : "opacity-100 motion-safe:animate-pulse",
+      )}
+    >
+      <div className="flex h-full flex-col justify-center gap-4 px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-8 md:py-5">
+        {/* Column 1 — avatar + name/role, mirrors the real column 1 */}
+        <div className="flex items-center gap-4 md:flex-1 md:border-r md:border-border/50 md:pr-8">
+          <div className="h-20 w-20 shrink-0 rounded-xl bg-foreground/10 md:h-24 md:w-24" />
+          <div className="min-w-0 flex-1 space-y-2.5">
+            <div className="h-5 w-40 rounded bg-foreground/10 md:h-6 md:w-48" />
+            <div className="h-4 w-28 rounded bg-foreground/10" />
+          </div>
+        </div>
+
+        {/* Column 2 — status block, desktop only (mobile collapses this too) */}
+        <div className="hidden md:flex md:w-[32%] md:flex-col md:justify-center md:gap-2 md:border-r md:border-border/50 md:px-8">
+          <div className="h-3 w-20 rounded bg-foreground/10" />
+          <div className="h-3 w-32 rounded bg-foreground/10" />
+          <div className="h-3 w-24 rounded bg-foreground/10" />
+        </div>
+
+        {/* Column 3 — CV button, email, socials, desktop only */}
+        <div className="hidden md:flex md:flex-1 md:flex-col md:items-end md:justify-center md:gap-3 md:pl-8">
+          <div className="h-9 w-28 rounded-full bg-foreground/10" />
+          <div className="h-4 w-40 rounded bg-foreground/10" />
+          <div className="flex gap-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-7 w-7 rounded-full bg-foreground/10" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+    </>
+  );
+}
+
 function ProfileHero({
   onJourney,
   theme,
@@ -1250,6 +1350,8 @@ function ProfileHero({
             </div>
           </div>
         </div>
+
+        <HeroSkeleton mounted={mounted} />
       </div>
     </section>
 
@@ -3912,6 +4014,54 @@ const CONTACT_MAX_SENDS = 2;
 const CONTACT_WINDOW_MS = 10 * 60 * 1000; // 2 sends per 10 minutes
 const CONTACT_MIN_FILL_MS = 2500; // ignore submits faster than this
 
+// ─────────────────────────────────────────────────────────
+// Cloudflare Turnstile
+//
+// Set VITE_TURNSTILE_SITE_KEY to enable. With a key, the form posts to
+// /api/contact (see contact-api.ts), where the Worker verifies the
+// token with the secret key and only then sends the email — so the
+// EmailJS credentials never reach the browser and a bot can't skip
+// the check. Without a key (local dev) it falls back to sending
+// straight from the browser via EmailJS, unprotected.
+// ─────────────────────────────────────────────────────────
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
+
+type TurnstileApi = {
+  render: (
+    el: HTMLElement,
+    opts: {
+      sitekey: string;
+      theme?: "auto" | "light" | "dark";
+      callback?: (token: string) => void;
+      "expired-callback"?: () => void;
+      "error-callback"?: () => void;
+    },
+  ) => string;
+  reset: (widgetId?: string) => void;
+  remove: (widgetId?: string) => void;
+};
+
+const getTurnstile = () => (window as unknown as { turnstile?: TurnstileApi }).turnstile;
+
+let turnstileScript: Promise<void> | null = null;
+function loadTurnstile(): Promise<void> {
+  if (turnstileScript) return turnstileScript;
+  turnstileScript = new Promise<void>((resolve, reject) => {
+    if (getTurnstile()) return resolve();
+    const el = document.createElement("script");
+    el.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    el.async = true;
+    el.defer = true;
+    el.onload = () => resolve();
+    el.onerror = () => {
+      turnstileScript = null; // allow a retry on the next mount
+      reject(new Error("Turnstile failed to load"));
+    };
+    document.head.appendChild(el);
+  });
+  return turnstileScript;
+}
+
 type ContactGuardState = {
   sends: number[]; // timestamps of recent successful sends
 };
@@ -3942,6 +4092,9 @@ function Contact() {
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
   const [time, setTime] = useState("");
   const mountedAtRef = useRef(Date.now());
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileBoxRef = useRef<HTMLDivElement | null>(null);
+  const turnstileIdRef = useRef<string | null>(null);
   const cooldownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Live IST clock
@@ -3960,6 +4113,36 @@ function Contact() {
     const id = setInterval(update, 1000);
     return () => clearInterval(id);
   }, []);
+
+  // Render the Turnstile widget (only when a site key is configured).
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return;
+    let cancelled = false;
+    loadTurnstile()
+      .then(() => {
+        const api = getTurnstile();
+        if (cancelled || !api || !turnstileBoxRef.current) return;
+        turnstileIdRef.current = api.render(turnstileBoxRef.current, {
+          sitekey: TURNSTILE_SITE_KEY,
+          theme: "auto",
+          callback: (token) => setTurnstileToken(token),
+          "expired-callback": () => setTurnstileToken(null),
+          "error-callback": () => setTurnstileToken(null),
+        });
+      })
+      .catch(() => toast.error("Couldn't load the spam check. Please refresh and try again."));
+    return () => {
+      cancelled = true;
+      if (turnstileIdRef.current) getTurnstile()?.remove(turnstileIdRef.current);
+      turnstileIdRef.current = null;
+    };
+  }, []);
+
+  // Tokens are single-use, so every attempt needs a fresh one.
+  function resetTurnstile() {
+    setTurnstileToken(null);
+    if (turnstileIdRef.current) getTurnstile()?.reset(turnstileIdRef.current);
+  }
 
   // Re-derive cooldown from localStorage on mount, so a refresh
   // mid-cooldown doesn't hand the limit back to a spammer/bot.
@@ -4016,9 +4199,31 @@ function Contact() {
       }
     }
 
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      toast.warning("Please complete the verification first.");
+      return;
+    }
+
     setSending(true);
-    emailjs
-      .sendForm("service_fdq7bwf", "template_jpawssn", form, "X7cczgqlSFWmadFLE")
+    const field = (n: string) =>
+      (form.elements.namedItem(n) as HTMLInputElement | HTMLTextAreaElement | null)?.value ?? "";
+
+    const request: Promise<unknown> = TURNSTILE_SITE_KEY
+      ? fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: field("name"),
+            email: field("email"),
+            message: field("message"),
+            token: turnstileToken,
+          }),
+        }).then((res) => {
+          if (!res.ok) throw new Error(`Contact API ${res.status}`);
+        })
+      : emailjs.sendForm("service_fdq7bwf", "template_jpawssn", form, "X7cczgqlSFWmadFLE");
+
+    request
       .then(() => {
         setSending(false);
         const next = { sends: [...sends, Date.now()] };
@@ -4033,7 +4238,8 @@ function Contact() {
       .catch(() => {
         setSending(false);
         toast.error("Something went wrong. Please try again.");
-      });
+      })
+      .finally(resetTurnstile);
   }
 
   return (
@@ -4101,8 +4307,13 @@ function Contact() {
               }}
             />
           </Field>
+          {TURNSTILE_SITE_KEY && <div ref={turnstileBoxRef} className="min-h-[65px]" />}
           <div className="pt-1">
-            <Button type="submit" disabled={sending || cooldown} className="gap-2">
+            <Button
+              type="submit"
+              disabled={sending || cooldown || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
+              className="gap-2"
+            >
               <Send className="h-4 w-4" />
               {sending
                 ? "Sending…"
@@ -4373,8 +4584,11 @@ function SectionRenderer({ active }: { active: SectionKey }) {
 // ROOT - Portfolio page
 // ═══════════════════════════════════════════════════════════
 
-export default function Portfolio() {
-  const [active, setActive] = useState<SectionKey>("about");
+export default function Portfolio({ section }: { section: SectionKey }) {
+  // The URL is the source of truth: routes/$section.tsx passes the
+  // current section in, and navigation goes through the router.
+  const active = section;
+  const navigate = useNavigate();
   const { theme, toggle, mounted } = useTheme();
 
   // ─────────────────────────────────────────────────────────
@@ -4456,24 +4670,33 @@ export default function Portfolio() {
   useEffect(() => cancelScrollAnim, [cancelScrollAnim]);
 
   const navigateTo = useCallback(
-    (section: SectionKey) => {
-      setActive(section);
-      smoothResetScroll();
+    (target: SectionKey) => {
+      if (target === active) {
+        // Already here: nothing to route to, just return to the top.
+        smoothResetScroll();
+        return;
+      }
+      // resetScroll:false stops the router's own instant scroll reset so
+      // the eased scroll below (via the effect) is what the user sees.
+      navigate({ to: "/$section", params: { section: SECTION_SLUG[target] }, resetScroll: false });
     },
-    [smoothResetScroll],
+    [active, navigate, smoothResetScroll],
   );
+
+  // Scroll to the top whenever the section changes — covers nav clicks
+  // and the browser back/forward buttons. Skipped on first render so a
+  // deep link or refresh doesn't animate.
+  const firstSectionRender = useRef(true);
+  useEffect(() => {
+    if (firstSectionRender.current) {
+      firstSectionRender.current = false;
+      return;
+    }
+    smoothResetScroll();
+  }, [section, smoothResetScroll]);
 
   return (
     <div className="ambient-bg relative min-h-screen text-foreground">
-      {/* JSON-LD — Person structured data for search engines / AI answer
-          engines. This is a client-side fallback so it ships without a
-          backend change; see the note in PORTFOLIO_JSON_LD above for
-          why moving this into the TanStack Start route's `head()` is
-          the better long-term home for it. */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: PORTFOLIO_JSON_LD }}
-      />
       <BackgroundFX />
       <Toaster />
 

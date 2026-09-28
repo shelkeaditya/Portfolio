@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import Portfolio from "../components/portfolio/Portfolio";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
+// "/" has no content of its own — send visitors to the About section.
 export const Route = createFileRoute("/")({
-  component: Portfolio,
+  beforeLoad: () => {
+    throw redirect({ to: "/$section", params: { section: "about" }, replace: true });
+  },
 });
