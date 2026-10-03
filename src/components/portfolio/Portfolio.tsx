@@ -1090,25 +1090,25 @@ function HeroSkeleton({ mounted }: { mounted: boolean }) {
         mounted ? "opacity-0 pointer-events-none" : "opacity-100 motion-safe:animate-pulse",
       )}
     >
-      <div className="flex h-full flex-col justify-center gap-4 px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-8 md:py-5">
+      <div className="flex h-full flex-col justify-center gap-4 px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-5 md:py-5 lg:px-8">
         {/* Column 1 — avatar + name/role, mirrors the real column 1 */}
-        <div className="flex items-center gap-4 md:flex-1 md:border-r md:border-border/50 md:pr-8">
-          <div className="h-20 w-20 shrink-0 rounded-xl bg-foreground/10 md:h-24 md:w-24" />
+        <div className="flex items-center gap-4 md:min-w-0 md:flex-[1.3_1_auto] lg:flex-1 md:border-r md:border-border/50 md:pr-4 lg:pr-8">
+          <div className="h-20 w-20 shrink-0 rounded-xl bg-foreground/10 lg:h-24 lg:w-24" />
           <div className="min-w-0 flex-1 space-y-2.5">
-            <div className="h-5 w-40 rounded bg-foreground/10 md:h-6 md:w-48" />
+            <div className="h-5 w-40 max-w-full rounded bg-foreground/10 md:h-6 md:w-48" />
             <div className="h-4 w-28 rounded bg-foreground/10" />
           </div>
         </div>
 
         {/* Column 2 — status block, desktop only (mobile collapses this too) */}
-        <div className="hidden md:flex md:w-[32%] md:flex-col md:justify-center md:gap-2 md:border-r md:border-border/50 md:px-8">
+        <div className="hidden md:flex md:w-auto md:shrink-0 lg:shrink md:flex-col md:justify-center md:gap-2 md:border-r md:border-border/50 md:px-4 lg:w-[32%] lg:px-8">
           <div className="h-3 w-20 rounded bg-foreground/10" />
           <div className="h-3 w-32 rounded bg-foreground/10" />
           <div className="h-3 w-24 rounded bg-foreground/10" />
         </div>
 
         {/* Column 3 — CV button, email, socials, desktop only */}
-        <div className="hidden md:flex md:flex-1 md:flex-col md:items-end md:justify-center md:gap-3 md:pl-8">
+        <div className="hidden md:flex md:flex-auto lg:flex-1 md:flex-col md:items-end md:justify-center md:gap-3 md:pl-4 lg:pl-8">
           <div className="h-9 w-28 rounded-full bg-foreground/10" />
           <div className="h-4 w-40 rounded bg-foreground/10" />
           <div className="flex gap-2">
@@ -1150,15 +1150,15 @@ function ProfileHero({
         />
 
         {/* ── 3-column row ── */}
-        <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-8 md:py-5">
+        <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-5 md:py-5 lg:px-8">
           {/* ── COL 1 - Photo + name + role + mobile chevron ── */}
-          <div className="flex flex-col justify-center md:flex-1 md:pr-8 md:border-r md:border-border/50">
+          <div className="flex flex-col justify-center md:min-w-0 md:flex-[1.3_1_auto] lg:flex-1 md:pr-4 lg:pr-8 md:border-r md:border-border/50">
             <div className="flex items-center gap-4 min-w-0">
               <div className="relative shrink-0">
                 <FadeImage
                   src="/r2/images/profile.jpeg"
                   alt="Aditya Shelke"
-                  containerClassName="h-20 w-20 md:h-24 md:w-24 rounded-xl ring-2 ring-[color:var(--accent-orange)]/70"
+                  containerClassName="h-20 w-20 lg:h-24 lg:w-24 rounded-xl ring-2 ring-[color:var(--accent-orange)]/70"
                   className="rounded-xl object-cover"
                 />
               </div>
@@ -1200,7 +1200,7 @@ function ProfileHero({
                 : "max-h-0 opacity-0 md:opacity-100",
             )}
           >
-            <div className="md:w-[32%] md:px-19 md:flex md:flex-col md:justify-center md:border-r md:border-border/50">
+            <div className="md:w-auto md:shrink-0 lg:shrink md:px-4 lg:w-[32%] lg:px-19 md:flex md:flex-col md:justify-center md:border-r md:border-border/50">
               {/* Mobile */}
               <div className="md:hidden space-y-3">
                 <div className="flex items-center justify-between text-[13px]">
@@ -1302,7 +1302,7 @@ function ProfileHero({
             </div>
 
             {/* ── COL 3 - Download CV + email + socials ── */}
-            <div className="hidden md:flex flex-col gap-3 pt-0 md:flex-1 md:pl-8 md:items-end">
+            <div className="hidden md:flex flex-col gap-3 pt-0 md:flex-auto lg:flex-1 md:pl-4 lg:pl-8 md:items-end">
               <span aria-hidden className="h-px w-full bg-border/60 md:hidden" />
               {/* Download CV */}
               <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden">
@@ -1373,7 +1373,7 @@ const NAV: {
   { key: "resume", label: "Resume", icon: FileText },
   { key: "portfolio", label: "Portfolio", icon: Briefcase },
   { key: "infra", label: "Build", icon: Workflow },
-  { key: "contact", label: "Contact", icon: Send },
+  { key: "contact", label: "Contact", icon: Mail },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -1394,7 +1394,7 @@ function NavPanel({
   mounted: boolean;
 }) {
   return (
-    <aside className="surface-1 sticky top-7 h-fit rounded-3xl border border-border/60 p-5 shadow-[0_10px_30px_-20px_rgba(0,0,0,0.6)]">
+    <aside className="surface-1 sticky top-7 h-fit rounded-3xl border border-border/60 p-3 lg:p-5 shadow-[0_10px_30px_-20px_rgba(0,0,0,0.6)]">
       <nav className="flex flex-col gap-1.5">
         {NAV.map(({ key, label, icon: Icon }) => {
           const isActive = active === key;
@@ -1403,7 +1403,7 @@ function NavPanel({
               key={key}
               onClick={() => setActive(key)}
               className={cn(
-                "group relative flex items-center gap-2 rounded-2xl px-4 py-3.5 transition-all duration-300 ease-out",
+                "group relative flex items-center gap-2 rounded-2xl px-3 lg:px-4 py-3.5 transition-all duration-300 ease-out",
                 isActive
                   ? "bg-violet-500/10 text-violet-500 border-l-2 border-violet-500 shadow-[0_0_20px_rgba(124,58,237,0.25)]"
                   : "text-muted-foreground hover:bg-foreground/8 hover:translate-x-1",
@@ -1430,7 +1430,7 @@ function NavPanel({
 
       {/* Theme toggle — left-aligned to match the nav buttons' px-4 rhythm,
           with breathing room above/below rather than being centered. */}
-      <div className="px-6 pt-2 pb-.5">
+      <div className="px-2 lg:px-6 pt-2 pb-.5">
         <ThemeToggleDesktop theme={theme} toggle={toggleTheme} mounted={mounted} />
       </div>
     </aside>
@@ -4701,7 +4701,7 @@ export default function Portfolio({ section }: { section: SectionKey }) {
       <Toaster />
 
       {/* ── Main layout ── */}
-      <div className="relative mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12">
+      <div className="relative mx-auto max-w-6xl px-4 py-8 md:px-5 md:py-12 lg:px-8">
         <ProfileHero
           onJourney={() => navigateTo("journey")}
           theme={theme}
@@ -4709,8 +4709,8 @@ export default function Portfolio({ section }: { section: SectionKey }) {
           mounted={mounted}
         />
 
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]">
-          <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0">
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_clamp(168px,22vw,200px)]">
+          <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 lg:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0">
             <SectionRenderer active={active} />
           </main>
 

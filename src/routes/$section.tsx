@@ -6,7 +6,7 @@ const PAGE_TITLE: Record<string, string> = {
   about: "About",
   resume: "Resume",
   portfolio: "Portfolio",
-  build: "Infrastructure Build",
+  build: "Build",
   contact: "Contact",
   journey: "Journey",
 };
