@@ -1288,7 +1288,7 @@ function ProfileHero({
                     <span className="w-16 shrink-0 text-[11px] text-foreground/70">
                       tz:
                     </span>
-                    <span className="text-[13px] text-foreground/70">GMT+5:30</span>
+                    <span className="text-[13px] text-foreground/70">UTC+5:30</span>
                   </div>
 
                   <div className="flex items-center gap-3">
