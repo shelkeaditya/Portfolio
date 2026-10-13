@@ -33,6 +33,7 @@ import {
   Square,
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -949,6 +950,178 @@ function BackgroundFX() {
 // instead of redirecting to Google Drive.
 // ═══════════════════════════════════════════════════════════
 
+// ───────────────────────────────────────────────────────────
+// PdfReader - a smooth in-page PDF reader (CV and research paper).
+//
+// Why not an <iframe>? An iframe hands scrolling to the browser's PDF
+// plugin. On Chrome (PC and Android) that plugin repaints the whole page
+// on every scroll frame - especially under a blurred modal backdrop -
+// which is the stickiness. iOS uses its own native renderer, which is why
+// it was smooth there. Here every page is a plain <canvas> inside an
+// ordinary scroll container, so the browser scrolls it on the GPU like
+// any other content, identically on every device.
+//
+// Pages are drawn lazily: only pages near the viewport are rasterised,
+// and pages that scroll far away release their pixels, so memory stays
+// low on phones. Pixel density is capped at 2x for the same reason.
+// ───────────────────────────────────────────────────────────
+async function loadPdfjs() {
+  const pdfjs = await import("pdfjs-dist");
+  const worker = await import("pdfjs-dist/build/pdf.worker.min.mjs?url");
+  pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
+  return pdfjs;
+}
+
+function PdfReaderPage({
+  page,
+  width,
+  rootRef,
+}: {
+  page: PDFPageProxy;
+  width: number;
+  rootRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  const base = useMemo(() => page.getViewport({ scale: 1 }), [page]);
+  const height = (width * base.height) / base.width;
+
+  // Track whether this page is near the viewport (one screen of margin).
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), {
+      root: rootRef.current,
+      rootMargin: "100% 0px",
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [rootRef]);
+
+  // Draw while near the viewport; release the pixels when far away.
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    if (!visible || width <= 0) {
+      canvas.width = 0;
+      canvas.height = 0;
+      return;
+    }
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const viewport = page.getViewport({ scale: (width / base.width) * dpr });
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const task: RenderTask = page.render({
+      canvasContext: ctx,
+      canvas,
+      viewport,
+    } as Parameters<PDFPageProxy["render"]>[0]);
+    task.promise.catch(() => {}); // a cancelled render rejects - ignore
+    return () => task.cancel();
+  }, [visible, width, page, base.width]);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="mx-auto mb-3 overflow-hidden rounded-md bg-white shadow-md last:mb-0"
+      style={{ width, height }}
+    >
+      <canvas ref={canvasRef} className="block h-full w-full" />
+    </div>
+  );
+}
+
+function PdfReader({ src, title }: { src: string; title: string }) {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [pages, setPages] = useState<PDFPageProxy[]>([]);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [pageWidth, setPageWidth] = useState(0);
+
+  // Load every page's size up front so the scroll height is correct and
+  // stable before anything is drawn.
+  useEffect(() => {
+    let cancelled = false;
+    let doc: PDFDocumentProxy | null = null;
+    (async () => {
+      try {
+        const pdfjs = await loadPdfjs();
+        const task = pdfjs.getDocument(new URL(src, window.location.origin).href);
+        doc = await task.promise;
+        const loaded: PDFPageProxy[] = [];
+        for (let i = 1; i <= doc.numPages; i++) loaded.push(await doc.getPage(i));
+        if (cancelled) return;
+        setPages(loaded);
+        setStatus("ready");
+      } catch {
+        if (!cancelled) setStatus("error");
+      }
+    })();
+    return () => {
+      cancelled = true;
+      void doc?.destroy();
+    };
+  }, [src]);
+
+  // Fit pages to the reader's width (capped so desktop text stays readable).
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const measure = () => {
+      const styles = getComputedStyle(el);
+      const inner = el.clientWidth - parseFloat(styles.paddingLeft) - parseFloat(styles.paddingRight);
+      const next = Math.max(0, Math.min(Math.floor(inner), 900));
+      setPageWidth((prev) => (Math.abs(prev - next) > 2 ? next : prev));
+    };
+    measure();
+    const ro = new ResizeObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(measure, 120);
+    });
+    ro.observe(el);
+    return () => {
+      clearTimeout(timer);
+      ro.disconnect();
+    };
+  }, []);
+
+  return (
+    <div
+      ref={scrollRef}
+      role="document"
+      aria-label={title}
+      className="h-full overflow-y-auto overscroll-contain px-3 py-3 sm:px-5 sm:py-5"
+    >
+      {status === "loading" && (
+        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+          Loading…
+        </div>
+      )}
+      {status === "error" && (
+        <div className="flex h-full items-center justify-center text-sm">
+          <a
+            href={src}
+            target="_blank"
+            rel="noreferrer"
+            className="text-accent-blue underline underline-offset-2"
+          >
+            Open the PDF
+          </a>
+        </div>
+      )}
+      {status === "ready" &&
+        pageWidth > 0 &&
+        pages.map((page, i) => (
+          <PdfReaderPage key={i} page={page} width={pageWidth} rootRef={scrollRef} />
+        ))}
+    </div>
+  );
+}
+
 function CvModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -965,7 +1138,7 @@ function CvModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
       onClick={onClose}
     >
       <div
@@ -984,15 +1157,11 @@ function CvModal({ onClose }: { onClose: () => void }) {
           <X className="h-4 w-4" />
         </button>
 
-        <div className="min-h-0 flex-1 bg-black/20 p-3 sm:p-5">
-          <iframe
-            src="/r2/aditya-shelke-cv.pdf"
-            title="Aditya Shelke — CV"
-            className="h-full w-full rounded-lg bg-white shadow-inner"
-          />
+        <div className="min-h-0 flex-1 bg-black/20">
+          <PdfReader src="/r2/aditya-shelke-cv.pdf" title="Aditya Shelke — CV" />
         </div>
 
-        <div className="border-t border-border/60 p-5">
+        <div className="shrink-0 border-t border-border/60 p-5">
           <h3 className="text-lg font-semibold text-foreground">Curriculum Vitae</h3>
         </div>
       </div>
@@ -1585,8 +1754,8 @@ function Resume() {
             <ResumeItem
               heading="Cloud, DevOps & Security Projects"
               organization="Independent Practice"
-              year="" //Mar 2023 – Present
-              location="" // Remote
+              year="Mar 2023 – Aug 2025"
+              location=""
               description="Built and managed personal cloud, virtualization, DevOps, networking, and cybersecurity labs involving cloud infrastructure, Linux administration, automation, and security assessment."
               points={[
                 "Provisioned and explored cloud infrastructure using AWS EC2, S3, IAM, VPC, EBS, ELB, EKS, ECR, and CloudWatch, practicing resource configuration, access control, networking, and monitoring.",
@@ -2053,6 +2222,130 @@ const CARD_ELEVATION_CLASSES =
 // COMPONENT - Certificate modal (in-page, image-first cards)
 // ═══════════════════════════════════════════════════════════
 
+// ───────────────────────────────────────────────────────────
+// PdfCertificate - renders page 1 of a PDF certificate onto a canvas at
+// its real size (PDF points -> CSS pixels at 96dpi), shrunk only when it
+// would not fit the viewport. Unlike an <iframe>, a canvas has a real
+// size, so the modal can wrap the certificate tightly with no blank
+// space. It also works on mobile, where browsers have no PDF plugin.
+// pdf.js is loaded on demand, so it never touches the initial bundle or
+// server rendering.
+// ───────────────────────────────────────────────────────────
+const PDF_CSS_SCALE = 96 / 72;
+
+function PdfCertificate({ src, title }: { src: string; title: string }) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const pageRef = useRef<PDFPageProxy | null>(null);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [cssSize, setCssSize] = useState<{ w: number; h: number } | null>(null);
+  const [renderTick, setRenderTick] = useState(0);
+
+  // Load the document and its first page.
+  useEffect(() => {
+    let cancelled = false;
+    let loadingTask: { destroy: () => Promise<void> } | null = null;
+    (async () => {
+      try {
+        const pdfjs = await import("pdfjs-dist");
+        const worker = await import("pdfjs-dist/build/pdf.worker.min.mjs?url");
+        pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
+        const task = pdfjs.getDocument(new URL(src, window.location.origin).href);
+        loadingTask = task;
+        const doc = await task.promise;
+        const page = await doc.getPage(1);
+        if (cancelled) return;
+        pageRef.current = page;
+        setRenderTick((n) => n + 1);
+      } catch {
+        if (!cancelled) setStatus("error");
+      }
+    })();
+    return () => {
+      cancelled = true;
+      pageRef.current = null;
+      void loadingTask?.destroy();
+    };
+  }, [src]);
+
+  // Re-fit when the window is resized (debounced).
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const onResize = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => setRenderTick((n) => n + 1), 250);
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  // Draw the page.
+  useEffect(() => {
+    const page = pageRef.current;
+    const canvas = canvasRef.current;
+    if (!page || !canvas) return;
+    let cancelled = false;
+    let task: RenderTask | null = null;
+    (async () => {
+      const base = page.getViewport({ scale: PDF_CSS_SCALE });
+      const maxW = window.innerWidth * 0.94 - 16;
+      const maxH = window.innerHeight * 0.78;
+      const fit = Math.min(1, maxW / base.width, maxH / base.height);
+      const dpr = window.devicePixelRatio || 1;
+      const viewport = page.getViewport({ scale: PDF_CSS_SCALE * fit * dpr });
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      task = page.render({ canvasContext: ctx, canvas, viewport } as Parameters<
+        PDFPageProxy["render"]
+      >[0]);
+      try {
+        await task.promise;
+      } catch {
+        return; // cancelled by a newer render
+      }
+      if (cancelled) return;
+      setCssSize({ w: base.width * fit, h: base.height * fit });
+      setStatus("ready");
+    })();
+    return () => {
+      cancelled = true;
+      task?.cancel();
+    };
+  }, [renderTick]);
+
+  return (
+    <div className="relative">
+      {status !== "ready" && (
+        <div className="flex h-48 w-[min(80vw,420px)] items-center justify-center text-sm text-muted-foreground">
+          {status === "error" ? (
+            <a
+              href={src}
+              target="_blank"
+              rel="noreferrer"
+              className="text-accent-blue underline underline-offset-2"
+            >
+              Open certificate PDF
+            </a>
+          ) : (
+            "Loading certificate…"
+          )}
+        </div>
+      )}
+      <canvas
+        ref={canvasRef}
+        role="img"
+        aria-label={title}
+        className={cn("block rounded-lg bg-white", status !== "ready" && "hidden")}
+        style={cssSize ? { width: cssSize.w, height: cssSize.h } : undefined}
+      />
+    </div>
+  );
+}
+
 function CertificateModal({
   card,
   onClose,
@@ -2089,36 +2382,31 @@ function CertificateModal({
   // certificate's own size — no empty space on the sides — with the
   // short details underneath. The iframe viewer is only a fallback for a
   // PDF with no preview image.
-  const previewSrc = hasDocument ? (isPdfDocument ? card.image : card.document) : card.image;
-  const showAsImage = Boolean(previewSrc);
+  // PDF certificates are drawn from the PDF itself (the document file,
+  // not the thumbnail). A research paper is a multi-page PDF, so it keeps
+  // the scrollable iframe viewer instead.
+  const isPaper = Boolean(card.paperDocument) && card.document === card.paperDocument;
+  const renderAsPdfCanvas = isPdfDocument && !isPaper;
+  const imageSrc = renderAsPdfCanvas
+    ? undefined
+    : hasDocument
+      ? isPdfDocument
+        ? undefined
+        : card.document
+      : card.image;
+  const showAsImage = renderAsPdfCanvas || Boolean(imageSrc);
 
-  // Desktop browsers render a PDF dropped straight into an <iframe> using
-  // their built-in PDF plugin. Most mobile browsers have no such plugin,
-  // so the exact same <iframe src="...pdf"> silently falls back to a bare
-  // "can't display this file" prompt with a raw link to the asset —
-  // that's the mobile bug this block fixes.
-  //
-  // The fix keeps the same iframe-based viewer on both platforms (nothing
-  // new to render, no download-only fallback, no raw path ever shown) and
-  // only changes what URL is fed into it on mobile: the existing PDF
-  // asset — same R2-served file, same `card.document` — is handed to
-  // Google's public document-viewer endpoint, which renders it as an
-  // image-paginated view inside our iframe, which mobile browsers *can*
-  // display. Desktop keeps using the direct asset URL exactly as before.
-  const isMobile = useIsMobile();
-  const pdfSrc = isPdfDocument
-    ? isMobile
-      ? `https://docs.google.com/viewer?url=${encodeURIComponent(
-          typeof window !== "undefined"
-            ? new URL(card.document as string, window.location.origin).href
-            : (card.document as string),
-        )}&embedded=true`
-      : `${card.document}#toolbar=0&navpanes=0&scrollbar=0&view=Fit`
-    : card.document;
+  // A research paper (multi-page PDF) opens in the canvas-based PdfReader.
+  const isPaperViewer = hasDocument && !showAsImage;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
+      className={cn(
+        "fixed inset-0 z-50 flex items-center justify-center p-4 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200",
+        // A scrolling reader under a blurred backdrop forces a re-blur on
+        // every frame, so the reader gets a plain dim backdrop instead.
+        isPaperViewer ? "bg-black/80" : "bg-black/70 backdrop-blur-sm",
+      )}
       onClick={onClose}
     >
       <div
@@ -2135,10 +2423,8 @@ function CertificateModal({
               // never grows past the certificate.
               "h-fit max-h-[92vh] w-fit max-w-[94vw] overflow-y-auto overflow-x-hidden"
             : hasDocument
-              ? // PDFs with no preview image (e.g. a research paper):
-                // an iframe has no intrinsic size, so it keeps the
-                // fixed viewer box.
-                "max-h-[90vh] max-w-md overflow-y-auto overflow-x-hidden md:h-[min(96vh,1200px)] md:max-w-6xl md:overflow-hidden"
+              ? // Research paper: a fixed reader box with its own scroll.
+                "h-[min(92vh,1100px)] w-full max-w-4xl overflow-hidden"
               : "max-w-lg overflow-hidden",
           ACCENT_BORDER_CLASSES[accent],
         )}
@@ -2158,23 +2444,20 @@ function CertificateModal({
           // viewport. The panel wraps this tightly, so nothing is wider
           // than the certificate itself.
           <div className="flex items-center justify-center bg-black/20 p-2">
-            <img
-              src={previewSrc}
-              alt={card.title}
-              className="block h-auto w-auto max-h-[78vh] max-w-full rounded-lg object-contain"
-            />
+            {renderAsPdfCanvas ? (
+              <PdfCertificate src={card.document as string} title={card.title} />
+            ) : (
+              <img
+                src={imageSrc}
+                alt={card.title}
+                className="block h-auto w-auto max-h-[78vh] max-w-full rounded-lg object-contain"
+              />
+            )}
           </div>
         ) : (
           hasDocument && (
-            // PDF with no preview image: keeps the iframe viewer.
-            <div className="flex min-h-0 flex-1 items-center justify-center bg-black/20 p-2 sm:p-3 md:min-h-0">
-              <div className="relative aspect-[4/3] w-full max-h-full md:aspect-auto md:h-full md:w-full">
-                <iframe
-                  src={pdfSrc}
-                  title={card.title}
-                  className="absolute inset-0 h-full w-full rounded-lg border-0 bg-white shadow-inner"
-                />
-              </div>
+            <div className="min-h-0 flex-1 bg-black/20">
+              <PdfReader src={card.document as string} title={card.title} />
             </div>
           )
         )}
