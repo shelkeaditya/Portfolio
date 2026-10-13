@@ -1440,6 +1440,8 @@ function ResumeItem({
   location,
   description,
   points,
+  tech,
+  collapsedCount = 6,
 }: {
   heading: string;
   organization?: string;
@@ -1447,7 +1449,16 @@ function ResumeItem({
   location: string;
   description?: string;
   points?: string[];
+  /** Every technology used in this role; always shown below a divider. */
+  tech?: string[];
+  /** Number of points shown before the "Show more" toggle appears. */
+  collapsedCount?: number;
 }) {
+  const [showAll, setShowAll] = useState(false);
+  const pointsId = useId();
+  const collapsible = (points?.length ?? 0) > collapsedCount;
+  const visiblePoints = points ? (collapsible && !showAll ? points.slice(0, collapsedCount) : points) : [];
+
   return (
     <div className="surface-2 rounded-xl border border-border/60 p-5">
       <div className="flex-1">
@@ -1467,14 +1478,39 @@ function ResumeItem({
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{description}</p>
         )}
         {points && points.length > 0 && (
-          <ul className="mt-3 space-y-1.5">
-            {points.map((p) => (
-              <li key={p} className="flex items-start gap-2 text-sm text-muted-foreground">
-                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent-blue" />
-                {p}
-              </li>
+          <>
+            <ul id={pointsId} className="mt-3 space-y-1.5">
+              {visiblePoints.map((p) => (
+                <li key={p} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent-blue" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+            {collapsible && (
+              <button
+                type="button"
+                onClick={() => setShowAll((v) => !v)}
+                aria-expanded={showAll}
+                aria-controls={pointsId}
+                className="mt-4 inline-flex items-center gap-1.5 rounded-md font-mono text-xs font-medium text-accent-blue outline-none transition-colors hover:underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-[color:var(--accent-blue)]/50"
+              >
+                {showAll ? "Show Less" : `Show More (${(points?.length ?? 0) - collapsedCount} more)`}
+              </button>
+            )}
+          </>
+        )}
+        {tech && tech.length > 0 && (
+          <div className="mt-5 flex flex-wrap gap-2 border-t border-border/60 pt-5">
+            {tech.map((t) => (
+              <span
+                key={t}
+                className="surface-3 rounded-md border border-border/60 px-2.5 py-1 font-mono text-xs text-muted-foreground"
+              >
+                {t}
+              </span>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>
@@ -1527,31 +1563,46 @@ function Resume() {
             location="Remote"
             description="Working on real-world DevOps and cloud tasks including CI/CD pipeline management, infrastructure automation, and security practices in an Agile team environment."
             points={[
-              "Managed end-to-end deployment of production applications across Linux-based cloud environments.",
-              "Designed, built, and maintained CI/CD pipelines using Jenkins to automate build, quality checks, and deployment workflows.",
-              "Provisioned and administered Oracle Cloud Infrastructure (OCI) virtual machines and deployment environments.",
-              "Performed secure server administration and deployment activities using SSH on remote Linux servers.",
-              "Integrated SonarQube into CI/CD pipelines to automate static code analysis and enforce quality gates before deployment.",
-              "Containerized and deployed applications using Docker and Docker Compose for consistent production environments.",
-              "Configured and maintained Nginx as a reverse proxy for application routing and production hosting.",
-              "Executed deployment validation, monitored application health, analyzed logs, and resolved production deployment issues.",
-              "Performed functional automation testing using Selenium and conducted performance testing with Apache JMeter as part of release validation.",
-              "Collaborated with development teams to coordinate releases, troubleshoot deployment issues, and ensure reliable production deployments.",
+              "Managed end-to-end deployment and operational support for production applications across Linux-based cloud environments, coordinating application builds, environment configuration, container deployment, release validation, and troubleshooting to maintain reliable application delivery.",
+              "Designed, maintained, and troubleshot CI/CD pipelines using Jenkins and GitHub, automating application builds and deployment workflows to improve release consistency and minimize manual intervention.",
+              "Provisioned and administered Oracle Cloud Infrastructure (OCI) virtual machines and deployment environments, managing server configuration, application runtime dependencies, remote access, and infrastructure readiness for production workloads.",
+              "Containerized and deployed applications using Docker and Docker Compose, configuring service definitions, environment variables, port mappings, volumes, and container networking to standardize deployments and simplify application lifecycle management.",
+              "Managed application deployment workflows using Coolify and Git-based repositories, supporting containerized builds, deployment configuration, production hosting, and application release operations.",
+              "Configured and maintained Nginx reverse proxy infrastructure, managing domain-based routing, upstream connectivity, and web server configurations to enable reliable access to hosted applications.",
+              "Administered Linux servers through SSH, performing service management, process inspection, filesystem operations, permission troubleshooting, and system diagnostics to maintain deployment environments and resolve infrastructure issues.",
+              "Conducted vulnerability assessments across server and application environments, identifying security weaknesses, exposed services, misconfigurations, and potential attack vectors, and implementing remediation measures to strengthen infrastructure security.",
+              "Investigated and remediated Linux server security issues by reviewing access permissions, SSH configurations, running services, scheduled tasks, and network exposure, helping reduce the attack surface of production infrastructure.",
+              "Investigated suspected security compromises by analyzing suspicious cron jobs, unauthorized processes, anomalous filesystem activity, and potential malware indicators to identify persistence mechanisms and support incident containment and remediation.",
+              "Supported infrastructure recovery following a suspected server compromise by preserving application backups, provisioning clean Linux environments, reinstalling deployment infrastructure, and restoring applications to re-establish production hosting.",
+              "Troubleshot production deployment failures involving container startup issues, application runtime configuration, port-binding mismatches, upstream connectivity, and HTTP gateway errors, using logs and system diagnostics to identify root causes and restore application functionality.",
+              "Managed application processes using PM2, monitoring process status, analyzing runtime logs, and troubleshooting execution and configuration issues affecting Node.js-based application deployments.",
+              "Performed functional and browser automation testing using Selenium and Playwright, alongside performance testing with Apache JMeter, to validate application behavior, browser compatibility, responsiveness, and release readiness.",
+              "Collaborated with development and QA teams in an Agile environment to investigate application and infrastructure issues, coordinate releases, validate deployment readiness, and improve the reliability and consistency of production delivery workflows.",
             ]}
+            tech={"Linux, Bash, Shell Scripting, Git, GitHub, Jenkins, GitHub Actions, Docker, Docker Compose, Kubernetes, PM2, Nginx, Apache, SSH, TCP/IP, DNS, HTTP/HTTPS, Selenium, Playwright, Apache JMeter, SonarQube, Prometheus, Grafana, Trivy, Checkov, HashiCorp Vault, Python".split(", ")}
           />
           <div className="mt-4">
             <ResumeItem
-              heading="Cloud Labs & Projects"
+              heading="Cloud, DevOps & Security Projects"
+              organization="Independent Practice"
               year="Mar 2023 – Aug 2025"
               location=""
-              description="Built and managed personal cloud and DevOps projects involving AWS services, Linux administration, containerisation, CI/CD workflows, and infrastructure automation."
+              description="Built and managed personal cloud, virtualization, DevOps, networking, and cybersecurity labs involving cloud infrastructure, Linux administration, automation, and security assessment."
               points={[
-                "Deployed AWS EC2, S3, IAM, VPC, ELB, EKS, ECR, CloudWatch configurations",
-                "Built CI/CD pipelines using GitHub Actions and Jenkins",
-                "Practised Terraform for infrastructure-as-code",
-                "Managed Linux servers - Debian, Ubuntu, Kali",
-                "Containerised applications with Docker and orchestrated with Kubernetes",
+                "Provisioned and explored cloud infrastructure using AWS EC2, S3, IAM, VPC, EBS, ELB, EKS, ECR, and CloudWatch, practicing resource configuration, access control, networking, and monitoring.",
+                "Created and managed virtualized environments using VMware Workstation, VMware vSphere, and VirtualBox, running Linux distributions and testing isolated infrastructure configurations.",
+                "Administered Linux environments including Debian, Ubuntu, and Kali Linux, performing package management, service administration, filesystem operations, user permissions, and system troubleshooting.",
+                "Configured SSH-based remote administration, Linux services, network connectivity, DNS resolution, TCP/IP communication, and HTTP/HTTPS troubleshooting across virtual machines and cloud-hosted environments.",
+                "Built CI/CD workflows using Jenkins and GitHub Actions, integrating Git/GitHub version control with automated build, testing, and application deployment processes.",
+                "Containerized applications using Docker and Docker Compose and explored Kubernetes, Minikube, kubectl, and Helm for container orchestration and workload management.",
+                "Practiced Infrastructure as Code using Terraform and explored configuration management, cloud resource provisioning, and repeatable infrastructure deployment.",
+                "Performed network reconnaissance and enumeration using Nmap, WHOIS, Shodan, and TheHarvester to investigate exposed services, domain information, and publicly available infrastructure details.",
+                "Used Wireshark and Linux networking utilities to inspect network traffic, troubleshoot connectivity, and study network protocols, communication flows, and security weaknesses.",
+                "Explored penetration testing and wireless security tools in Kali Linux, including the Aircrack-ng suite, Wash, Reaver, and Hashcat, within authorized lab environments.",
+                "Practiced vulnerability assessment, web security testing, and system hardening, investigating misconfigurations, access control weaknesses, exposed services, and potential attack vectors.",
+                "Deployed and experimented with self-hosted applications and cloud services, including Nextcloud, while exploring reverse proxy configuration, web hosting, infrastructure monitoring, and application availability.",
               ]}
+              tech={"AWS, GCP, Azure, OCI, Cloudflare, VMware Workstation, WSL, Linux, Debian, Ubuntu, Kali Linux, Bash, Shell Scripting, Git, GitHub, Jenkins, GitHub Actions, Docker, Kubernetes, Minikube, kubectl, Helm, Terraform, Coolify, PM2, Nginx, Apache, SSH, TCP/IP, DNS, HTTP/HTTPS, Nmap, Wireshark, WHOIS, Shodan, TheHarvester, Prometheus, Grafana, Trivy, Python, Java, Tailwind CSS, Vite, TanStack, Wrangler".split(", ")}
             />
           </div>
         </ResumeBlock>
@@ -2266,8 +2317,10 @@ function PortfolioSection() {
         ))}
       </div>
 
-      {/* Cards grid */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {/* Cards grid. Keyed by filter so every filter change remounts the
+          cards: otherwise cards present in both the old and new filter
+          (same key) are reused in place and never animate in. */}
+      <div key={filter} className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {filtered.map((c) =>
           c.category.includes("Projects") && c.image ? (
             // ── Project card (thumbnail, clean by default, reveals on hover) ──
@@ -3384,7 +3437,7 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
   return (
     <section className="relative">
       <style>{ARCH_CSS}</style>
-      <SectionHeading title="Infrastructure." />
+      <SectionHeading title="Topology." />
       <p className="-mt-4 mb-5 max-w-xl text-sm text-muted-foreground">
         Explore how the portfolio&apos;s services communicate and how assets are delivered.
       </p>
@@ -3423,7 +3476,7 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
         </button>
       </div>
 
-      <div className="arch-root" data-theme={theme} data-reveal={reveal}>
+      <div className="arch-root" data-sr-skip data-theme={theme} data-reveal={reveal}>
         <div className="arch-stage" ref={stageRef}>
         <div className="arch-canvas">
           <div className="arch-scroll">
@@ -4055,91 +4108,65 @@ function Contact() {
 // ═════════════════════════════════════════════════════════════
 
 type JourneyMilestone = {
-  year: number;
+  label: string;
   title: string;
   events: string[];
 };
 
 const JOURNEY: JourneyMilestone[] = [
   {
-    year: 2014,
-    title: "First Steps Into Creation",
+    label: "2014",
+    title: "Where It Started",
     events: [
-      "Experimented with animation in Adobe Flash, combining timelines, objects, and movement.",
-      "The first shift from using technology to actually building something with it.",
+      "Made a first animation in 2014, which started an interest in building things.",
+      "Learned HTML and CSS around 2017–18 and built a first webpage.",
     ],
   },
   {
-    year: 2018,
-    title: "First Web Development",
+    label: "2018",
+    title: "Understanding How the Web Works",
     events: [
-      "Learned HTML and CSS and built a first basic webpage.",
-      "The point curiosity turned into an actual, buildable skill.",
+      "Learned how frontend and backend fit together, and how data is stored in databases and reached over the internet.",
+      "By 2020–21, the question of where that data actually lives pointed toward cloud.",
     ],
   },
   {
-    year: 2019,
-    title: "Systems Exploration",
-    events: [
-      "Installed and ran Phoenix OS, an Android-based OS built for PCs.",
-      "Early hands-on exposure to how an operating system interacts with hardware.",
-    ],
-  },
-  {
-    year: 2020,
-    title: "Digital Content Production",
-    events: [
-      "Experimented with OBS Studio — scenes, overlays, live audio/video sources.",
-      "No direction toward tech yet, just continued hands-on curiosity.",
-    ],
-  },
-  {
-    year: 2021,
-    title: "First Real Interest in Cloud",
-    events: [
-      "Compared local storage against cloud storage and remote access.",
-      "The specific question that led directly into choosing a cloud-focused degree.",
-    ],
-  },
-  {
-    year: 2022,
+    label: "2022",
     title: "Starting My B.Tech",
     events: [
-      "Began a B.Tech in Cloud Technology & Information Security at Ajeenkya DY Patil University.",
-      "Moved from self-directed exploration into structured technical education.",
+      "Started the first year of a B.Tech in Cloud Technology & Information Security at Ajeenkya DY Patil University in August 2022.",
     ],
   },
   {
-    year: 2023,
+    label: "2023",
     title: "Building Technical Foundations",
     events: [
-      "Strengthened Linux, networking, and cloud fundamentals through labs and coursework.",
-      "Cloud stopped being an academic subject and started being something to build with.",
+      "Built Linux, networking, and cloud fundamentals through hands-on labs: Debian, Ubuntu, and Kali administration, Wireshark traffic analysis, and core AWS services (EC2, S3, IAM, VPC).",
     ],
   },
   {
-    year: 2024,
+    label: "2024",
     title: "Infrastructure & Security in Practice",
     events: [
-      "Built a DevSecOps CI/CD pipeline and a Kubernetes-based server monitoring platform.",
-      "Infrastructure, automation, and security stopped being separate topics and became one discipline.",
+      "Built a DevSecOps pipeline: a Dockerized Flask app with GitHub Actions running Trivy and SonarQube scans before deployment.",
+      "Built a Kubernetes-based server monitoring platform with Prometheus and Grafana, with automated recovery when failures are detected.",
     ],
   },
   {
-    year: 2025,
+    label: "2025",
     title: "Moving Into DevOps",
     events: [
-      "Focused seriously on Docker, Kubernetes, CI/CD, Git, and Terraform.",
-      "Shifted from learning individual tools to understanding how software is built, deployed, and maintained end to end.",
+      "Built an end-to-end CI/CD platform with GitHub Actions, Jenkins, and Docker covering build, test, containerization, and deployment.",
+      "Practiced Infrastructure as Code with Terraform alongside Kubernetes and Git workflows.",
     ],
   },
   {
-  year: 2026,
-  title: "From Education to Real-World Engineering",
-  events: [
-    "Earned AWS Certified Cloud Practitioner (CLF-C02) in April 2026.",
-    "Completed the B.Tech in Cloud Technology & Information Security (CGPA 8.66).",
-    "Began working as a Cloud & DevOps Engineer at E-Sutra Technologies, applying it inside a real production pipeline.",
+    label: "2026",
+    title: "From Education to Real-World Engineering",
+    events: [
+      "Earned AWS Certified Cloud Practitioner (CLF-C02) in April 2026.",
+      "Completed the B.Tech in Cloud Technology & Information Security (CGPA 8.66).",
+      "Joined E-Sutra Technologies as a Cloud & DevOps Engineer: managing Jenkins and GitHub CI/CD pipelines, production deployments on Oracle Cloud, and server security hardening and incident response.",
     ],
   },
 ];
@@ -4149,8 +4176,8 @@ const JOURNEY: JourneyMilestone[] = [
 // ═══════════════════════════════════════════════════════════
 
 function Journey() {
-  const first = JOURNEY[0];
-  const last = JOURNEY[JOURNEY.length - 1];
+  const firstYear = JOURNEY[0].label.slice(0, 4);
+  const lastYear = JOURNEY[JOURNEY.length - 1].label.slice(-4);
 
   return (
     <div>
@@ -4158,30 +4185,27 @@ function Journey() {
 
       <div className="mb-16 text-sm text-muted-foreground">
         <span className="font-semibold text-accent-blue">{JOURNEY.length}</span> milestones ·{" "}
-        {first.year}–{last.year}
+        {firstYear}–{lastYear}
       </div>
 
       <div className="space-y-10">
         {JOURNEY.map((milestone) => (
-          <div key={milestone.year}>
+          <div key={milestone.label}>
             {/* Year header with ghost numeral */}
             <div className="relative mb-5 flex items-center justify-between">
               <div className="relative">
                 <span
                   aria-hidden
-                  className="pointer-events-none absolute -top-6 left-0 select-none text-6xl font-black leading-none text-foreground md:text-7xl"
+                  className="pointer-events-none absolute -top-6 left-0 select-none whitespace-nowrap text-6xl font-black leading-none text-foreground md:text-7xl"
                   style={{ opacity: "var(--ghost-year-opacity)" }}
                 >
-                  {milestone.year}
+                  {milestone.label.slice(0, 4)}
                 </span>
                 <div className="relative">
-                  <h3 className="text-xl font-bold text-foreground md:text-2xl">{milestone.year}</h3>
+                  <h3 className="text-xl font-bold text-foreground md:text-2xl">{milestone.label}</h3>
                   <span className="mt-1 block h-[2px] w-56 rounded-full bg-gradient-to-r from-accent-blue to-transparent" />
                 </div>
               </div>
-              <span className="rounded-full border border-border/60 bg-foreground/[0.03] px-3 py-1 font-mono text-xs text-muted-foreground/70">
-                {milestone.events.length} events
-              </span>
             </div>
 
             {/* Rail: milestone marker, connecting line, and event markers all
@@ -4231,10 +4255,165 @@ function Journey() {
 }
 
 // ═══════════════════════════════════════════════════════════
+// HOOK - useScrollReveal
+// Fades + lifts each top-level block of the active section into view
+// as it scrolls on screen (one-shot, lightly staggered for blocks that
+// arrive together, e.g. a row of cards).
+//
+// - Targets are the section root's direct children; "list" containers
+//   (grid / space-y / md:flex-row) are expanded one level so their
+//   items animate individually instead of as one big slab.
+// - Elements marked `data-sr-skip` are left alone (the Build diagram
+//   has its own intro). Fixed/absolute elements (modals) are skipped.
+// - After an element finishes animating, the helper classes are
+//   removed so cards go back to their own hover/transition styles and
+//   no stray transform is left behind.
+// - On the very first (server-rendered) load, blocks already on screen
+//   are left visible so there is no hide-then-show flash; everything
+//   below the fold still reveals on scroll. Section changes animate
+//   from the top.
+// - Nothing runs under prefers-reduced-motion, and nothing is hidden
+//   on the server, so crawlers and no-JS visitors get full content.
+// ═══════════════════════════════════════════════════════════
+
+const SCROLL_REVEAL_CSS = `
+.sr-hidden { opacity: 0; transform: translate3d(0, 10px, 0); }
+.sr-hidden.sr-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 750ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    transform 750ms cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sr-hidden { opacity: 1; transform: none; }
+}
+`;
+
+const SR_CONTAINER_RE = /(^|\s)((?:[a-z]+:)?grid-cols-\d|space-y-\d+|md:flex-row)(\s|$)/;
+const SR_DURATION_MS = 750;
+const SR_BASE_DELAY_MS = 60;
+const SR_STAGGER_MS = 90;
+// How long the old page takes to fade out before the next one loads.
+const PAGE_LEAVE_MS = 260;
+
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+function useScrollReveal(sectionKey: SectionKey) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const isFirstRun = useRef(true);
+
+  useIsoLayoutEffect(() => {
+    const wrapper = wrapperRef.current;
+    const root = wrapper?.firstElementChild;
+    if (!wrapper || !root) return;
+    if (typeof IntersectionObserver === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const leaveVisibleInView = isFirstRun.current;
+    isFirstRun.current = false;
+    let firstPass = true;
+
+    const seen = new WeakSet<Element>();
+    const timers = new Set<number>();
+
+    const reveal = (el: HTMLElement, delay: number) => {
+      el.style.transitionDelay = `${delay}ms`;
+      el.classList.add("sr-in");
+      const timer = window.setTimeout(() => {
+        timers.delete(timer);
+        el.classList.remove("sr-hidden", "sr-in");
+        el.style.transitionDelay = "";
+      }, SR_DURATION_MS + delay + 80);
+      timers.add(timer);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((en) => en.isIntersecting)
+          .sort(
+            (a, b) =>
+              a.boundingClientRect.top - b.boundingClientRect.top ||
+              a.boundingClientRect.left - b.boundingClientRect.left,
+          );
+        visible.forEach((en, i) => {
+          io.unobserve(en.target);
+          reveal(en.target as HTMLElement, SR_BASE_DELAY_MS + Math.min(i, 4) * SR_STAGGER_MS);
+        });
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0 },
+    );
+
+    const tagTargets = () => {
+      const targets: HTMLElement[] = [];
+      const walk = (parent: Element, depth: number) => {
+        for (const child of Array.from(parent.children)) {
+          if (!(child instanceof HTMLElement)) continue;
+          if (child.tagName === "STYLE" || child.tagName === "SCRIPT" || child.tagName === "LINK") {
+            continue;
+          }
+          if (child.hasAttribute("data-sr-skip")) continue;
+          const position = window.getComputedStyle(child).position;
+          if (position === "fixed" || position === "absolute") continue;
+          if (depth < 2 && SR_CONTAINER_RE.test(child.getAttribute("class") ?? "")) {
+            walk(child, depth + 1);
+            continue;
+          }
+          targets.push(child);
+        }
+      };
+      walk(root, 0);
+
+      for (const el of targets) {
+        if (seen.has(el)) continue;
+        seen.add(el);
+        if (firstPass && leaveVisibleInView) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) continue;
+        }
+        el.classList.add("sr-hidden");
+        io.observe(el);
+      }
+      firstPass = false;
+    };
+
+    tagTargets();
+
+    // Pick up blocks that mount later (e.g. cards after a filter change).
+    let raf = 0;
+    const mo = new MutationObserver((records) => {
+      if (!records.some((r) => r.addedNodes.length > 0)) return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(tagTargets);
+    });
+    mo.observe(root, { childList: true, subtree: true });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      mo.disconnect();
+      io.disconnect();
+      timers.forEach((id) => window.clearTimeout(id));
+    };
+  }, [sectionKey]);
+
+  return wrapperRef;
+}
+
+// ═══════════════════════════════════════════════════════════
 // ROUTER - Section switcher
 // ═══════════════════════════════════════════════════════════
 
-function SectionRenderer({ active, theme }: { active: SectionKey; theme: "dark" | "light" }) {
+function SectionRenderer({
+  active,
+  theme,
+  leaving = false,
+}: {
+  active: SectionKey;
+  theme: "dark" | "light";
+  leaving?: boolean;
+}) {
+  const wrapperRef = useScrollReveal(active);
   const map: Record<SectionKey, React.ReactNode> = {
     about: <About />,
     resume: <Resume />,
@@ -4244,12 +4423,20 @@ function SectionRenderer({ active, theme }: { active: SectionKey; theme: "dark" 
     journey: <Journey />,
   };
   return (
-    <div
-      key={active}
-      className="motion-safe:animate-in motion-safe:fade-in-50 motion-safe:slide-in-from-bottom-2 motion-safe:duration-[380ms] motion-safe:ease-out"
-    >
-      {map[active]}
-    </div>
+    <>
+      <style>{SCROLL_REVEAL_CSS}</style>
+      <div
+        key={active}
+        ref={wrapperRef}
+        className={cn(
+          "transition-opacity ease-out motion-reduce:transition-none",
+          leaving ? "pointer-events-none opacity-0" : "opacity-100",
+        )}
+        style={{ transitionDuration: `${PAGE_LEAVE_MS}ms` }}
+      >
+        {map[active]}
+      </div>
+    </>
   );
 }
 
@@ -4274,7 +4461,7 @@ export default function Portfolio({ section }: { section: SectionKey }) {
   // that are already mounted / previously visited — without
   // requiring scroll logic on individual buttons.
   //
-  // The scroll-to-top itself is animated (capped 220–380ms,
+  // The scroll-to-top itself is animated (capped 350–650ms,
   // eased) instead of an instant jump, but:
   //   - it's skipped (instant snap) when the user is already
   //     at/near the top, so there's nothing to visibly interact with
@@ -4293,8 +4480,8 @@ export default function Portfolio({ section }: { section: SectionKey }) {
     }
   }, []);
 
-  const smoothResetScroll = useCallback(() => {
-    if (typeof window === "undefined") return;
+  const smoothResetScroll = useCallback((): number => {
+    if (typeof window === "undefined") return 0;
     cancelScrollAnim();
 
     const startY = window.scrollY || document.documentElement.scrollTop || 0;
@@ -4307,17 +4494,19 @@ export default function Portfolio({ section }: { section: SectionKey }) {
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
-      return;
+      return 0;
     }
 
-    const duration = Math.min(380, Math.max(220, startY * 0.4));
+    const duration = Math.min(650, Math.max(350, startY * 0.45));
     const startTime = performance.now();
-    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+    // Ease in AND out so the glide starts and stops softly.
+    const easeInOutCubic = (t: number) =>
+      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
     const step = (now: number) => {
       const elapsed = now - startTime;
       const t = Math.min(1, elapsed / duration);
-      const eased = easeOutCubic(t);
+      const eased = easeInOutCubic(t);
       const nextY = startY * (1 - eased);
       window.scrollTo(0, nextY);
 
@@ -4338,22 +4527,73 @@ export default function Portfolio({ section }: { section: SectionKey }) {
     };
 
     scrollAnimRef.current = requestAnimationFrame(step);
+    return duration;
   }, [cancelScrollAnim]);
 
   useEffect(() => cancelScrollAnim, [cancelScrollAnim]);
 
+  // Page changes are a calm hand-off rather than a cut: the page first
+  // glides up to the top (eased in and out), the fade-out is timed to
+  // finish exactly as that glide ends, and only then does the router swap
+  // in the next page, whose blocks fade in via useScrollReveal. If the
+  // page is already at the top there is no glide, just the short fade.
+  // `leavingFrom` records which page is fading out; it is cleared as soon
+  // as the section prop changes. Reduced-motion users switch immediately.
+  const [leavingFrom, setLeavingFrom] = useState<SectionKey | null>(null);
+  const leaveTimersRef = useRef<number[]>([]);
+
+  const clearLeaveTimers = useCallback(() => {
+    leaveTimersRef.current.forEach((id) => window.clearTimeout(id));
+    leaveTimersRef.current = [];
+  }, []);
+
+  useEffect(() => {
+    setLeavingFrom(null);
+  }, [section]);
+
+  useEffect(() => clearLeaveTimers, [clearLeaveTimers]);
+
   const navigateTo = useCallback(
     (target: SectionKey) => {
       if (target === active) {
-        // Already here: nothing to route to, just return to the top.
+        // Already here: cancel any pending switch and return to the top.
+        clearLeaveTimers();
+        setLeavingFrom(null);
         smoothResetScroll();
         return;
       }
-      // resetScroll:false stops the router's own instant scroll reset so
-      // the eased scroll below (via the effect) is what the user sees.
-      navigate({ to: "/$section", params: { section: SECTION_SLUG[target] }, resetScroll: false });
+
+      const go = () => {
+        leaveTimersRef.current = [];
+        // Safety only: the glide has normally landed on 0 already.
+        if ((window.scrollY || 0) > 2) window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+        // resetScroll:false keeps the router from doing its own scroll
+        // reset on top of ours.
+        // About is the landing page, so it lives at "/" rather than "/about".
+      navigate({
+        to: "/{-$section}",
+        params: { section: target === "about" ? undefined : SECTION_SLUG[target] },
+        resetScroll: false,
+      });
+      };
+
+      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+      if (reduceMotion) {
+        clearLeaveTimers();
+        go();
+        return;
+      }
+
+      // A second click while switching just retargets the pending switch.
+      clearLeaveTimers();
+      const glideMs = smoothResetScroll();
+      const fadeDelay = Math.max(0, glideMs - PAGE_LEAVE_MS);
+      leaveTimersRef.current = [
+        window.setTimeout(() => setLeavingFrom(active), fadeDelay),
+        window.setTimeout(go, fadeDelay + PAGE_LEAVE_MS),
+      ];
     },
-    [active, navigate, smoothResetScroll],
+    [active, navigate, smoothResetScroll, clearLeaveTimers],
   );
 
   // Scroll to the top whenever the section changes — covers nav clicks
@@ -4384,7 +4624,7 @@ export default function Portfolio({ section }: { section: SectionKey }) {
 
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]">
           <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0">
-            <SectionRenderer active={active} theme={theme} />
+            <SectionRenderer active={active} theme={theme} leaving={leavingFrom === active} />
           </main>
 
           <div className="hidden md:block">

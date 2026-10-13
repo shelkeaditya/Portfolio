@@ -61,6 +61,24 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Palette tokens -> utilities (bg-rack, border-border-ui, bg-nav-hover, …) */
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-surface-alt: var(--c-surface-alt);
+  --color-rack: var(--c-rack);
+  --color-border-ui: var(--c-border-ui);
+  --color-edge: var(--c-edge);
+  --color-heading: var(--c-heading);
+  --color-body: var(--c-text);
+  --color-nav-hover: var(--c-nav-hover);
+  --color-nav-active-bg: var(--c-nav-active-bg);
+  --color-glow: var(--c-glow);
+  --color-shadow-sm: var(--c-shadow-sm);
+  --color-shadow-md: var(--c-shadow-md);
+  --color-shadow-lg: var(--c-shadow-lg);
+  --color-skeleton-base: var(--color-skeleton-base-val);
+  --color-skeleton-shine: var(--color-skeleton-shine-val);
 }
 
 :root {
@@ -92,36 +110,82 @@
   --surface-2: oklch(0.94 0.005 250);
   --surface-3: oklch(0.91 0.007 255);
   --ghost-year-opacity: 0.1;
+
+  /* Palette tokens - light values */
+  --c-bg: oklch(0.965 0.003 250);
+  --c-surface: oklch(0.94 0.005 250);
+  --c-surface-alt: oklch(0.91 0.007 255);
+  --c-rack: oklch(0.89 0.008 255);
+  --c-border: oklch(0.88 0.008 255);
+  --c-border-ui: oklch(0.6 0.03 260);
+  --c-edge: #0000000f;
+  --c-text: oklch(0.28 0.02 265);
+  --c-heading: oklch(0.18 0.02 265);
+  --c-muted: oklch(0.5 0.02 260);
+  --c-nav-hover: #5b8def14;
+  --c-nav-active-bg: #5b8def1f;
+  --c-glow: #5b8def59;
+  --c-shadow-sm: #0f172a14;
+  --c-shadow-md: #0f172a1f;
+  --c-shadow-lg: #0f172a2e;
+  --color-skeleton-base-val: oklch(0.9 0.005 250);
+  --color-skeleton-shine-val: oklch(0.95 0.004 250);
 }
 
 .dark {
   color-scheme: dark;
-  --background: #0d0e12;   /* #16181F */
-  --foreground: #E8E6E1;
+
+  /* ── Reference palette ── */
+  /* Surface & background */
+  --c-bg: #0d0e12;
+  --c-surface: #16181f;
+  --c-surface-alt: #1e2129;
+  --c-rack: #111318;
+  --c-border: #2a2e3a;
+  --c-border-ui: #6e7a96;
+  --c-edge: #ffffff0f;
+  /* Text */
+  --c-text: #c8cdd8;
+  --c-heading: #f0f1f5;
+  --c-muted: #8b8fa3;
+  /* State */
+  --c-nav-hover: #5b8def14;
+  --c-nav-active-bg: #5b8def1f;
+  --c-glow: #5b8def59;
+  /* Shadow & skeleton */
+  --c-shadow-sm: #03061247;
+  --c-shadow-md: #0306126b;
+  --c-shadow-lg: #03061299;
+  --color-skeleton-base-val: #2a2d3a;
+  --color-skeleton-shine-val: #32364a;
+
+  /* ── Semantic tokens mapped onto the palette ── */
+  --background: var(--c-bg);
+  --foreground: var(--c-heading);
   --ghost-year-opacity: 0.06;
-  --card: oklch(0.13 0 0);         /* #1E1F22 */
-  --card-foreground: #E8E6E1;
-  --popover: #161B22;
-  --popover-foreground: oklch(0.96 0.005 250);
+  --card: var(--c-surface);
+  --card-foreground: var(--c-text);
+  --popover: var(--c-surface-alt);
+  --popover-foreground: var(--c-heading);
   --primary: #E8820C;
   --primary-foreground: #ffffff;
-  --secondary: oklch(0.20 0 0);    /* #2B2D31 */
-  --secondary-foreground: #E8E6E1;
-  --muted: #18181c;
-  --muted-foreground: #8B949E;
-  --accent: #18181c;
-  --accent-foreground: #E8E6E1;
+  --secondary: var(--c-surface-alt);
+  --secondary-foreground: var(--c-text);
+  --muted: var(--c-surface-alt);
+  --muted-foreground: var(--c-muted);
+  --accent: var(--c-surface-alt);
+  --accent-foreground: var(--c-heading);
   --destructive: oklch(0.65 0.22 22);
   --destructive-foreground: oklch(0.98 0.003 250);
-  --border: #30363D;
-  --input: #21262D;
-  --ring: 	#E8820C;
-  --accent-blue: oklch(0.7 0.14 250);
+  --border: var(--c-border);
+  --input: var(--c-border);
+  --ring: var(--c-border-ui);
+  --accent-blue: #5b8def;
   --accent-purple: oklch(0.7 0.16 295);
   --accent-orange: #E8820C;
-  --surface-1: #16181f;
-  --surface-2: #16181f;
-  --surface-3: #16181f;
+  --surface-1: var(--c-surface);
+  --surface-2: var(--c-surface);
+  --surface-3: var(--c-surface-alt);
 }
 
 @layer base {
@@ -137,6 +201,10 @@
       Arial, sans-serif;
     font-feature-settings: "cv11", "ss01", "ss03";
     -webkit-font-smoothing: antialiased;
+  }
+
+  .dark body {
+    color: var(--c-text);
   }
 }
 
