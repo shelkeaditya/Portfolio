@@ -1364,7 +1364,7 @@ function About() {
     <div>
       <SectionHeading title="About Me." />
 
-      <div className="max-w-5xl space-y-5 text-[15px] leading-relaxed text-muted-foreground">
+      <div className="max-w-5xl space-y-5 text-[15px] leading-relaxed text-body">
         <p>
           I'm currently working as a Cloud & DevOps Engineer while building cloud-native
           applications and infrastructure-focused projects in my free time. I enjoy applying what I
@@ -1475,7 +1475,7 @@ function ResumeItem({
           <span>{year}</span>
         </div>
         {description && (
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{description}</p>
+          <p className="mt-3 text-sm leading-relaxed text-body">{description}</p>
         )}
         {points && points.length > 0 && (
           <>
@@ -1579,7 +1579,7 @@ function Resume() {
               "Performed functional and browser automation testing using Selenium and Playwright, alongside performance testing with Apache JMeter, to validate application behavior, browser compatibility, responsiveness, and release readiness.",
               "Collaborated with development and QA teams in an Agile environment to investigate application and infrastructure issues, coordinate releases, validate deployment readiness, and improve the reliability and consistency of production delivery workflows.",
             ]}
-            tech={"Linux, Bash, Shell Scripting, Git, GitHub, Jenkins, GitHub Actions, Docker, Docker Compose, Kubernetes, PM2, Nginx, Apache, SSH, TCP/IP, DNS, HTTP/HTTPS, Selenium, Playwright, Apache JMeter, SonarQube, Prometheus, Grafana, Trivy, Checkov, HashiCorp Vault, Python".split(", ")}
+            tech={"Linux, Bash, Shell Scripting, Git, GitHub, Jenkins, GitHub Actions, Docker, Docker Compose, Kubernetes, PM2, Nginx, Apache, SSH, TCP/IP, DNS, HTTP/HTTPS, Selenium, Playwright, Apache JMeter, SonarQube, Postman, Prometheus, Grafana, Trivy, Checkov, HashiCorp Vault, Python".split(", ")}
           />
           <div className="mt-4">
             <ResumeItem
@@ -1602,7 +1602,7 @@ function Resume() {
                 "Practiced vulnerability assessment, web security testing, and system hardening, investigating misconfigurations, access control weaknesses, exposed services, and potential attack vectors.",
                 "Deployed and experimented with self-hosted applications and cloud services, including Nextcloud, while exploring reverse proxy configuration, web hosting, infrastructure monitoring, and application availability.",
               ]}
-              tech={"AWS, GCP, Azure, OCI, Cloudflare, VMware Workstation, WSL, Linux, Debian, Ubuntu, Kali Linux, Bash, Shell Scripting, Git, GitHub, Jenkins, GitHub Actions, Docker, Kubernetes, Minikube, kubectl, Helm, Terraform, Coolify, PM2, Nginx, Apache, SSH, TCP/IP, DNS, HTTP/HTTPS, Nmap, Wireshark, WHOIS, Shodan, TheHarvester, Prometheus, Grafana, Trivy, Python, Java, Tailwind CSS, Vite, TanStack, Wrangler".split(", ")}
+              tech={"AWS, GCP, Azure, OCI, Cloudflare, VMware Workstation, VMware vSphere, VirtualBox, WSL, Windows, Linux, Debian, Ubuntu, Kali Linux, Bash, Shell Scripting, Git, GitHub, Jenkins, GitHub Actions, Docker, Docker Compose, Kubernetes, Minikube, kubectl, Helm, Terraform, Coolify, PM2, Nginx, Apache, SSH, TCP/IP, DNS, HTTP/HTTPS, Nmap, Wireshark, WHOIS, Shodan, TheHarvester, Prometheus, Grafana, Trivy, Checkov, HashiCorp Vault, Python, Java, Tailwind CSS, Vite, TanStack Start, Nextcloud, Cloudflare Workers, Wrangler, Cloudflare R2, Portainer".split(", ")}
             />
           </div>
         </ResumeBlock>
@@ -2084,6 +2084,14 @@ function CertificateModal({
   const hasDocument = Boolean(card.document);
   const isPdfDocument = Boolean(card.document?.toLowerCase().endsWith(".pdf"));
 
+  // Certificates that ship a preview image (every PDF certificate has a
+  // matching .webp) are shown as that image, so the panel hugs the
+  // certificate's own size — no empty space on the sides — with the
+  // short details underneath. The iframe viewer is only a fallback for a
+  // PDF with no preview image.
+  const previewSrc = hasDocument ? (isPdfDocument ? card.image : card.document) : card.image;
+  const showAsImage = Boolean(previewSrc);
+
   // Desktop browsers render a PDF dropped straight into an <iframe> using
   // their built-in PDF plugin. Most mobile browsers have no such plugin,
   // so the exact same <iframe src="...pdf"> silently falls back to a bare
@@ -2120,20 +2128,18 @@ function CertificateModal({
         onClick={(e) => e.stopPropagation()}
         className={cn(
           "surface-2 relative flex w-full flex-col rounded-2xl border shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)] motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200 motion-safe:ease-out",
-          hasDocument
-            ? isPdfDocument
-              ? // PDFs: an iframe has no intrinsic content size to shrink-wrap
-                // to, so it keeps the original fixed viewer box exactly as
-                // before (mobile: tight aspect-ratio wrapper + footer,
-                // capped to viewport; desktop: fixed 96vh/6xl viewer).
+          showAsImage
+            ? // Every certificate: the panel is exactly as wide as the
+              // certificate shown at its own size (only shrunk when it
+              // would not fit the viewport). No minimum width, so it
+              // never grows past the certificate.
+              "h-fit max-h-[92vh] w-fit max-w-[94vw] overflow-y-auto overflow-x-hidden"
+            : hasDocument
+              ? // PDFs with no preview image (e.g. a research paper):
+                // an iframe has no intrinsic size, so it keeps the
+                // fixed viewer box.
                 "max-h-[90vh] max-w-md overflow-y-auto overflow-x-hidden md:h-[min(96vh,1200px)] md:max-w-6xl md:overflow-hidden"
-              : // Certificate images: the panel hugs the image's own size
-                // (min-width so the footer text/details never look
-                // squeezed) instead of forcing every certificate into the
-                // same wide fixed box — that fixed box is what left blank
-                // space on the sides for certificates narrower than 6xl.
-                "h-fit max-h-[90vh] w-fit min-w-[min(92vw,380px)] max-w-[92vw] overflow-y-auto"
-            : "max-w-lg overflow-hidden",
+              : "max-w-lg overflow-hidden",
           ACCENT_BORDER_CLASSES[accent],
         )}
       >
@@ -2146,20 +2152,22 @@ function CertificateModal({
           <X className="h-4 w-4" />
         </button>
 
-        {hasDocument ? (
-          // ── Clean certificate viewer (every non-AWS certificate) ──
-          // Same treatment whether the source is a PDF or an image: fills
-          // the enlarged modal, preserves aspect ratio, nothing cropped,
-          // minimal surrounding padding, no reader chrome.
-          //
-          // Mobile: the document sits in a fixed aspect-ratio box (matching
-          // the aspect used for certificate thumbnails elsewhere) so the
-          // viewer's height is derived from its width instead of stretching
-          // to fill leftover modal height — this is what eliminates the
-          // empty space below the certificate. Desktop (md:) drops the
-          // aspect ratio and fills the flex-1 area exactly as before.
-          <div className="flex min-h-0 flex-1 items-center justify-center bg-black/20 p-2 sm:p-3 md:min-h-0">
-            {isPdfDocument ? (
+        {showAsImage ? (
+          // ── Certificate at its real size ──
+          // Natural size, aspect ratio preserved, capped only by the
+          // viewport. The panel wraps this tightly, so nothing is wider
+          // than the certificate itself.
+          <div className="flex items-center justify-center bg-black/20 p-2">
+            <img
+              src={previewSrc}
+              alt={card.title}
+              className="block h-auto w-auto max-h-[78vh] max-w-full rounded-lg object-contain"
+            />
+          </div>
+        ) : (
+          hasDocument && (
+            // PDF with no preview image: keeps the iframe viewer.
+            <div className="flex min-h-0 flex-1 items-center justify-center bg-black/20 p-2 sm:p-3 md:min-h-0">
               <div className="relative aspect-[4/3] w-full max-h-full md:aspect-auto md:h-full md:w-full">
                 <iframe
                   src={pdfSrc}
@@ -2167,31 +2175,18 @@ function CertificateModal({
                   className="absolute inset-0 h-full w-full rounded-lg border-0 bg-white shadow-inner"
                 />
               </div>
-            ) : (
-              // Sized to the image's own aspect ratio (capped by viewport),
-              // same pattern as the AWS viewer below — no forced box, so no
-              // empty space on the sides for certificates that aren't 4:3.
-              <img
-                src={card.document}
-                alt={card.title}
-                className="max-h-[75vh] max-w-full h-auto w-auto rounded-lg object-contain"
-              />
-            )}
-          </div>
-        ) : (
-          // ── AWS Certified Cloud Practitioner — untouched original viewer ──
-          card.image && (
-            <div className="flex items-center justify-center bg-black/20 p-8 sm:p-10">
-              <img
-                src={card.image}
-                alt={card.title}
-                className="max-h-[70vh] w-auto max-w-full object-contain"
-              />
             </div>
           )
         )}
 
-        <div className="border-t border-border/60 p-5">
+        <div
+          className={cn(
+            "border-t border-border/60 p-5",
+            // width:0 + min-width:100% -> the footer takes the
+            // certificate's width but never adds to it.
+            showAsImage && "w-0 min-w-full",
+          )}
+        >
           <h3 className="text-lg font-semibold text-foreground">{card.title}</h3>
 
           {card.certDetails && (
@@ -2786,7 +2781,7 @@ function ProjectDetailPage({
                 </span>
                 <div>
                   <div className="mb-1 text-sm font-semibold text-foreground">{ch.title}</div>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-sm leading-relaxed text-body">
                     {ch.description}
                   </p>
                 </div>
@@ -4243,7 +4238,7 @@ function Journey() {
                     className="absolute top-[7px] h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-muted-foreground/50"
                     style={{ left: "6px" }}
                   />
-                  <span className="text-sm leading-relaxed text-foreground/80">{event}</span>
+                  <span className="text-sm leading-relaxed text-body">{event}</span>
                 </li>
               ))}
             </ol>
