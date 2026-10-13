@@ -1585,8 +1585,8 @@ function Resume() {
             <ResumeItem
               heading="Cloud, DevOps & Security Projects"
               organization="Independent Practice"
-              year="Mar 2023 – Aug 2025"
-              location=""
+              year="" //Mar 2023 – Present
+              location="" // Remote
               description="Built and managed personal cloud, virtualization, DevOps, networking, and cybersecurity labs involving cloud infrastructure, Linux administration, automation, and security assessment."
               points={[
                 "Provisioned and explored cloud infrastructure using AWS EC2, S3, IAM, VPC, EBS, ELB, EKS, ECR, and CloudWatch, practicing resource configuration, access control, networking, and monitoring.",
