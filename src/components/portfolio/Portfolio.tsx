@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Instagram,
   Linkedin,
   Github,
   Flag,
-  Gamepad2,
   Mail,
   MapPin,
   Download,
@@ -24,21 +23,14 @@ import {
   Code2,
   CheckCircle2,
   GraduationCap,
-  CircleCheck,
-  Clock3,
-  FolderKanban,
-  BadgeCheck,
-  Bot,
   Workflow,
   Activity,
-  Link,
   ChevronDown,
-  Zap,
-  Globe,
-  Monitor,
   MessageSquare,
   X,
   ArrowLeft,
+  Play,
+  Square,
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
@@ -48,7 +40,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import emailjs from "@emailjs/browser";
-import profileImg from "/r2/images/profile.jpeg";
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
@@ -80,52 +71,6 @@ export function sectionFromSlug(slug: string): SectionKey | null {
   const match = (Object.keys(SECTION_SLUG) as SectionKey[]).find((k) => SECTION_SLUG[k] === slug);
   return match ?? null;
 }
-
-// ═══════════════════════════════════════════════════════════
-// URL SYNC - map each section to a real, shareable path
-//
-// This makes the active section reflect in the address bar (so a
-// link to /contact opens straight on Contact), makes browser
-// back/forward move between sections instead of doing nothing, and
-// survives a refresh instead of always dumping the visitor back on
-// About.
-//
-// IMPORTANT — this only covers client-side navigation (pushState +
-// popstate), which is all a single component file can do on its
-// own. For a *hard* refresh or a freshly opened link to /resume to
-// actually work, the server needs a matching route that renders
-// this same page — i.e. you need route entries for /resume,
-// /portfolio, /build, /contact, and /journey in your TanStack
-// Start `src/routes/` folder (each can just render <Portfolio />).
-// Without those, a direct load of e.g. /contact will 404 at the
-// server before this component ever runs.
-// ═══════════════════════════════════════════════════════════
-
-const SECTION_PATHS: Record<SectionKey, string> = {
-  about: "/",
-  resume: "/resume",
-  portfolio: "/portfolio",
-  infra: "/build",
-  contact: "/contact",
-  journey: "/journey",
-};
-
-const PATH_TO_SECTION: Record<string, SectionKey> = Object.fromEntries(
-  Object.entries(SECTION_PATHS).map(([key, path]) => [path, key as SectionKey]),
-);
-
-function sectionFromPath(pathname: string): SectionKey {
-  return PATH_TO_SECTION[pathname] ?? "about";
-}
-
-const SECTION_TITLES: Record<SectionKey, string> = {
-  about: "Aditya Shelke | Cloud and DevOps Engineer",
-  resume: "Resume | Aditya Shelke",
-  portfolio: "Portfolio | Aditya Shelke",
-  infra: "Build | Aditya Shelke",
-  contact: "Contact | Aditya Shelke",
-  journey: "Journey | Aditya Shelke",
-};
 
 // ═══════════════════════════════════════════════════════════
 // HOOK - Theme
@@ -1056,72 +1001,39 @@ function CvModal({ onClose }: { onClose: () => void }) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// COMPONENT - HeroSkeleton
+// Hero loading skeleton
 //
-// Softens the gap between "blank page" and "hydrated app" on slow
-// connections. This does NOT replace the real hero markup in the
-// server-rendered HTML — the actual content (name, role, bio,
-// socials) always renders normally underneath, so crawlers and
-// no-JS clients still get the full content and nothing regresses
-// on SEO. This is purely a visual overlay, absolutely positioned
-// on top of the real hero, shown by default (present in the SSR
-// HTML, so it paints immediately, before any JS has run) and faded
-// out once `mounted` flips true post-hydration. On a slow
-// connection that gap can be a beat or more; without this, users
-// see either nothing styled yet or a flash of unstyled content —
-// with this, they see a clean, intentional-looking placeholder
-// instead.
+// Instead of an overlay with guessed shapes, the real hero text/buttons
+// are tagged with `.sk`. While `data-sk="true"` (before hydration / until
+// `mounted`), each tagged element keeps its exact layout box but shows a
+// pulsing block instead of its content — so every placeholder sits exactly
+// where the real text will appear, and nothing shifts when it swaps in.
+// The attribute is true in the server-rendered HTML, so this paints before
+// any JS runs.
+//
+// Wrapped in `scripting: enabled` so visitors with JavaScript disabled
+// (where `mounted` would never flip) still see the real content instead
+// of permanent placeholders.
 // ═══════════════════════════════════════════════════════════
 
-function HeroSkeleton({ mounted }: { mounted: boolean }) {
-  return (
-    <>
-    {/* No-JS fallback: the overlay only fades out once React mounts, so
-        without JavaScript it would cover the real hero forever. <noscript>
-        content is rendered in the server HTML and ignored by the client,
-        so this only ever applies when scripts are blocked or failed. */}
-    <noscript>
-      <style>{".hero-skeleton{display:none !important}"}</style>
-    </noscript>
-    <div
-      aria-hidden
-      className={cn(
-        "hero-skeleton absolute inset-0 z-30 rounded-2xl bg-[var(--surface-2,inherit)] transition-opacity duration-300 motion-reduce:transition-none",
-        mounted ? "opacity-0 pointer-events-none" : "opacity-100 motion-safe:animate-pulse",
-      )}
-    >
-      <div className="flex h-full flex-col justify-center gap-4 px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-5 md:py-5 lg:px-8">
-        {/* Column 1 — avatar + name/role, mirrors the real column 1 */}
-        <div className="flex items-center gap-4 md:min-w-0 md:flex-[1.3_1_auto] lg:flex-1 md:border-r md:border-border/50 md:pr-4 lg:pr-8">
-          <div className="h-20 w-20 shrink-0 rounded-xl bg-foreground/10 lg:h-24 lg:w-24" />
-          <div className="min-w-0 flex-1 space-y-2.5">
-            <div className="h-5 w-40 max-w-full rounded bg-foreground/10 md:h-6 md:w-48" />
-            <div className="h-4 w-28 rounded bg-foreground/10" />
-          </div>
-        </div>
-
-        {/* Column 2 — status block, desktop only (mobile collapses this too) */}
-        <div className="hidden md:flex md:w-auto md:shrink-0 lg:shrink md:flex-col md:justify-center md:gap-2 md:border-r md:border-border/50 md:px-4 lg:w-[32%] lg:px-8">
-          <div className="h-3 w-20 rounded bg-foreground/10" />
-          <div className="h-3 w-32 rounded bg-foreground/10" />
-          <div className="h-3 w-24 rounded bg-foreground/10" />
-        </div>
-
-        {/* Column 3 — CV button, email, socials, desktop only */}
-        <div className="hidden md:flex md:flex-auto lg:flex-1 md:flex-col md:items-end md:justify-center md:gap-3 md:pl-4 lg:pl-8">
-          <div className="h-9 w-28 rounded-full bg-foreground/10" />
-          <div className="h-4 w-40 rounded bg-foreground/10" />
-          <div className="flex gap-2">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-7 w-7 rounded-full bg-foreground/10" />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-    </>
-  );
+const HERO_SK_CSS = `
+@media (scripting: enabled) {
+  [data-sk="true"] .sk {
+    color: transparent !important;
+    text-shadow: none !important;
+    background: rgba(128, 128, 128, 0.22);
+    border-color: transparent !important;
+    border-radius: 6px;
+    animation: hero-sk-pulse 1.4s ease-in-out infinite;
+  }
+  [data-sk="true"] .sk * { visibility: hidden; }
+  [data-sk="true"] .sk-role { width: 9.5rem; }
 }
+@keyframes hero-sk-pulse { 50% { opacity: 0.5; } }
+@media (prefers-reduced-motion: reduce) {
+  [data-sk="true"] .sk { animation: none; }
+}
+`;
 
 function ProfileHero({
   onJourney,
@@ -1140,7 +1052,11 @@ function ProfileHero({
   return (
     <>
     <section className="relative">
-      <div className="surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]">
+      <div
+        data-sk={mounted ? "false" : "true"}
+        className="surface-2 relative overflow-hidden rounded-2xl border border-border/60 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]"
+      >
+        <style>{HERO_SK_CSS}</style>
         {/* Mobile theme toggle — condensed circular button, shares theme state with the desktop slider */}
         <ThemeToggleMobile
           theme={theme}
@@ -1150,23 +1066,27 @@ function ProfileHero({
         />
 
         {/* ── 3-column row ── */}
-        <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-5 md:py-5 lg:px-8">
+        <div className="relative flex flex-col px-6 py-5 md:flex-row md:items-stretch md:gap-0 md:px-8 md:py-5">
           {/* ── COL 1 - Photo + name + role + mobile chevron ── */}
-          <div className="flex flex-col justify-center md:min-w-0 md:flex-[1.3_1_auto] lg:flex-1 md:pr-4 lg:pr-8 md:border-r md:border-border/50">
+          <div className="flex flex-col justify-center md:flex-1 md:pr-8 md:border-r md:border-border/50">
             <div className="flex items-center gap-4 min-w-0">
               <div className="relative shrink-0">
                 <FadeImage
                   src="/r2/images/profile.jpeg"
                   alt="Aditya Shelke"
-                  containerClassName="h-20 w-20 lg:h-24 lg:w-24 rounded-xl ring-2 ring-[color:var(--accent-orange)]/70"
+                  containerClassName="h-20 w-20 md:h-24 md:w-24 rounded-xl ring-2 ring-[color:var(--accent-orange)]/70"
                   className="rounded-xl object-cover"
                 />
               </div>
               <div className="min-w-0">
-                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight">
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight w-fit sk">
                   Aditya <span className="font-light text-muted-foreground">Shelke</span>
                 </h1>
-                <div className="mt-0.5 h-6 md:h-5">
+                {/* No `w-fit` here: VerticalSlide's words are absolutely
+                    positioned, so a shrink-wrapped wrapper collapses to 0px
+                    wide and its overflow-hidden clips the role text. The
+                    skeleton width comes from `.sk-role` while loading only. */}
+                <div className="mt-0.5 h-6 md:h-5 sk sk-role">
                   <VerticalSlide words={["DevOps Engineer", "Cloud Architect"]} />
                 </div>
               </div>
@@ -1200,14 +1120,14 @@ function ProfileHero({
                 : "max-h-0 opacity-0 md:opacity-100",
             )}
           >
-            <div className="md:w-auto md:shrink-0 lg:shrink md:px-4 lg:w-[32%] lg:px-19 md:flex md:flex-col md:justify-center md:border-r md:border-border/50">
+            <div className="md:w-[32%] md:px-19 md:flex md:flex-col md:justify-center md:border-r md:border-border/50">
               {/* Mobile */}
               <div className="md:hidden space-y-3">
                 <div className="flex items-center justify-between text-[13px]">
                   <div className="flex items-center gap-1">
                     <span className="text-muted-foreground/60"></span>
 
-                    <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                    <span className="flex items-center gap-1.5 text-emerald-400 font-medium sk">
                       <span className="relative inline-flex h-1.5 w-1.5">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
@@ -1217,8 +1137,8 @@ function ProfileHero({
                   </div>
 
                   <div className="flex items-center gap-1">
-                    <span className="text-muted-foreground/60">Location :</span>
-                    <span className="text-foreground/70">Pune, IN</span>
+                    <span className="text-muted-foreground/60 sk">Location :</span>
+                    <span className="text-foreground/70 sk">Pune, IN</span>
                   </div>
                 </div>
 
@@ -1226,14 +1146,14 @@ function ProfileHero({
 
                 <a
                   href="mailto:shelkeaditya@proton.me"
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-fit sk"
                 >
                   <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
                   shelkeaditya@proton.me
                 </a>
                 <div className="flex items-center justify-between">
                   <div className="shrink-0">
-                    <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden">
+                    <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden sk">
                       <button
                         type="button"
                         onClick={() => setCvOpen(true)}
@@ -1255,7 +1175,7 @@ function ProfileHero({
                   </div>
 
                   <div className="shrink-0">
-                    <div className="flex items-center gap-0.3"> 
+                    <div className="flex items-center gap-0.3 sk">
                     <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
                     <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
                     <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
@@ -1267,15 +1187,15 @@ function ProfileHero({
               </div>
               {/* Desktop */}
               <div className="hidden md:block">
-                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                <div className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60 w-fit sk">
                   Current Status
                 </div>
                 <div className="gap-1 font-mono text-sm">
                   <div className="flex items-center gap-3">
                     <span className="w-16 shrink-0 text-[11px] text-foreground/70">
-                      status:
+                      <span className="sk">status:</span>
                     </span>
-                    <span className="flex items-center gap-1.5 whitespace-nowrap text-emerald-400 font-medium text-[13px]">
+                    <span className="flex items-center gap-1.5 whitespace-nowrap text-emerald-400 font-medium text-[13px] sk">
                       <span className="relative inline-flex h-1.5 w-1.5">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/60" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
@@ -1286,26 +1206,26 @@ function ProfileHero({
 
                   <div className="flex items-center gap-3">
                     <span className="w-16 shrink-0 text-[11px] text-foreground/70">
-                      tz:
+                      <span className="sk">tz:</span>
                     </span>
-                    <span className="text-[13px] text-foreground/70">UTC+5:30</span>
+                    <span className="text-[13px] text-foreground/70 sk">UTC+5:30</span>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <span className="w-16 shrink-0 text-[11px] text-foreground/70">
-                      location:
+                      <span className="sk">location:</span>
                     </span>
-                    <span className="text-[13px] text-foreground/70">Pune, IN</span>
+                    <span className="text-[13px] text-foreground/70 sk">Pune, IN</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* ── COL 3 - Download CV + email + socials ── */}
-            <div className="hidden md:flex flex-col gap-3 pt-0 md:flex-auto lg:flex-1 md:pl-4 lg:pl-8 md:items-end">
+            <div className="hidden md:flex flex-col gap-3 pt-0 md:flex-1 md:pl-8 md:items-end">
               <span aria-hidden className="h-px w-full bg-border/60 md:hidden" />
               {/* Download CV */}
-              <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden">
+              <div className="inline-flex w-fit items-stretch rounded-full border border-[color:var(--accent-blue)]/50 bg-transparent overflow-hidden sk">
                 <button
                   type="button"
                   onClick={() => setCvOpen(true)}
@@ -1332,7 +1252,7 @@ function ProfileHero({
               <div className="flex flex-1 items-center">
                 <a
                   href="mailto:shelkeaditya@proton.me"
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors"
+                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors sk"
                 >
                   <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
                   shelkeaditya@proton.me
@@ -1340,7 +1260,7 @@ function ProfileHero({
               </div>
 
               {/* Social icons + theme toggle */}
-              <div className="flex items-center gap-0.3">
+              <div className="flex items-center gap-0.3 sk">
                 <IconLink href="https://linkedin.com/in/shelkeaditya" icon={Linkedin} label="LinkedIn" />
                 <IconLink href="https://github.com/shelkeaditya" icon={Github} label="GitHub" />
                 <IconLink href="https://instagram.com/shelke__aditya" icon={Instagram} label="Instagram" />
@@ -1350,8 +1270,6 @@ function ProfileHero({
             </div>
           </div>
         </div>
-
-        <HeroSkeleton mounted={mounted} />
       </div>
     </section>
 
@@ -1373,7 +1291,7 @@ const NAV: {
   { key: "resume", label: "Resume", icon: FileText },
   { key: "portfolio", label: "Portfolio", icon: Briefcase },
   { key: "infra", label: "Build", icon: Workflow },
-  { key: "contact", label: "Contact", icon: Mail },
+  { key: "contact", label: "Contact", icon: Send },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -1394,7 +1312,7 @@ function NavPanel({
   mounted: boolean;
 }) {
   return (
-    <aside className="surface-1 sticky top-7 h-fit rounded-3xl border border-border/60 p-3 lg:p-5 shadow-[0_10px_30px_-20px_rgba(0,0,0,0.6)]">
+    <aside className="surface-1 sticky top-7 h-fit rounded-3xl border border-border/60 p-5 shadow-[0_10px_30px_-20px_rgba(0,0,0,0.6)]">
       <nav className="flex flex-col gap-1.5">
         {NAV.map(({ key, label, icon: Icon }) => {
           const isActive = active === key;
@@ -1403,7 +1321,7 @@ function NavPanel({
               key={key}
               onClick={() => setActive(key)}
               className={cn(
-                "group relative flex items-center gap-2 rounded-2xl px-3 lg:px-4 py-3.5 transition-all duration-300 ease-out",
+                "group relative flex items-center gap-2 rounded-2xl px-4 py-3.5 transition-all duration-300 ease-out",
                 isActive
                   ? "bg-violet-500/10 text-violet-500 border-l-2 border-violet-500 shadow-[0_0_20px_rgba(124,58,237,0.25)]"
                   : "text-muted-foreground hover:bg-foreground/8 hover:translate-x-1",
@@ -1430,7 +1348,7 @@ function NavPanel({
 
       {/* Theme toggle — left-aligned to match the nav buttons' px-4 rhythm,
           with breathing room above/below rather than being centered. */}
-      <div className="px-2 lg:px-6 pt-2 pb-.5">
+      <div className="px-6 pt-2 pb-.5">
         <ThemeToggleDesktop theme={theme} toggle={toggleTheme} mounted={mounted} />
       </div>
     </aside>
@@ -2864,1116 +2782,889 @@ function ProjectDetailPage({
   );
 }
 
-// ═════════════════════════════════════════════════════════════
-// CONSTANTS - Infra Build data
-// ═════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// SECTION - Build (native architecture diagram)
+//
+// Inline-SVG reproduction of the reference architecture diagram
+// (classic preset). Geometry is expressed in a fixed 923×589 viewBox
+// so node sizes, spacing and connector routing keep their proportions
+// at every width; narrow screens scroll horizontally instead of
+// squeezing the nodes.
+//
+// All colours live in CSS variables scoped to `.arch-root`, switched by
+// the portfolio's existing theme (`data-theme`) — no second toggle and
+// no global styles. Trace / pulse animations only run while the "Trace"
+// control is on; `prefers-reduced-motion` disables all motion.
+// ═══════════════════════════════════════════════════════════
 
-type InfraCategory = "build" | "runtime" | "observability" | "application" | "communication" | "client";
+type ArchCat = "backend" | "database" | "cloud" | "external";
+type ArchIcon = "browser" | "code" | "cloud" | "database";
+type ArchColor = "green" | "purple" | "red" | "grey";
 
-type InfraDetail = {
-  purpose: string;
-  technologies: string[];
-  responsibilities: string[];
-  relationships: string[];
-  configuration?: string;
-  buildProcess?: string;
-  runtimeDetails?: string;
-  futureImprovements?: string;
-};
-
-type InfraNode = {
+interface ArchNode {
   id: string;
-  title: string;
-  subtitle: string;
-  meta: string; // short preview shown on the card itself
-  items: string[]; // contents shown on the node card
-  category: InfraCategory;
-  icon: React.ComponentType<{ className?: string }>;
-  size?: "md" | "lg";
-  group?: "build" | "worker" | "observability" | "browser"; // which dashed group outline this node sits inside, if any
-  x: number; // px on the infra canvas
-  y: number; // px on the infra canvas
-  detail: InfraDetail;
-};
-
-type InfraEdgeStyle = "solid" | "dashed" | "dotted" | "vertical" | "curved";
-
-type InfraEdge = {
-  from: string;
-  to: string;
-  label: string;
-  style: InfraEdgeStyle;
-  category: InfraCategory; // colors the edge
-  bidirectional?: boolean;
-  // Fixed label position, used instead of the auto-computed longest-segment anchor.
-  // Needed for the Worker → Observability telemetry edge: with only two branches (Logs,
-  // Traces) fanning out underneath it, the longest straight run of the routed line is
-  // whichever branch's final descent into its node, which pulls the label off-center. A
-  // pinned anchor keeps "Emits Telemetry" visually centered between the Worker and the
-  // Observability container regardless of how the branches route.
-  labelAnchor?: InfraPoint;
-  // Shifts this edge's endpoint off the node's center point along whichever side it
-  // enters — see infraPort. Only applies to edges that get the plain point-to-point
-  // route (i.e. don't share a bus with siblings). Used so DNS and R2, which both enter
-  // the Worker's top side but come from different sources, land on two distinct points
-  // instead of colliding at the one default center-of-side port.
-  toPortOffset?: number;
-};
-
-type InfraGroup = {
-  id: "build" | "worker" | "observability" | "browser";
-  title: string;
-  category: InfraCategory;
   x: number;
   y: number;
   w: number;
   h: number;
+  cat: ArchCat;
+  icon: ArchIcon;
+  title: string;
+  sub: string;
+  src: number;
+  titleDy: number;
+  subDy: number;
+}
+
+interface ArchEdge {
+  id: string;
+  from: string;
+  to: string;
+  d: string;
+  color: ArchColor;
+  dashed: boolean;
+  width: number;
+  label: string;
+  lx: number;
+  ly: number;
+}
+
+const ARCH_W = 923;
+const ARCH_H = 589;
+
+const ARCH_NODES: ArchNode[] = [
+  { id: "browser", x: 65, y: 248, w: 155, h: 71, cat: "external", icon: "browser", title: "User Browser", sub: "Portfolio visitor", src: 2, titleDy: 32, subDy: 48 },
+  { id: "worker", x: 388, y: 248, w: 184, h: 75, cat: "backend", icon: "code", title: "Cloudflare Worker", sub: "TanStack Start SSR · src/server.ts", src: 3, titleDy: 35, subDy: 50 },
+  { id: "r2", x: 685, y: 366, w: 165, h: 71, cat: "database", icon: "database", title: "R2 Bucket", sub: "portfolio-assets", src: 2, titleDy: 32, subDy: 48 },
+  { id: "obs", x: 685, y: 102, w: 205, h: 75, cat: "cloud", icon: "cloud", title: "Observability", sub: "Worker logs · invocation logs · traces", src: 1, titleDy: 34, subDy: 50 },
+  { id: "email", x: 338, y: 448, w: 174, h: 71, cat: "external", icon: "browser", title: "EmailJS", sub: "Contact form delivery", src: 1, titleDy: 33, subDy: 49 },
+];
+
+// Order matters for the trace stagger (160ms per step).
+const ARCH_DESC: Record<string, string> = {
+  browser: "The visitor's browser loads the portfolio page, receives the server-rendered HTML, and requests the assets needed to display the site.",
+  worker: "Runs the TanStack Start SSR application through src/server.ts. Handles incoming portfolio requests, returns server-rendered HTML, serves application responses, and retrieves static assets from R2.",
+  r2: "Stores portfolio assets such as images, the profile photo, favicon, and resume. The Worker retrieves these objects when the application requests them.",
+  obs: "Provides visibility into Worker execution through logs, invocation records, and traces, helping diagnose errors and investigate runtime behavior.",
+  email: "Handles portfolio contact form delivery through the EmailJS API, allowing visitors to send messages through the contact form.",
 };
 
+// Real request lifecycle used by the "Run request trace" walkthrough.
+const ARCH_FLOW: string[] = ["req", "assets", "bytes", "html", "logs"];
 
-// Four containers laid out strictly left → right — Build, Cloudflare Worker,
-// Observability, User Browser — each its own dashed boundary so the topology reads as a
-// single horizontal pipeline. Build feeds the Worker; the Worker's live request line runs
-// straight through Observability's DNS card on its way to the User Browser; R2 taps in
-// from Observability's own right edge; Worker Logs/Events branch off DNS underneath it;
-// and EmailJS hangs off the User Browser on its own curved connector, outside every box.
-const INFRA_GROUPS: InfraGroup[] = [
-  { id: "build", title: "Build", category: "build", x: 15, y: 190, w: 200, h: 220 },
-  { id: "observability", title: "Observability", category: "observability", x: 535, y: 110, w: 260, h: 440 },
+const ARCH_EDGES: ArchEdge[] = [
+  { id: "req-r2", from: "browser", to: "worker", d: "M142 248 V232 Q142 226 148 226 H474 Q480 226 480 232 V246", color: "grey", dashed: false, width: 1.4, label: "GET /r2/* · images and PDFs", lx: 310, ly: 175 },
+  { id: "req", from: "browser", to: "worker", d: "M220 276 H386", color: "green", dashed: false, width: 2, label: "HTTPS page request · /portfolio", lx: 304, ly: 264 },
+  { id: "html", from: "worker", to: "browser", d: "M480 323 V342 Q480 348 474 348 H148 Q142 348 142 342 V321", color: "purple", dashed: true, width: 1.5, label: "SSR HTML", lx: 310, ly: 337 },
+  { id: "assets", from: "worker", to: "r2", d: "M572 299 H622 Q628 299 628 305 V404 Q628 410 634 410 H683", color: "green", dashed: false, width: 2, label: "Assets.get(key)", lx: 585, ly: 355 },
+  { id: "bytes", from: "r2", to: "worker", d: "M685 396 H669 Q663 396 663 390 V291 Q663 285 657 285 H574", color: "purple", dashed: true, width: 1.5, label: "Object bytes", lx: 663, ly: 328 },
+  { id: "logs", from: "worker", to: "obs", d: "M572 271 H622 Q628 271 628 265 V145 Q628 139 634 139 H683", color: "purple", dashed: true, width: 1.5, label: "Invocation logs · traces", lx: 628, ly: 194 },
+  { id: "contact", from: "browser", to: "email", d: "M220 290 H273 Q279 290 279 296 V478 Q279 484 285 484 H336", color: "red", dashed: true, width: 1.5, label: "Contact form · EmailJS API", lx: 279, ly: 375 },
 ];
 
-const INFRA_NODES: InfraNode[] = [
-  {
-    id: "development",
-    title: "Local Development",
-    subtitle: "Local Environment",
-    meta: "VS Code · React · TS",
-    items: ["VS Code", "React", "TypeScript", "TanStack Start", "TanStack Router", "Tailwind CSS", "Git"],
-    category: "build",
-    icon: Code2,
-    group: "build",
-    x: 115,
-    y: 250,
-    detail: {
-      purpose:
-        "Local machine where the portfolio is written and iterated on before every commit — SSR renders live locally too, not just in production.",
-      technologies: ["VS Code", "React", "TypeScript", "TanStack Start", "TanStack Router", "Tailwind CSS", "Git"],
-      responsibilities: [
-        "Component development",
-        "Styling & layout",
-        "Type safety",
-        "Local testing before commit",
-      ],
-      relationships: ["Pushes commits to the GitHub Repository"],
-      configuration: "Vite dev server with hot module reload",
-      futureImprovements: "Add Storybook for isolated component development",
-    },
-  },
-  {
-    id: "github",
-    title: "GitHub Repository",
-    subtitle: "Source Control",
-    meta: "main branch · git push",
-    items: ["Main Branch", "Version Control"],
-    category: "build",
-    icon: Github,
-    group: "build",
-    x: 115,
-    y: 350,
-    detail: {
-      purpose:
-        "Stores the source code and automatically triggers a build and deployment on every push to main — no manual webhook step.",
-      technologies: ["Main Branch", "Version Control"],
-      responsibilities: [
-        "Stores source code & commit history",
-        "Tracks changes on the main branch",
-        "Automatically triggers a Cloudflare Worker deployment on every push to main",
-      ],
-      relationships: ["Receives pushes from Local Development", "Automatically deploys to the Cloudflare Worker"],
-      configuration: "main is the only deploy branch — every push ships automatically",
-      futureImprovements: "Add branch preview deployments for pull requests",
-    },
-  },
-  {
-    id: "worker",
-    title: "Cloudflare Worker",
-    subtitle: "Deployment Runtime",
-    meta: "SSR · Edge Runtime",
-    items: ["Build Application", "SSR Runtime", "Edge Runtime", "Global Deployment"],
-    category: "runtime",
-    icon: Cloud,
-    size: "lg",
-    group: "worker",
-    x: 385,
-    y: 300,
-    detail: {
-      purpose:
-        "The center of the deployment — automatically builds the app and runs live server-side rendering on Cloudflare's global edge network for every request.",
-      technologies: ["Cloudflare Workers", "Bun", "TanStack Start SSR", "TanStack Router"],
-      responsibilities: [
-        "Builds the project automatically on every push to main",
-        "TanStack Router resolves the matched route before rendering",
-        "Runs src/server.ts to render the page server-side on every request",
-        "Requests static assets from the bound R2 bucket",
-        "Serves every request close to the visitor",
-      ],
-      relationships: [
-        "Automatically deployed from the GitHub Repository",
-        "Its response travels through Cloudflare DNS on the way to the browser",
-        "Fetches assets from the bound R2 bucket",
-        "Reports to Worker Logs & Worker Events",
-        "Serves the User Browser directly over HTTPS",
-      ],
-      buildProcess: "push to main → automatic build → wrangler deploy -c dist/server/wrangler.json",
-      runtimeDetails:
-        "wrangler.jsonc sets \"main\": \"src/server.ts\" and \"compatibility_flags\": [\"nodejs_compat\"] — the Worker genuinely executes this file per request; it's not serving pre-built static files",
-    },
-  },
-  {
-    id: "dns",
-    title: "Cloudflare DNS",
-    subtitle: "Domain Routing",
-    meta: "CNAME · HTTPS/TLS",
-    items: ["Custom Domain", "HTTPS / TLS", "Traffic Routing"],
-    category: "application",
-    icon: Globe,
-    group: "observability",
-    x: 665,
-    y: 300,
-    detail: {
-      purpose: "Resolves the custom domain and routes every request from the Worker to the browser over HTTPS — sitting directly on the main request line.",
-      technologies: ["Custom Domain", "HTTPS / TLS", "Traffic Routing"],
-      responsibilities: [
-        "Custom domain resolution",
-        "TLS termination",
-        "Routes the Worker's response through to the User Browser",
-        "Branches off to Worker Logs & Worker Events",
-      ],
-      relationships: [
-        "Sits on the request line between the Cloudflare Worker and the User Browser",
-        "Feeds Worker Logs & Worker Events",
-      ],
-    },
-  },
-  {
-    id: "r2",
-    title: "R2 Assets",
-    subtitle: "Static Asset Storage",
-    meta: "Images · Resume · Favicon",
-    items: ["Profile Image", "Resume PDF", "Favicon", "Static Images"],
-    category: "observability",
-    icon: FileText,
-    group: "observability",
-    x: 700,
-    y: 190,
-    detail: {
-      purpose: "Object storage bound straight into the Worker's runtime — never exposed directly to the browser.",
-      technologies: ["Profile Image", "Resume PDF", "Favicon", "Static Images"],
-      responsibilities: [
-        "Stores the profile image, resume PDF, favicon & other static images",
-        "Serves reads only through the Worker's binding",
-      ],
-      relationships: ["Bound directly into the Cloudflare Worker — fetched on demand, never called directly by the browser"],
-      configuration: "wrangler.jsonc → r2_buckets: [{ binding: \"ASSETS\" }]",
-    },
-  },
-  {
-    id: "logs",
-    title: "Worker Logs",
-    subtitle: "Observability",
-    meta: "Runtime tracing",
-    items: ["Runtime Tracing", "Performance", "Diagnostics"],
-    category: "observability",
-    icon: Activity,
-    group: "observability",
-    x: 710,
-    y: 410,
-    detail: {
-      purpose: "Traces execution inside the Cloudflare Worker to spot latency and runtime issues — invocation counts, duration and CPU time roll up here too.",
-      technologies: ["Performance", "Diagnostics"],
-      responsibilities: [
-        "Captures performance traces",
-        "Helps diagnose slow requests",
-        "Tracks invocation count, duration & CPU time per run",
-      ],
-      relationships: ["Branches off Cloudflare DNS, downstream of the Worker"],
-      configuration: "wrangler.jsonc → observability.traces: { enabled: true }",
-    },
-  },
-  {
-    id: "events",
-    title: "Worker Events",
-    subtitle: "Observability",
-    meta: "Request · Deploy Events",
-    items: ["Request Events", "Deploy Events", "Logs", "Dashboards"],
-    category: "observability",
-    icon: Zap,
-    group: "observability",
-    x: 620,
-    y: 490,
-    detail: {
-      purpose:
-        "The event feed inside Cloudflare's Workers Observability dashboard — every request, deployment, runtime log and alert the Worker generates, charted into one timeline.",
-      technologies: ["Workers Observability"],
-      responsibilities: [
-        "Timelines incoming requests",
-        "Surfaces deployment events",
-        "Streams runtime logs & errors",
-        "Charts everything into dashboards",
-      ],
-      relationships: ["Branches off Cloudflare DNS, downstream of the Worker"],
-      configuration: "wrangler.jsonc → observability.logs: { enabled: true, invocation_logs: true }",
-    },
-  },
-  {
-    id: "userBrowser",
-    title: "User Browser",
-    subtitle: "Client",
-    meta: "Brave · Safari · Edge",
-    items: ["Brave", "Safari", "Edge"],
-    category: "client",
-    icon: Monitor,
-    group: "browser",
-    x: 930,
-    y: 300,
-    detail: {
-      purpose: "The end of the main request flow — whatever browser a visitor is using to view the site.",
-      technologies: ["Brave", "Safari", "Edge"],
-      responsibilities: ["Renders the SSR application over HTTPS", "Submits the Contact Form when used"],
-      relationships: [
-        "Receives the SSR application directly from the Cloudflare Worker",
-        "Requests images, favicon & resume through the Worker, which fetches them from R2",
-        "Submits the Contact Form to EmailJS",
-      ],
-    },
-  },
-  {
-    id: "communication",
-    title: "EmailJS",
-    subtitle: "Communication Service",
-    meta: "Contact Form",
-    items: ["Contact Form", "Email Delivery", "Communication Service"],
-    category: "communication",
-    icon: Mail,
-    x: 930,
-    y: 420,
-    detail: {
-      purpose:
-        "Delivers Contact Form submissions straight to a designated inbox — a branch off the User Browser only, with no ties to GitHub or Cloudflare at all.",
-      technologies: ["EmailJS"],
-      responsibilities: [
-        "Receives form data client-side",
-        "Relays the message via the EmailJS API",
-        "Delivers the email to a designated inbox",
-      ],
-      relationships: ["Only the User Browser connects to it — never the Cloudflare Worker"],
-      configuration: "Client-side only call from the browser — no backend, no queue",
-      futureImprovements: "Add a serverless fallback queue for guaranteed delivery",
-    },
-  },
-];
-
-// Strict left → right pipeline: Build feeds the Worker, and the Worker's live request line
-// runs straight through the DNS card (inside Observability) on its way to the User Browser
-// — DNS is on the main line, not a side branch. R2 is fed separately by a bold arrow off
-// Observability's own right border (drawn directly in the SVG below, not as a node edge).
-// Worker Logs & Worker Events branch off DNS underneath it, sharing one trunk. EmailJS sits
-// outside every container, reached only by a curved branch off the User Browser.
-const INFRA_EDGES: InfraEdge[] = [
-  { from: "development", to: "github", label: "git push", style: "dashed", category: "build" },
-  { from: "github", to: "worker", label: "Auto Deploy", style: "dashed", category: "build" },
-  { from: "worker", to: "dns", label: "", style: "solid", category: "runtime" },
-  { from: "r2", to: "worker", label: "", style: "dotted", category: "observability" },
-  { from: "dns", to: "userBrowser", label: "HTTPS / SSR Response", style: "solid", category: "runtime" },
-  { from: "dns", to: "logs", label: "", style: "dotted", category: "observability" },
-  { from: "dns", to: "events", label: "", style: "dotted", category: "observability" },
-  {
-    from: "userBrowser",
-    to: "communication",
-    label: "Mail Delivery",
-    style: "curved",
-    category: "communication",
-    labelAnchor: { x: 890, y: 360 },
-  },
-];
-
-const INFRA_CATEGORY_STYLE: Record<InfraCategory, { text: string; ring: string; dot: string; stroke: string }> = {
-  build: {
-    text: "text-orange-400",
-    ring: "border-orange-400/40",
-    dot: "bg-orange-400",
-    stroke: "#fb923c",
-  },
-  runtime: {
-    text: "text-emerald-400",
-    ring: "border-emerald-400/40",
-    dot: "bg-emerald-400",
-    stroke: "#34d399",
-  },
-  observability: {
-    text: "text-violet-400",
-    ring: "border-violet-400/40",
-    dot: "bg-violet-400",
-    stroke: "#a78bfa",
-  },
-  application: {
-    text: "text-blue-400",
-    ring: "border-blue-400/40",
-    dot: "bg-blue-400",
-    stroke: "#60a5fa",
-  },
-  communication: {
-    text: "text-fuchsia-400",
-    ring: "border-fuchsia-400/40",
-    dot: "bg-fuchsia-400",
-    stroke: "#e879f9",
-  },
-  client: {
-    text: "text-slate-300",
-    ring: "border-slate-300/40",
-    dot: "bg-slate-300",
-    stroke: "#cbd5e1",
-  },
-};
-
-
-// ═══════════════════════════════════════════════════════════
-// SECTION - Infra Build
-// ═══════════════════════════════════════════════════════════
-
-const INFRA_CANVAS_W = 1057;
-const INFRA_CANVAS_H = 577;
-
-// Node width now sizes to its own content (title + icon, subtitle, meta — whichever is
-// widest) instead of a fixed "lg | default" bucket, while keeping horizontal padding
-// perfectly symmetrical (16px each side, see the px-4 on the node button below). This is
-// a deterministic character-width estimate rather than a DOM measurement, so it stays in
-// sync with layout on first paint (no measure-then-reflow flash) and works the same on
-// server-rendered output.
-const INFRA_NODE_MIN_W = 140; // raised from 108 so Workers Logs & Workers Traces — the two
-// Observability cards — land on the exact same rendered width (both clamp to this floor)
-// instead of each sizing independently to their own text length.
-// No max width — nodes must grow to fit their longest line rather than truncate. This is
-// only a sanity ceiling against a pathologically long future label, not a real constraint.
-const INFRA_NODE_SAFETY_CEILING = 340;
-const INFRA_NODE_PAD_X = 16; // symmetrical left/right padding (px-4)
-const INFRA_NODE_HH = 26; // half-height — compact card height
-
-// The Worker is the one "lg" node in the graph — the diagram's center of gravity —
-// so it renders at a visibly larger scale (bigger padding, taller card, larger type)
-// than every other card. Kept as a multiplier off the base metrics so it stays in
-// lockstep with estimateInfraNodeWidth/infraNodeHalfDims below, which both connector
-// ports and the rendered button read from.
-const INFRA_LG_SCALE = 1.3;
-
-function infraNodeHH(node: InfraNode) {
-  return node.size === "lg" ? Math.round(INFRA_NODE_HH * INFRA_LG_SCALE) : INFRA_NODE_HH;
-}
-
-function estimateInfraNodeWidth(node: InfraNode) {
-  const scale = node.size === "lg" ? INFRA_LG_SCALE : 1;
-  const iconAndGap = (12 + 4) * scale; // h-3 icon + gap-1
-  const titleW = iconAndGap + node.title.length * 6.3 * scale; // text-[11px] font-semibold — slightly generous so it never clips
-  const subtitleW = node.subtitle.length * 5.3 * scale; // text-[9px]
-  const metaW = node.meta.length * 4.7 * scale; // text-[8px]
-  const contentW = Math.max(titleW, subtitleW, metaW);
-  const width = Math.ceil(contentW + INFRA_NODE_PAD_X * 2 * scale);
-  return Math.min(INFRA_NODE_SAFETY_CEILING, Math.max(INFRA_NODE_MIN_W, width));
-}
-
-// Half-width/half-height of each node card, driven by the same content-based width used
-// to render it — so connector ports always land exactly on the card's actual edge.
-function infraNodeHalfDims(node: InfraNode) {
-  return { hw: estimateInfraNodeWidth(node) / 2, hh: infraNodeHH(node) };
-}
-
-const INFRA_EDGE_GAP = 5; // px between the arrowhead/line end and the node border — tight, not floaty
-const INFRA_CORNER_RADIUS = 8; // px, rounded 90° bends on orthogonal connectors
-const INFRA_LABEL_OFFSET = 9; // px, consistent clearance between a label and its connector
-
-type InfraPoint = { x: number; y: number };
-
-// A port sits at the mid-point of whichever side of the node faces the other end,
-// pushed outward by `gap` so the line/arrowhead never touches the card. `offset` shifts
-// that point along the side (x for top/bottom, y for left/right) — used so two edges
-// converging on the same node/side (e.g. DNS and R2 both entering the Worker's top) land
-// on two visibly distinct points instead of the exact same coordinate.
-function infraPort(node: InfraNode, side: "left" | "right" | "top" | "bottom", gap: number, offset = 0): InfraPoint {
-  const { hw, hh } = infraNodeHalfDims(node);
-  switch (side) {
-    case "right":
-      return { x: node.x + hw + gap, y: node.y + offset };
-    case "left":
-      return { x: node.x - hw - gap, y: node.y + offset };
-    case "bottom":
-      return { x: node.x + offset, y: node.y + hh + gap };
-    case "top":
-      return { x: node.x + offset, y: node.y - hh - gap };
-  }
-}
-
-// Builds the Manhattan (horizontal/vertical-only) waypoints between two nodes. Picks
-// whichever axis dominates as the "through" direction, exits/enters on the matching side,
-// and — only if the two ports aren't already aligned — inserts a single mid-line jog so
-// every segment stays perfectly horizontal or vertical. Already-aligned nodes (the common
-// case here) come back as a plain 2-point straight run with zero bends. `fromOffset`/
-// `toOffset` nudge either endpoint off-center along its side — see infraPort.
-function infraOrthogonalPoints(from: InfraNode, to: InfraNode, gap: number, fromOffset = 0, toOffset = 0): InfraPoint[] {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const horizontalDominant = Math.abs(dx) >= Math.abs(dy);
-
-  if (horizontalDominant) {
-    const start = infraPort(from, dx >= 0 ? "right" : "left", gap, fromOffset);
-    const end = infraPort(to, dx >= 0 ? "left" : "right", gap, toOffset);
-    if (Math.abs(start.y - end.y) < 0.5) return [start, end];
-    const midX = (start.x + end.x) / 2;
-    return [start, { x: midX, y: start.y }, { x: midX, y: end.y }, end];
-  }
-  const start = infraPort(from, dy >= 0 ? "bottom" : "top", gap, fromOffset);
-  const end = infraPort(to, dy >= 0 ? "top" : "bottom", gap, toOffset);
-  if (Math.abs(start.x - end.x) < 0.5) return [start, end];
-  const midY = (start.y + end.y) / 2;
-  return [start, { x: start.x, y: midY }, { x: end.x, y: midY }, end];
-}
-
-
-// Turns a Manhattan polyline into an SVG path string with rounded corners at every
-// interior vertex (quadratic-curve corner, radius clamped to half the shorter adjoining
-// segment so short jogs never produce an overshooting curve).
-function infraRoundedPath(points: InfraPoint[], radius: number): string {
-  if (points.length < 2) return "";
-  if (points.length === 2) return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
-  let d = `M ${points[0].x} ${points[0].y}`;
-  for (let i = 1; i < points.length - 1; i++) {
-    const prev = points[i - 1];
-    const curr = points[i];
-    const next = points[i + 1];
-    const inLen = Math.hypot(curr.x - prev.x, curr.y - prev.y) || 1;
-    const outLen = Math.hypot(next.x - curr.x, next.y - curr.y) || 1;
-    const r = Math.min(radius, inLen / 2, outLen / 2);
-    const a = { x: curr.x - ((curr.x - prev.x) / inLen) * r, y: curr.y - ((curr.y - prev.y) / inLen) * r };
-    const b = { x: curr.x + ((next.x - curr.x) / outLen) * r, y: curr.y + ((next.y - curr.y) / outLen) * r };
-    d += ` L ${a.x} ${a.y} Q ${curr.x} ${curr.y} ${b.x} ${b.y}`;
-  }
-  const last = points[points.length - 1];
-  d += ` L ${last.x} ${last.y}`;
-  return d;
-}
-
-// Finds the longest straight run in the polyline (the whole thing, for a simple 2-point
-// line) and returns a label anchor centered on that segment, offset a fixed distance to
-// the side so the label clears the line itself, any arrowhead, and the nodes at either end.
-function infraLabelAnchor(points: InfraPoint[], offset: number): InfraPoint {
-  let bestLen = -1;
-  let bestMid: InfraPoint = points[0];
-  let bestHorizontal = true;
-  for (let i = 0; i < points.length - 1; i++) {
-    const p = points[i];
-    const q = points[i + 1];
-    const len = Math.hypot(q.x - p.x, q.y - p.y);
-    if (len > bestLen) {
-      bestLen = len;
-      bestMid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
-      bestHorizontal = Math.abs(q.y - p.y) < 0.5;
+/** Final point (the arrowhead tip) of an edge path — where the arrival ping fires.
+ *  Handles the M / H / V / Q commands the edges above use. */
+function pathEnd(d: string): { x: number; y: number } {
+  let x = 0;
+  let y = 0;
+  const re = /([MLHVQ])([^MLHVQ]*)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(d))) {
+    const n = m[2].trim().split(/[\s,]+/).map(Number);
+    if (m[1] === "H") x = n[0];
+    else if (m[1] === "V") y = n[0];
+    else if (m[1] === "Q") {
+      x = n[2];
+      y = n[3];
+    } else {
+      x = n[0];
+      y = n[1];
     }
   }
-  return bestHorizontal ? { x: bestMid.x, y: bestMid.y - offset } : { x: bestMid.x + offset, y: bestMid.y };
+  return { x, y };
 }
 
-// Which side of `from` an edge exits, and which side of `to` it enters — same
-// horizontal/vertical-dominant rule used by infraOrthogonalPoints, exposed separately so
-// the fan-out grouping below can key edges by (node, side) before any points are built.
-function infraExitSide(from: InfraNode, to: InfraNode): "left" | "right" | "top" | "bottom" {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? "right" : "left";
-  return dy >= 0 ? "bottom" : "top";
-}
-function infraEntrySide(from: InfraNode, to: InfraNode): "left" | "right" | "top" | "bottom" {
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? "left" : "right";
-  return dy >= 0 ? "top" : "bottom";
-}
+const ARCH_END: Record<string, { x: number; y: number }> = Object.fromEntries(
+  ARCH_EDGES.map((e) => [e.id, pathEnd(e.d)]),
+);
 
-// Drops any repeated consecutive vertex (e.g. a branch whose target row is level with the
-// trunk collapses two of the bus waypoints onto the same point) — infraRoundedPath can't
-// round a zero-length segment.
-function infraDedupePoints(points: InfraPoint[]): InfraPoint[] {
-  const out: InfraPoint[] = [points[0]];
-  for (let i = 1; i < points.length; i++) {
-    const p = points[i];
-    const last = out[out.length - 1];
-    if (Math.hypot(p.x - last.x, p.y - last.y) > 0.5) out.push(p);
-  }
-  return out;
-}
-
-const INFRA_BUS_OFFSET = 26; // px the shared trunk runs before it's allowed to branch
-
-// Computes the routed waypoints for every edge in one pass. Edges that share the same
-// exit side of the same source node (e.g. the Cloudflare Worker fanning out to DNS, R2,
-// Logs, Traces, and the Browser, all off its right edge) are grouped into a single shared
-// trunk: one line leaves the node, runs INFRA_BUS_OFFSET px clear of it, and only THEN
-// splits into a bus that the individual branches tap off of — so nothing crosses or
-// bundles right at the node boundary, the way Cloudflare's own reference diagrams draw
-// fan-out. Edges that don't share an exit side with any sibling fall back to the plain
-// point-to-point orthogonal route.
-function infraComputeEdgeGeometries(edges: InfraEdge[], nodeMap: Record<string, InfraNode>, gap: number, busOffset: number): InfraPoint[][] {
-  const groups = new Map<string, number[]>();
-  edges.forEach((edge, i) => {
-    const from = nodeMap[edge.from];
-    const to = nodeMap[edge.to];
-    const key = `${edge.from}::${infraExitSide(from, to)}`;
-    groups.set(key, [...(groups.get(key) ?? []), i]);
-  });
-
-  const result: InfraPoint[][] = new Array(edges.length);
-
-  groups.forEach((indices) => {
-    if (indices.length === 1) {
-      const edge = edges[indices[0]];
-      result[indices[0]] = infraOrthogonalPoints(nodeMap[edge.from], nodeMap[edge.to], gap, 0, edge.toPortOffset ?? 0);
-      return;
-    }
-
-    // Shared trunk: same source node + exit side for every edge in this group.
-    const first = edges[indices[0]];
-    const fromNode = nodeMap[first.from];
-    const side = infraExitSide(fromNode, nodeMap[first.to]);
-    const trunkStart = infraPort(fromNode, side, gap);
-    const horizontalTrunk = side === "left" || side === "right";
-    const busCoord = horizontalTrunk
-      ? trunkStart.x + (side === "right" ? busOffset : -busOffset)
-      : trunkStart.y + (side === "bottom" ? busOffset : -busOffset);
-
-    indices.forEach((i) => {
-      const edge = edges[i];
-      const toNode = nodeMap[edge.to];
-      const entrySide = infraEntrySide(fromNode, toNode);
-      const end = infraPort(toNode, entrySide, gap);
-      const points = horizontalTrunk
-        ? [trunkStart, { x: busCoord, y: trunkStart.y }, { x: busCoord, y: end.y }, end]
-        : [trunkStart, { x: trunkStart.x, y: busCoord }, { x: end.x, y: busCoord }, end];
-      result[i] = infraDedupePoints(points);
-    });
-  });
-
-  return result;
-}
-
-const INFRA_SUMMARY_CARDS: { title: string; category: InfraCategory; items: string[] }[] = [
-  { title: "Edge Stack", category: "runtime", items: ["Cloudflare Workers", "Cloudflare DNS", "Edge Runtime", "HTTPS/TLS", "Custom Domain"] },
-  { title: "Monitoring", category: "observability", items: ["Worker Logs", "Worker Events", "R2 Assets", "Runtime Monitoring"] },
-  { title: "Build Pipeline", category: "build", items: ["Development", "GitHub", "Git Push", "Automatic Deployment"] },
-  { title: "Communication", category: "communication", items: ["EmailJS", "Contact Form"] },
+const ARCH_LEGEND: { cat: ArchCat; label: string; count: number; x: number }[] = [
+  { cat: "backend", label: "Backend", count: 1, x: 38 },
+  { cat: "database", label: "Database", count: 1, x: 129 },
+  { cat: "cloud", label: "Cloud", count: 1, x: 224 },
+  { cat: "external", label: "External", count: 2, x: 306 },
 ];
 
-function InfraBuild() {
-  const [hovered, setHovered] = useState<string | null>(null);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const dragState = useRef({ isDown: false, startX: 0, startScrollLeft: 0 });
+function ArchIconGlyph({ icon }: { icon: ArchIcon }) {
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+  switch (icon) {
+    case "browser":
+      return (
+        <g {...common}>
+          <rect x="3" y="0.7" width="6" height="6" rx="1" />
+          <rect x="0.7" y="3" width="6" height="6.3" rx="1" />
+        </g>
+      );
+    case "code":
+      return <path {...common} d="M3.6 2 .9 5l2.7 3M6.4 2 9.1 5 6.4 8" />;
+    case "cloud":
+      return <path {...common} d="M3 8.6h5.2a2 2 0 0 0 .3-3.97A3.1 3.1 0 0 0 2.6 5 1.8 1.8 0 0 0 3 8.6Z" />;
+    case "database":
+      return (
+        <g {...common}>
+          <ellipse cx="5" cy="2" rx="3.4" ry="1.4" />
+          <path d="M1.6 2v5.6c0 .8 1.5 1.4 3.4 1.4s3.4-.6 3.4-1.4V2M1.6 4.8c0 .8 1.5 1.4 3.4 1.4s3.4-.6 3.4-1.4" />
+        </g>
+      );
+  }
+}
 
-  const nodeMap = useMemo(
-    () => Object.fromEntries(INFRA_NODES.map((n) => [n.id, n])) as Record<string, InfraNode>,
-    [],
+const ARCH_CSS = `
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+.arch-root {
+  --arch-font: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --arch-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --arch-bg: #ffffff;
+  --arch-dot: #d9dee5;
+  --arch-title: #111827;
+  --arch-sub: #4b5563;
+  --arch-legend: #374151;
+  --arch-pill: #6b7280;
+  --arch-badge-fill: rgba(255, 255, 255, 0.7);
+  --arch-green: #059669;
+  --arch-purple: #7c3aed;
+  --arch-red: #e11d48;
+  --arch-grey: #94a3b8;
+  --arch-border: #e2e8f0;
+  --arch-hl: #3b82f6;
+  --arch-shadow: drop-shadow(0 1px 1px rgba(17, 24, 39, 0.05)) drop-shadow(0 6px 12px rgba(17, 24, 39, 0.06)) drop-shadow(0 0 0 rgba(59, 130, 246, 0));
+  --arch-shadow-active: drop-shadow(0 1px 1px rgba(17, 24, 39, 0.05)) drop-shadow(0 6px 12px rgba(17, 24, 39, 0.06)) drop-shadow(0 0 8px rgba(59, 130, 246, 0.45));
+  --arch-card-bg: #ffffff;
+  --arch-card-border: #e2e8f0;
+  --arch-card-text: #374151;
+  --arch-card-shadow: 0 1px 2px rgba(17, 24, 39, 0.06), 0 10px 24px rgba(17, 24, 39, 0.12);
+  --arch-backend-fill: #d7f4ea;  --arch-backend-stroke: #059669;
+  --arch-database-fill: #e9e4fa; --arch-database-stroke: #7c3aed;
+  --arch-cloud-fill: #fbf0d4;    --arch-cloud-stroke: #d97706;
+  --arch-external-fill: #e9ebef; --arch-external-stroke: #64748b;
+}
+.arch-root[data-theme="dark"] {
+  --arch-bg: #16181f;
+  --arch-dot: rgba(148, 163, 184, 0.2);
+  --arch-title: #f1f5f9;
+  --arch-sub: #94a3b8;
+  --arch-legend: #94a3b8;
+  --arch-pill: #94a3b8;
+  --arch-badge-fill: rgba(255, 255, 255, 0.05);
+  --arch-green: #34d399;
+  --arch-purple: #a78bfa;
+  --arch-red: #fb7185;
+  --arch-grey: #64748b;
+  --arch-border: rgba(148, 163, 184, 0.16);
+  --arch-hl: #60a5fa;
+  --arch-shadow: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 0 rgba(96, 165, 250, 0));
+  --arch-shadow-active: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35)) drop-shadow(0 0 10px rgba(96, 165, 250, 0.5));
+  --arch-card-bg: #0f1219;
+  --arch-card-border: rgba(148, 163, 184, 0.24);
+  --arch-card-text: #cbd5e1;
+  --arch-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 28px rgba(0, 0, 0, 0.45);
+  --arch-backend-fill: #0e2c29;  --arch-backend-stroke: #34d399;
+  --arch-database-fill: #2a194d; --arch-database-stroke: #a78bfa;
+  --arch-cloud-fill: #321f19;    --arch-cloud-stroke: #eab308;
+  --arch-external-fill: #181f2b; --arch-external-stroke: #94a3b8;
+}
+
+.arch-canvas {
+  background-color: var(--arch-bg);
+  background-image: radial-gradient(circle, var(--arch-dot) 1px, transparent 1.2px);
+  background-size: 20px 20px;
+  border: 1px solid var(--arch-border);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.arch-stage { position: relative; }
+.arch-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+.arch-svg {
+  display: block; width: 100%; min-width: 760px; height: auto;
+  font-family: var(--arch-font);
+}
+
+.arch-cat-backend  { --n-fill: var(--arch-backend-fill);  --n-stroke: var(--arch-backend-stroke); }
+.arch-cat-database { --n-fill: var(--arch-database-fill); --n-stroke: var(--arch-database-stroke); }
+.arch-cat-cloud    { --n-fill: var(--arch-cloud-fill);    --n-stroke: var(--arch-cloud-stroke); }
+.arch-cat-external { --n-fill: var(--arch-external-fill); --n-stroke: var(--arch-external-stroke); }
+
+/* Focus pop — the node springs up from its own centre (overshoot easing) when hovered, focused, pinned or hit by the request flow. */
+.arch-node { cursor: pointer; outline: none; transform-box: fill-box; transform-origin: center;
+  transition: transform 360ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease; }
+.arch-node.active, .arch-node:focus-visible { transform: translateY(-1.5px) scale(1.05); }
+.arch-node.dim { opacity: 0.28; }
+.arch-box { fill: var(--n-fill); stroke: var(--n-stroke); stroke-width: 1.5; filter: var(--arch-shadow);
+  transition: stroke 220ms ease, stroke-width 220ms ease, filter 220ms ease; }
+.arch-node.active .arch-box, .arch-node:focus-visible .arch-box { stroke: var(--arch-hl); stroke-width: 2; filter: var(--arch-shadow-active); }
+.arch-edge-g, .arch-label { transition: opacity 200ms ease; }
+.arch-edge-g.dim, .arch-label.dim { opacity: 0.15; }
+.arch-label.rel { font-weight: 700; }
+.arch-node-icon, .arch-badge-text { color: var(--n-stroke); fill: var(--n-stroke); }
+.arch-badge { fill: var(--arch-badge-fill); stroke: var(--n-stroke); stroke-width: 1; }
+.arch-title { fill: var(--arch-title); font-size: 10px; font-weight: 700; }
+.arch-sub { fill: var(--arch-sub); font-size: 8px; }
+
+.arch-edge { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.arch-edge.green  { stroke: var(--arch-green); }
+.arch-edge.purple { stroke: var(--arch-purple); }
+.arch-edge.red    { stroke: var(--arch-red); }
+.arch-edge.grey   { stroke: var(--arch-grey); }
+.arch-edge.dashed { stroke-dasharray: 5 4; }
+.arch-label { font-size: 7.2px; paint-order: stroke; stroke: var(--arch-bg); stroke-width: 4px; stroke-linejoin: round; }
+.arch-label.green { fill: var(--arch-green); }
+.arch-label.purple { fill: var(--arch-purple); }
+.arch-label.red { fill: var(--arch-red); }
+.arch-label.grey { fill: var(--arch-grey); }
+.arch-arrow.green { fill: var(--arch-green); }
+.arch-arrow.purple { fill: var(--arch-purple); }
+.arch-arrow.red { fill: var(--arch-red); }
+.arch-arrow.grey { fill: var(--arch-grey); }
+
+.arch-legend-title { fill: var(--arch-title); font-size: 10.5px; font-weight: 700; }
+.arch-legend-label { fill: var(--arch-legend); font-size: 9px; }
+.arch-legend-swatch { fill: var(--n-fill); stroke: var(--n-stroke); stroke-width: 1; }
+.arch-legend-pill { fill: none; stroke: var(--arch-pill); stroke-opacity: 0.5; stroke-width: 0.8; }
+.arch-legend-count { fill: var(--arch-pill); font-size: 7px; }
+
+.arch-card { position: absolute; z-index: 5; width: min(320px, calc(100% - 16px)); box-sizing: border-box;
+  padding: 12px 14px; border-radius: 10px; font-family: var(--arch-font);
+  background: var(--arch-card-bg); border: 1px solid var(--arch-card-border); color: var(--arch-card-text);
+  box-shadow: var(--arch-card-shadow);
+  opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(4px) scale(0.97);
+  transition: opacity 200ms ease, transform 200ms ease, visibility 0s linear 200ms; }
+.arch-card[data-open="true"] { opacity: 1; visibility: visible; pointer-events: auto; transform: none; transition-delay: 0s; }
+.arch-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.arch-card-pin { margin-left: 8px; padding: 1px 6px; border: 1px solid var(--arch-card-border); border-radius: 999px;
+  font-size: 8.5px; font-weight: 500; letter-spacing: 0.04em; color: var(--arch-sub); vertical-align: 1px; }
+.arch-card-title { margin: 0; font-size: 12px; font-weight: 700; color: var(--arch-title); }
+.arch-card-close { flex: none; margin: -3px -5px 0 0; padding: 0 5px; border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: 16px; line-height: 1.2; color: var(--arch-sub); }
+.arch-card-close:hover, .arch-card-close:focus-visible { color: var(--arch-title); }
+.arch-card-sec { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--arch-card-border); }
+.arch-card-sec-title { margin-bottom: 4px; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--arch-sub); }
+.arch-card-sec ul { margin: 0; padding: 0; list-style: none; }
+.arch-card-sec li { margin: 0 0 5px; font-size: 10.5px; line-height: 1.45; }
+.arch-card-peer { color: var(--arch-title); font-weight: 600; }
+.arch-card-lbl { display: block; padding-left: 1.3em; color: var(--arch-sub); }
+.arch-card-body { margin: 0; font-size: 11px; line-height: 1.65; }
+
+/* One-time intro reveal (only while data-reveal is set; never loops). */
+.arch-root[data-reveal="pending"] .arch-node,
+.arch-root[data-reveal="pending"] .arch-edge-g,
+.arch-root[data-reveal="pending"] .arch-label { opacity: 0; }
+.arch-root[data-reveal="done"] .arch-node { animation: arch-in 420ms var(--arch-ease) backwards; animation-delay: calc(var(--i, 0) * 80ms); }
+.arch-root[data-reveal="done"] .arch-edge-g,
+.arch-root[data-reveal="done"] .arch-label { animation: arch-fade 500ms ease backwards; animation-delay: calc(450ms + var(--i, 0) * 70ms); }
+@keyframes arch-in { from { opacity: 0; transform: translateY(6px); } }
+@keyframes arch-fade { from { opacity: 0; } }
+
+/* Trace overlay — drawn once on the active node's own connections. 2.4s linear, once, 160ms stagger. */
+.arch-trace { fill: none; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0.95; pointer-events: none;
+  animation: arch-trace var(--dur, 2.4s) linear both; animation-delay: calc(var(--step, 0) * 160ms); }
+/* Packet: a small dot riding the path in its arrow direction, matching the draw-on head. */
+.arch-packet { fill: none; stroke-linecap: round; stroke-dasharray: 0.015 2; stroke-dashoffset: 0.015; pointer-events: none;
+  animation: arch-packet calc(var(--dur, 2.4s) * 0.8) linear both; animation-delay: calc(var(--step, 0) * 160ms); }
+.arch-packet.green { stroke: var(--arch-green); } .arch-packet.purple { stroke: var(--arch-purple); }
+.arch-packet.red { stroke: var(--arch-red); }     .arch-packet.grey { stroke: var(--arch-grey); }
+@keyframes arch-packet { 0% { stroke-dashoffset: 0.015; opacity: 1; } 99% { opacity: 1; } 100% { stroke-dashoffset: -1; opacity: 0; } }
+
+.arch-legend-item { cursor: pointer; outline: none; }
+.arch-legend-hit { fill: transparent; stroke: transparent; transition: stroke 160ms ease; }
+.arch-legend-item:focus-visible .arch-legend-hit { stroke: var(--arch-hl); stroke-width: 1; }
+.arch-legend-item:hover .arch-legend-label, .arch-legend-item.on .arch-legend-label { fill: var(--arch-title); }
+.arch-legend-item.on .arch-legend-swatch { stroke-width: 1.8; }
+.arch-trace.green { stroke: var(--arch-green); } .arch-trace.purple { stroke: var(--arch-purple); }
+.arch-trace.red { stroke: var(--arch-red); }     .arch-trace.grey { stroke: var(--arch-grey); }
+@keyframes arch-trace { 0% { stroke-dashoffset: 1; opacity: 0.95; } 80% { stroke-dashoffset: 0; opacity: 0.95; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+
+/* Arrival ping — fires at the path's arrowhead the moment the trace/packet gets there
+   (delay = trace step offset + 80% of the trace duration), plus a ripple around the destination node. */
+.arch-ping-g { pointer-events: none; }
+.arch-ping-g.green  { --ping: var(--arch-green); }
+.arch-ping-g.purple { --ping: var(--arch-purple); }
+.arch-ping-g.red    { --ping: var(--arch-red); }
+.arch-ping-g.grey   { --ping: var(--arch-grey); }
+.arch-ping, .arch-ping-dot, .arch-ping-node {
+  opacity: 0; transform-box: fill-box; transform-origin: center;
+  animation-delay: calc(var(--step, 0) * 160ms + var(--dur, 2.4s) * 0.8);
+  animation-fill-mode: forwards; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.arch-ping { fill: none; stroke: var(--ping); stroke-width: 1.6; animation-name: arch-ping; animation-duration: 800ms; }
+.arch-ping-2 { stroke-width: 1; animation-delay: calc(var(--step, 0) * 160ms + var(--dur, 2.4s) * 0.8 + 140ms); }
+.arch-ping-dot { fill: var(--ping); animation-name: arch-ping-dot; animation-duration: 520ms; }
+.arch-ping-node { fill: none; stroke: var(--ping); stroke-width: 1.5; animation-name: arch-ping-node; animation-duration: 700ms; }
+@keyframes arch-ping { 0% { opacity: 0.85; transform: scale(0.4); } 100% { opacity: 0; transform: scale(3.4); } }
+@keyframes arch-ping-dot { 0% { opacity: 1; transform: scale(1); } 40% { opacity: 1; transform: scale(1.9); } 100% { opacity: 0; transform: scale(0.6); } }
+@keyframes arch-ping-node { 0% { opacity: 0.75; transform: scale(1); } 100% { opacity: 0; transform: scale(1.14); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .arch-root *, .arch-root *::before, .arch-root *::after { animation: none !important; transition: none !important; }
+  .arch-node:hover { transform: none; }
+  .arch-node.active, .arch-node:focus-visible { transform: none; }
+  .arch-trace, .arch-packet, .arch-ping-g { display: none; }
+}
+`;
+
+function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const colors: ArchColor[] = ["green", "purple", "red", "grey"];
+
+  // Single source of truth for the interaction: `active` drives node
+  // highlight, dimming and the floating card. `cardId` keeps the last
+  // selection mounted so the card can fade out instead of vanishing.
+  const [active, setActive] = useState<string | null>(null);
+  const [cardId, setCardId] = useState<string>("browser");
+  const [cardPos, setCardPos] = useState({ left: 0, top: 0, ox: 0, oy: 0 });
+  // `pinned` keeps a selection after the pointer leaves; `flow` is the step
+  // of the request walkthrough (-1 = idle); `reveal` drives the one-time intro.
+  const [pinned, setPinned] = useState<string | null>(null);
+  const pinnedRef = useRef<string | null>(null);
+  const [flow, setFlow] = useState(-1);
+  const [legendCat, setLegendCat] = useState<ArchCat | null>(null);
+  const [reveal, setReveal] = useState<"idle" | "pending" | "done">("idle");
+  const stageRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const leaveTimer = useRef<number | null>(null);
+  const lastPointer = useRef<string>("mouse");
+  const hitAttr = uid;
+  const cardDomId = `${uid}-card`;
+
+  const cancelLeave = useCallback(() => {
+    if (leaveTimer.current !== null) {
+      window.clearTimeout(leaveTimer.current);
+      leaveTimer.current = null;
+    }
+  }, []);
+  const pin = useCallback((id: string | null) => {
+    pinnedRef.current = id;
+    setPinned(id);
+  }, []);
+  const activate = useCallback(
+    (id: string) => {
+      cancelLeave();
+      setFlow(-1); // interacting with a node takes over from the walkthrough
+      setCardId(id);
+      setActive(id);
+    },
+    [cancelLeave],
   );
-
-  // Routed waypoints per edge — shared trunk/bus for any node's fanned-out edges, plain
-  // point-to-point orthogonal route otherwise. Computed once so the line pass and the
-  // label pass below always agree on exactly where each connector runs.
-  const edgeGeometries = useMemo(
-    () => infraComputeEdgeGeometries(INFRA_EDGES, nodeMap, INFRA_EDGE_GAP, INFRA_BUS_OFFSET),
-    [nodeMap],
+  const dismiss = useCallback(() => {
+    cancelLeave();
+    pin(null);
+    setActive(null);
+    setLegendCat(null);
+  }, [cancelLeave, pin]);
+  // Legend filter: click a category to spotlight its nodes and their connections.
+  const toggleLegend = useCallback(
+    (cat: ArchCat) => {
+      const next = legendCat === cat ? null : cat;
+      dismiss();
+      setFlow(-1);
+      setLegendCat(next);
+    },
+    [dismiss, legendCat],
   );
+  const togglePin = useCallback(
+    (id: string, touch: boolean) => {
+      if (pinnedRef.current === id) {
+        pin(null);
+        if (touch) setActive(null);
+      } else {
+        activate(id);
+        pin(id);
+      }
+    },
+    [activate, pin],
+  );
+  const startFlow = useCallback(() => {
+    dismiss();
+    setFlow(0);
+  }, [dismiss]);
+  // Short grace period so the pointer can cross the gap between a node and
+  // its card (or hop between nodes) without the card flickering.
+  const scheduleLeave = useCallback(() => {
+    cancelLeave();
+    leaveTimer.current = window.setTimeout(() => {
+      const pin = pinnedRef.current;
+      if (pin) setCardId(pin);
+      setActive(pin);
+    }, 140);
+  }, [cancelLeave]);
 
-  const activeIds = useMemo(() => {
-    if (!hovered) return null;
-    const ids = new Set<string>([hovered]);
-    INFRA_EDGES.forEach((e) => {
-      if (e.from === hovered) ids.add(e.to);
-      if (e.to === hovered) ids.add(e.from);
-    });
-    return ids;
-  }, [hovered]);
+  useEffect(() => cancelLeave, [cancelLeave]);
 
-  const selectedNode = selected ? nodeMap[selected] : null;
-
-  // Hover a node -> immediately drive the inspector; the last hovered node
-  // stays selected even after the cursor leaves the graph entirely.
-  const handleNodeHover = (id: string) => {
-    setHovered(id);
-    setSelected(id);
-  };
-
-  // Grab-to-pan: only starts when the mousedown originates on empty canvas
-  // background (node wrappers call stopPropagation so they never trigger this).
-  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!scrollRef.current) return;
-    dragState.current.isDown = true;
-    dragState.current.startX = e.pageX;
-    dragState.current.startScrollLeft = scrollRef.current.scrollLeft;
-    setIsDragging(true);
-    e.preventDefault();
-  };
+  // Walkthrough: advance one step at a time, then stop on its own.
+  useEffect(() => {
+    if (flow < 0) return;
+    const id = window.setTimeout(() => setFlow((f) => (f + 1 >= ARCH_FLOW.length ? -1 : f + 1)), 1600);
+    return () => window.clearTimeout(id);
+  }, [flow]);
 
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      if (!dragState.current.isDown || !scrollRef.current) return;
-      const dx = e.pageX - dragState.current.startX;
-      scrollRef.current.scrollLeft = dragState.current.startScrollLeft - dx;
+    if (!active && !pinned && !legendCat) return;
+    const onDown = (e: PointerEvent) => {
+      const el = e.target as Element | null;
+      if (!el?.closest(`[data-arch-hit="${hitAttr}"]`)) dismiss();
     };
-    const onUp = () => {
-      if (dragState.current.isDown) {
-        dragState.current.isDown = false;
-        setIsDragging(false);
-      }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") dismiss();
     };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
     return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
     };
+  }, [active, pinned, legendCat, hitAttr, dismiss]);
+
+  const related = useMemo(() => {
+    const s = new Set<string>();
+    if (!active) return s;
+    for (const e of ARCH_EDGES) {
+      if (e.from === active) s.add(e.to);
+      if (e.to === active) s.add(e.from);
+    }
+    return s;
+  }, [active]);
+  // Place the card beside the active node. Candidate spots (below, above,
+  // right, left) are scored so the card avoids the active node, the
+  // connected nodes and — most importantly — the highlighted paths.
+  const useIsoLayout = typeof window !== "undefined" ? useLayoutEffect : useEffect;
+  useIsoLayout(() => {
+    if (!active) return;
+    const stage = stageRef.current;
+    const svg = svgRef.current;
+    const card = cardRef.current;
+    const n = ARCH_NODES.find((x) => x.id === cardId);
+    if (!stage || !svg || !card || !n) return;
+    const sr = stage.getBoundingClientRect();
+    const vr = svg.getBoundingClientRect();
+    const s = vr.width / ARCH_W;
+    const ox = vr.left - sr.left;
+    const oy = vr.top - sr.top;
+    const box = (m: ArchNode) => ({ l: ox + m.x * s, t: oy + m.y * s, r: ox + (m.x + m.w) * s, b: oy + (m.y + m.h) * s });
+    const nb = box(n);
+    const cw = card.offsetWidth;
+    const ch = card.offsetHeight;
+    const gap = 10;
+    const clampX = (v: number) => Math.max(8, Math.min(v, Math.max(8, sr.width - cw - 8)));
+    const clampY = (v: number) => Math.max(8, Math.min(v, Math.max(8, sr.height - ch - 8)));
+    const cx = (nb.l + nb.r) / 2 - cw / 2;
+    const cy = (nb.t + nb.b) / 2 - ch / 2;
+    const candidates = [
+      { left: clampX(cx), top: clampY(nb.b + gap) },
+      { left: clampX(cx), top: clampY(nb.t - ch - gap) },
+      { left: clampX(nb.r + gap), top: clampY(cy) },
+      { left: clampX(nb.l - cw - gap), top: clampY(cy) },
+    ];
+    // Sample the highlighted paths in stage pixels.
+    const pts: { x: number; y: number }[] = [];
+    svg.querySelectorAll<SVGGeometryElement>("[data-edge]").forEach((el) => {
+      const ed = ARCH_EDGES.find((e) => e.id === el.getAttribute("data-edge"));
+      if (!ed || (ed.from !== cardId && ed.to !== cardId)) return;
+      const len = el.getTotalLength();
+      for (let d = 0; d <= len; d += 6) {
+        const pt = el.getPointAtLength(d);
+        pts.push({ x: ox + pt.x * s, y: oy + pt.y * s });
+      }
+    });
+    const hit = (c: { left: number; top: number }, r: { l: number; t: number; r: number; b: number }, pad = 0) =>
+      c.left < r.r + pad && c.left + cw > r.l - pad && c.top < r.b + pad && c.top + ch > r.t - pad;
+    let best = candidates[0];
+    let bestScore = Infinity;
+    for (const c of candidates) {
+      let score = 0;
+      if (hit(c, nb, 2)) score += 1000;
+      for (const m of ARCH_NODES) if (related.has(m.id) && hit(c, box(m), 2)) score += 60;
+      for (const q of pts) if (q.x > c.left - 4 && q.x < c.left + cw + 4 && q.y > c.top - 4 && q.y < c.top + ch + 4) score += 1;
+      if (score < bestScore) {
+        bestScore = score;
+        best = c;
+      }
+    }
+    const originX = Math.max(-60, Math.min((nb.l + nb.r) / 2 - best.left, cw + 60));
+    const originY = Math.max(-60, Math.min((nb.t + nb.b) / 2 - best.top, ch + 60));
+    setCardPos({ left: best.left, top: best.top, ox: originX, oy: originY });
+  }, [active, cardId, related]);
+
+  // One-time intro: hidden until the diagram scrolls into view, then a short
+  // staggered reveal. Skipped entirely under reduced motion.
+  useIsoLayout(() => {
+    const el = stageRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    setReveal("pending");
+    const io = new IntersectionObserver(
+      ([en]) => {
+        if (en.isIntersecting) {
+          setReveal("done");
+          io.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
-  return (
-    <div>
-      <style>{`
-        .infra-scroll::-webkit-scrollbar { height: 8px; }
-        .infra-scroll::-webkit-scrollbar-track { background: color-mix(in oklab, var(--foreground) 6%, transparent); border-radius: 999px; }
-        .infra-scroll::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--foreground) 22%, transparent); border-radius: 999px; }
-        .infra-scroll::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--foreground) 34%, transparent); }
-        .infra-scroll { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent; }
-        @keyframes infra-flow { to { stroke-dashoffset: -24; } }
-        .infra-edge-live { stroke-dasharray: 5 5; animation: infra-flow 1s linear infinite; }
-        @keyframes infra-inspector-in { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: none; } }
-        .infra-inspector-anim { animation: infra-inspector-in 250ms ease both; }
-        .infra-scroll { cursor: grab; }
-        .infra-scroll.infra-dragging { cursor: grabbing; }
-      `}</style>
+  const flowEdge = flow >= 0 ? ARCH_EDGES.find((e) => e.id === ARCH_FLOW[flow]) : undefined;
+  const nodeTitle = (id: string) => ARCH_NODES.find((m) => m.id === id)?.title ?? id;
+  const legendIds = useMemo(
+    () => new Set(legendCat ? ARCH_NODES.filter((m) => m.cat === legendCat).map((m) => m.id) : []),
+    [legendCat],
+  );
+  // Priority: request-flow step > hovered/pinned node > legend category.
+  const hiEdges: ArchEdge[] | null = flowEdge
+    ? [flowEdge]
+    : active
+      ? ARCH_EDGES.filter((e) => e.from === active || e.to === active)
+      : legendCat
+        ? ARCH_EDGES.filter((e) => legendIds.has(e.from) || legendIds.has(e.to))
+        : null;
+  const edgeState = (e: ArchEdge) => (hiEdges ? (hiEdges.includes(e) ? "rel" : "dim") : "");
+  const nodeState = (id: string) =>
+    flowEdge
+      ? id === flowEdge.from || id === flowEdge.to
+        ? "active"
+        : "dim"
+      : active
+        ? active === id
+          ? "active"
+          : related.has(id)
+            ? ""
+            : "dim"
+        : legendCat
+          ? legendIds.has(id)
+            ? ""
+            : "dim"
+          : "";
 
+  // Arrow keys hop to the nearest connected node in that direction.
+  const moveFocus = (fromId: string, key: string) => {
+    const f = ARCH_NODES.find((m) => m.id === fromId);
+    if (!f) return;
+    const fx = f.x + f.w / 2;
+    const fy = f.y + f.h / 2;
+    const linked = new Set<string>();
+    for (const e of ARCH_EDGES) {
+      if (e.from === fromId) linked.add(e.to);
+      if (e.to === fromId) linked.add(e.from);
+    }
+    let best: ArchNode | null = null;
+    let bestScore = Infinity;
+    for (const m of ARCH_NODES) {
+      if (m.id === fromId) continue;
+      const dx = m.x + m.w / 2 - fx;
+      const dy = m.y + m.h / 2 - fy;
+      const ok =
+        key === "ArrowRight" ? dx > 0 && Math.abs(dx) >= Math.abs(dy) * 0.6
+        : key === "ArrowLeft" ? dx < 0 && Math.abs(dx) >= Math.abs(dy) * 0.6
+        : key === "ArrowDown" ? dy > 0 && Math.abs(dy) >= Math.abs(dx) * 0.6
+        : dy < 0 && Math.abs(dy) >= Math.abs(dx) * 0.6;
+      if (!ok) continue;
+      const score = Math.hypot(dx, dy) * (linked.has(m.id) ? 1 : 2.5);
+      if (score < bestScore) {
+        bestScore = score;
+        best = m;
+      }
+    }
+    if (best) svgRef.current?.querySelector<SVGGElement>(`[data-node="${best.id}"]`)?.focus();
+  };
+
+  const cardNode = ARCH_NODES.find((n) => n.id === cardId)!;
+
+  return (
+    <section className="relative">
+      <style>{ARCH_CSS}</style>
       <SectionHeading title="Infrastructure." />
-      <div className="-mt-4 mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-        <span className="relative flex h-2 w-2 shrink-0">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+      <p className="-mt-4 mb-5 max-w-xl text-sm text-muted-foreground">
+        Explore how the portfolio&apos;s services communicate and how assets are delivered.
+      </p>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-border/60 pt-3 font-mono text-[11px] text-muted-foreground">
+        <span role="status" aria-live="polite">
+          {flowEdge
+            ? `${flow + 1}/${ARCH_FLOW.length} · ${nodeTitle(flowEdge.from)} → ${nodeTitle(flowEdge.to)} · ${flowEdge.label}`
+            : legendCat && !active
+              ? `Highlighting ${ARCH_LEGEND.find((l) => l.cat === legendCat)?.label} nodes · click the legend again to clear.`
+              : "Hover over a node to trace its connections."}
         </span>
-        <span>Develop. Debug. Deploy.</span>
+        <button
+          type="button"
+          aria-pressed={flow >= 0}
+          onClick={() => (flow >= 0 ? setFlow(-1) : startFlow())}
+          className={cn(
+            // Compact, quiet pill (same family as the portfolio filter/CV buttons): neutral
+            // outline, accent only on hover. Fixed width so Run/Stop never resize it.
+            "inline-flex h-7 w-[104px] shrink-0 items-center justify-center gap-1.5 rounded-full border border-border/60 font-sans text-xs font-medium text-muted-foreground outline-none transition-colors",
+            "hover:border-[color:var(--accent-blue)]/50 hover:text-[color:var(--accent-blue)]",
+            "focus-visible:ring-2 focus-visible:ring-[color:var(--accent-blue)]/50",
+            flow >= 0 && "border-[color:var(--accent-blue)]/50 text-accent-blue",
+          )}
+        >
+          {flow >= 0 ? (
+            <>
+              <Square className="h-3 w-3 fill-current" aria-hidden />
+              Stop trace
+            </>
+          ) : (
+            <>
+              <Play className="h-3 w-3 fill-current" aria-hidden />
+              Run trace
+            </>
+          )}
+        </button>
       </div>
 
-      <div className="flex flex-col gap-4 lg:flex-row">
-        {/* ── Graph card (canvas + in-graph legend) ── */}
-        <div className="surface-2 min-w-0 flex-1 rounded-2xl border border-border/60 p-3 md:p-4 lg:w-[72%] lg:flex-none">
-          <div
-            ref={scrollRef}
-            className={cn(
-              "infra-scroll select-none overflow-x-auto overflow-y-hidden rounded-xl",
-              isDragging && "infra-dragging",
-            )}
-            style={{ WebkitOverflowScrolling: "touch" }}
-            onMouseDown={handleCanvasMouseDown}
-            onDragStart={(e) => e.preventDefault()}
-          >
-            <div
-              className="relative select-none"
-              style={{
-                width: INFRA_CANVAS_W,
-                height: INFRA_CANVAS_H,
-                backgroundImage:
-                  "linear-gradient(to right, color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 7%, transparent) 1px, transparent 1px)",
-                backgroundSize: "24px 24px",
-              }}
-              onMouseLeave={() => setHovered(null)}
+      <div className="arch-root" data-theme={theme} data-reveal={reveal}>
+        <div className="arch-stage" ref={stageRef}>
+        <div className="arch-canvas">
+          <div className="arch-scroll">
+            <svg
+              ref={svgRef}
+              className="arch-svg"
+              viewBox={`0 0 ${ARCH_W} ${ARCH_H}`}
+              role="img"
+              aria-label="Portfolio system architecture: a User Browser requests pages from a Cloudflare Worker, which reads assets from an R2 bucket and sends logs to Observability; the browser also posts the contact form to EmailJS."
             >
-              {/* Group outlines (Build / Observability) — thin dashed borders, tightly
-                  wrapped around their child nodes, small monospace title top-left */}
-              {INFRA_GROUPS.map((g) => {
-                const style = INFRA_CATEGORY_STYLE[g.category];
-                return (
-                  <div
-                    key={g.id}
-                    className={cn("absolute rounded-xl border border-dashed", style.ring)}
-                    style={{ left: g.x, top: g.y, width: g.w, height: g.h, zIndex: 1 }}
-                  >
-                    <span
-                      className={cn(
-                        "surface-2 absolute -top-2.5 left-3 rounded px-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.14em]",
-                        style.text,
-                      )}
-                    >
-                      {g.title}
-                    </span>
-                  </div>
-                );
-              })}
+              <defs>
+                {colors.map((c) => (
+                  <marker key={c} id={`${uid}-${c}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+                    <path className={`arch-arrow ${c}`} d="M0 1 L10 5 L0 9 Z" />
+                  </marker>
+                ))}
+              </defs>
 
-              <svg
-                viewBox={`0 0 ${INFRA_CANVAS_W} ${INFRA_CANVAS_H}`}
-                className="absolute inset-0 h-full w-full overflow-visible"
-                style={{ zIndex: 2 }}
-              >
-                <defs>
-                  {(Object.keys(INFRA_CATEGORY_STYLE) as InfraCategory[]).map((cat) => (
-                    <marker
-                      key={cat}
-                      id={`infra-arrow-${cat}`}
-                      viewBox="0 0 10 10"
-                      refX="8"
-                      refY="5"
-                      markerWidth="5"
-                      markerHeight="5"
-                      orient="auto-start-reverse"
-                    >
-                      <path d="M 0 0 L 10 5 L 0 10 z" fill={INFRA_CATEGORY_STYLE[cat].stroke} />
-                    </marker>
-                  ))}
-                </defs>
-                {INFRA_EDGES.map((edge, i) => {
-                  const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
-                  const dash =
-                    edge.style === "dashed"
-                      ? "6 5"
-                      : edge.style === "dotted"
-                        ? "2 6"
-                        : edge.style === "vertical"
-                          ? "9 4 2 4"
-                          : undefined;
-                  const color = INFRA_CATEGORY_STYLE[edge.category].stroke;
-                  const isLive = edge.style === "solid";
-
-                  // Orthogonal (horizontal/vertical-only) waypoints — a plain point-to-point
-                  // route, or a shared trunk-then-bus route when this edge fans out from the
-                  // same node/side as siblings (see infraComputeEdgeGeometries) — then a
-                  // rounded-corner path drawn through them.
-                  const points = edgeGeometries[i];
-                  const d = infraRoundedPath(points, INFRA_CORNER_RADIUS);
-
-                  return (
+              <>
+                {ARCH_EDGES.map((e) => (
+                  <g key={e.id} className={cn("arch-edge-g", edgeState(e))} style={{ ["--i" as string]: ARCH_EDGES.indexOf(e) } as React.CSSProperties}>
                     <path
-                      key={i}
-                      d={d}
-                      fill="none"
-                      stroke={color}
-                      strokeWidth={edge.style === "vertical" ? 1.3 : 1.5}
-                      strokeDasharray={dash}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      markerEnd={`url(#infra-arrow-${edge.category})`}
-                      markerStart={edge.bidirectional ? `url(#infra-arrow-${edge.category})` : undefined}
-                      className={cn("transition-opacity duration-200", isLive && "infra-edge-live")}
-                      style={{ opacity: isActive ? 0.9 : 0.12 }}
+                      data-edge={e.id}
+                      className={cn("arch-edge", e.color, e.dashed && "dashed")}
+                      d={e.d}
+                      strokeWidth={e.width}
+                      markerEnd={`url(#${uid}-${e.color})`}
                     />
+                  </g>
+                ))}
+
+                {(hiEdges ?? []).map((e, i) => (
+                  <g
+                    key={`${e.id}-${flowEdge ? `f${flow}` : (active ?? legendCat)}`}
+                    style={{ ["--step" as string]: flowEdge ? 0 : i, ["--dur" as string]: flowEdge ? "1.4s" : "2.4s" } as React.CSSProperties}
+                  >
+                    <path className={cn("arch-trace", e.color)} d={e.d} pathLength={1} strokeWidth={e.width + 0.6} />
+                    <path className={cn("arch-packet", e.color)} d={e.d} pathLength={1} strokeWidth={e.width + 2} />
+                  </g>
+                ))}
+
+                {ARCH_EDGES.map((e) => (
+                  <text key={`${e.id}-l`} className={cn("arch-label", e.color, edgeState(e))} style={{ ["--i" as string]: ARCH_EDGES.indexOf(e) } as React.CSSProperties} x={e.lx} y={e.ly} textAnchor="middle">
+                    {e.label}
+                  </text>
+                ))}
+
+                {ARCH_NODES.map((n) => (
+                  <g
+                    key={n.id}
+                    className={cn(
+                      "arch-node",
+                      `arch-cat-${n.cat}`,
+                      nodeState(n.id),
+                      pinned === n.id && "pinned",
+                    )}
+                    style={{ ["--i" as string]: ARCH_NODES.indexOf(n) } as React.CSSProperties}
+                    data-node={n.id}
+                    data-arch-hit={hitAttr}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`${n.title}: show details`}
+                    aria-describedby={active === n.id ? cardDomId : undefined}
+                    onPointerDown={(e) => {
+                      lastPointer.current = e.pointerType;
+                    }}
+                    onPointerEnter={(e) => {
+                      if (e.pointerType !== "touch") activate(n.id);
+                    }}
+                    onPointerLeave={(e) => {
+                      if (e.pointerType !== "touch") scheduleLeave();
+                    }}
+                    onFocus={(e) => {
+                      // Keyboard focus only; a tap/click focuses too, but that is handled by onClick.
+                      let kb = true;
+                      try {
+                        kb = e.currentTarget.matches(":focus-visible");
+                      } catch {
+                        kb = true;
+                      }
+                      if (kb) activate(n.id);
+                    }}
+                    onBlur={() => {
+                      if (lastPointer.current !== "touch") scheduleLeave();
+                    }}
+                    onClick={() => togglePin(n.id, lastPointer.current === "touch")}
+                    onKeyDown={(e) => {
+                      lastPointer.current = "keyboard";
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        togglePin(n.id, false);
+                      } else if (e.key === "Escape") dismiss();
+                      else if (e.key.startsWith("Arrow")) {
+                        e.preventDefault();
+                        moveFocus(n.id, e.key);
+                      }
+                    }}
+                  >
+                    <rect className="arch-box" x={n.x} y={n.y} width={n.w} height={n.h} rx={7} />
+                    <g className="arch-node-icon" transform={`translate(${n.x + 9} ${n.y + 8})`}>
+                      <ArchIconGlyph icon={n.icon} />
+                    </g>
+                    <rect className="arch-badge" x={n.x + n.w - 34} y={n.y + 4} width={28} height={12} rx={6} />
+                    <text className="arch-badge-text" x={n.x + n.w - 20} y={n.y + 12.4} textAnchor="middle" fontSize="6.5" fontWeight="700">
+                      SRC {n.src}
+                    </text>
+                    <text className="arch-title" x={n.x + n.w / 2} y={n.y + n.titleDy} textAnchor="middle">
+                      {n.title}
+                    </text>
+                    <text className="arch-sub" x={n.x + n.w / 2} y={n.y + n.subDy} textAnchor="middle">
+                      {n.sub}
+                    </text>
+                  </g>
+                ))}
+
+                {/* Arrival pings — drawn above the nodes so the rings stay visible at the arrowhead. */}
+                {(hiEdges ?? []).map((e, i) => {
+                  const end = ARCH_END[e.id];
+                  const to = ARCH_NODES.find((m) => m.id === e.to);
+                  if (!end || !to) return null;
+                  return (
+                    <g
+                      key={`ping-${e.id}-${flowEdge ? `f${flow}` : (active ?? legendCat)}`}
+                      className={cn("arch-ping-g", e.color)}
+                      style={{ ["--step" as string]: flowEdge ? 0 : i, ["--dur" as string]: flowEdge ? "1.4s" : "2.4s" } as React.CSSProperties}
+                      aria-hidden
+                    >
+                      <rect className="arch-ping-node" x={to.x} y={to.y} width={to.w} height={to.h} rx={7} />
+                      <circle className="arch-ping" cx={end.x} cy={end.y} r={4} />
+                      <circle className="arch-ping arch-ping-2" cx={end.x} cy={end.y} r={4} />
+                      <circle className="arch-ping-dot" cx={end.x} cy={end.y} r={2.4} />
+                    </g>
                   );
                 })}
-              </svg>
 
-              {/* Connection labels — plain coloured monospace text floating above the
-                  line, no background/border/pill, matching the reference diagram. */}
-              {INFRA_EDGES.map((edge, i) => {
-                if (!edge.label) return null;
-                const isActive = !hovered || (activeIds?.has(edge.from) && activeIds?.has(edge.to));
-                const anchor = edge.labelAnchor ?? infraLabelAnchor(edgeGeometries[i], INFRA_LABEL_OFFSET);
-                return (
-                  <span
-                    key={i}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-mono text-[9px] font-medium transition-opacity duration-200 md:text-[10px]"
-                    style={{
-                      left: anchor.x,
-                      top: anchor.y,
-                      opacity: isActive ? 1 : 0.15,
-                      zIndex: 3,
-                      color: INFRA_CATEGORY_STYLE[edge.category].stroke,
-                    }}
-                  >
-                    {edge.label}
-                  </span>
-                );
-              })}
-
-              {INFRA_NODES.map((node) => {
-                const Icon = node.icon;
-                const style = INFRA_CATEGORY_STYLE[node.category];
-                const isActive = !hovered || activeIds?.has(node.id);
-                const isHovered = hovered === node.id;
-                const isSelected = selected === node.id;
-                const isLg = node.size === "lg";
-                return (
-                  <div
-                    key={node.id}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 transition-opacity duration-200"
-                    style={{
-                      left: node.x,
-                      top: node.y,
-                      opacity: isActive ? 1 : 0.25,
-                      zIndex: isHovered || isSelected ? 30 : 10,
-                    }}
-                    onMouseEnter={() => handleNodeHover(node.id)}
-                    onMouseDown={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setSelected(node.id)}
-                      className={cn(
-                        "surface-1 flex flex-col justify-center gap-0.5 rounded-md border text-left shadow-[0_10px_30px_-20px_rgba(0,0,0,0.7)] transition-all hover:-translate-y-0.5",
-                        isLg ? "gap-1 rounded-lg border-2 px-5 py-2" : "px-4 py-1.5",
-                        style.ring,
-                      )}
-                      style={{
-                        // Content-sized width (see estimateInfraNodeWidth) — same value the
-                        // connector ports use, and px-4/px-5 above keeps padding symmetrical
-                        // so there's never leftover space stacked on just the right edge. The
-                        // Worker is the one "lg" node — the diagram's center of gravity — so
-                        // it renders visibly larger than every other card (see INFRA_LG_SCALE).
-                        width: estimateInfraNodeWidth(node),
-                        height: infraNodeHH(node) * 2,
-                        boxShadow: isSelected
-                          ? `0 0 0 2px ${style.stroke}, 0 0 18px 2px ${style.stroke}55`
-                          : isHovered
-                            ? `0 0 0 2px ${style.stroke}30`
-                            : isLg
-                              ? `0 0 24px -6px ${style.stroke}70`
-                              : `0 0 8px -4px ${style.stroke}40`,
+                <text className="arch-legend-title" x={38} y={549}>
+                  Legend
+                </text>
+                {ARCH_LEGEND.map((l) => {
+                  const labelW = l.label.length * 5.4;
+                  const px = l.x + 19 + labelW + 6;
+                  const on = legendCat === l.cat;
+                  return (
+                    <g
+                      key={l.cat}
+                      className={cn("arch-legend-item", `arch-cat-${l.cat}`, on && "on")}
+                      data-arch-hit={hitAttr}
+                      role="button"
+                      tabIndex={0}
+                      aria-pressed={on}
+                      aria-label={`Highlight ${l.label} nodes`}
+                      onClick={() => toggleLegend(l.cat)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          toggleLegend(l.cat);
+                        } else if (e.key === "Escape") dismiss();
                       }}
                     >
-                      <div className="flex items-center gap-1.5">
-                        <Icon className={cn(isLg ? "h-4 w-4" : "h-3 w-3", "shrink-0", style.text)} />
-                        <span
-                          className={cn(
-                            "whitespace-nowrap font-semibold text-foreground",
-                            isLg ? "text-[14px]" : "text-[11px]",
-                          )}
-                        >
-                          {node.title}
-                        </span>
-                      </div>
-                      <span className={cn("whitespace-nowrap text-muted-foreground", isLg ? "text-[11px]" : "text-[9px]")}>
-                        {node.subtitle}
-                      </span>
-                      <span
-                        className={cn(
-                          "whitespace-nowrap text-muted-foreground/60",
-                          isLg ? "text-[9px]" : "text-[8px]",
-                        )}
-                      >
-                        {node.meta}
-                      </span>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* ── In-graph legend ── */}
-          <div className="mt-4 grid gap-4 border-t border-border/60 pt-4 sm:grid-cols-3">
-            <div>
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-                Category
-              </p>
-              <div className="space-y-1.5 text-xs text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 shrink-0 rounded-full bg-orange-400" /> Build
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" /> Runtime
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 shrink-0 rounded-full bg-violet-400" /> Observability
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 shrink-0 rounded-full bg-blue-400" /> Application
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 shrink-0 rounded-full bg-fuchsia-400" /> Communication
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 shrink-0 rounded-full bg-slate-300" /> Client
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-                Edge Style
-              </p>
-              <div className="space-y-1.5 text-xs text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <span className="h-[2px] w-5 shrink-0 bg-emerald-400" /> Solid — Runtime Request
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className="h-0 w-5 shrink-0 border-t-2"
-                    style={{ borderColor: "#fb923c", borderStyle: "dashed" }}
-                  />
-                  Dashed — Deployment
-                </div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className="h-0 w-5 shrink-0 border-t-2"
-                    style={{ borderColor: "#34d399", borderStyle: "dotted" }}
-                  />
-                  Dotted — Configuration
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-4 w-[2px] shrink-0 bg-fuchsia-400" /> Vertical — External Service
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="infra-edge-live h-[2px] w-5 shrink-0 bg-emerald-400" /> Animated — Live Request
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-                Dataflow Direction
-              </p>
-              <div className="space-y-1.5 text-xs text-muted-foreground">
-                <p>Left → Right — main pipeline</p>
-                <p>Vertical — external service branch</p>
-                <p>Hover — highlight connected nodes</p>
-                <p>Hover — open inspector</p>
-              </div>
-            </div>
+                      <rect className="arch-legend-hit" x={l.x - 5} y={553} width={px + 21 - l.x} height={22} rx={6} />
+                      <rect className="arch-legend-swatch" x={l.x} y={559} width={15} height={9} rx={3} />
+                      <text className="arch-legend-label" x={l.x + 19} y={567}>
+                        {l.label}
+                      </text>
+                      <rect className="arch-legend-pill" x={px} y={558} width={11} height={11} rx={5.5} />
+                      <text className="arch-legend-count" x={px + 5.5} y={566} textAnchor="middle">
+                        {l.count}
+                      </text>
+                    </g>
+                  );
+                })}
+              </>
+            </svg>
           </div>
         </div>
-
-        {/* ── Inspector ── */}
-        <div className="surface-2 flex flex-col rounded-2xl border border-border/60 p-5 lg:w-[28%]">
-          <div key={selectedNode ? selectedNode.id : "empty"} className="infra-inspector-anim flex flex-1 flex-col">
-          {!selectedNode ? (
-            <div className="flex h-full min-h-[200px] flex-1 flex-col items-center justify-center gap-2 text-center">
-              <Workflow className="h-6 w-6 text-muted-foreground/40" />
-              <p className="text-xs text-muted-foreground">
-                Hover any node to inspect its purpose, responsibilities, technologies and configuration.
-              </p>
+          <div
+            ref={cardRef}
+            id={cardDomId}
+            role="tooltip"
+            className="arch-card"
+            data-open={active ? "true" : "false"}
+            data-arch-hit={hitAttr}
+            style={{ left: cardPos.left, top: cardPos.top, transformOrigin: `${cardPos.ox}px ${cardPos.oy}px` }}
+            onPointerDown={(e) => {
+              lastPointer.current = e.pointerType;
+            }}
+            onPointerEnter={cancelLeave}
+            onPointerLeave={(e) => {
+              if (e.pointerType !== "touch") scheduleLeave();
+            }}
+            onFocus={cancelLeave}
+            onBlur={() => {
+              if (lastPointer.current !== "touch") scheduleLeave();
+            }}
+          >
+            <div className="arch-card-head">
+              <h3 className="arch-card-title">
+                {cardNode.title}
+                {pinned === cardId && <span className="arch-card-pin">pinned</span>}
+              </h3>
+              <button type="button" className="arch-card-close" aria-label="Close details" onClick={dismiss}>
+                ×
+              </button>
             </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <selectedNode.icon
-                  className={cn("h-4 w-4 shrink-0", INFRA_CATEGORY_STYLE[selectedNode.category].text)}
-                />
-                <div>
-                  <div className="text-sm font-semibold text-foreground">{selectedNode.title}</div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground/60">
-                    {selectedNode.subtitle}
-                  </div>
+            <p className="arch-card-body">{ARCH_DESC[cardNode.id]}</p>
+            {(
+              [
+                ["Incoming", ARCH_EDGES.filter((e) => e.to === cardId), "←"],
+                ["Outgoing", ARCH_EDGES.filter((e) => e.from === cardId), "→"],
+              ] as const
+            ).map(([heading, list, glyph]) =>
+              list.length === 0 ? null : (
+                <div key={heading} className="arch-card-sec">
+                  <div className="arch-card-sec-title">{heading}</div>
+                  <ul>
+                    {list.map((e) => {
+                      const peerId = heading === "Incoming" ? e.from : e.to;
+                      const peer = ARCH_NODES.find((m) => m.id === peerId)!;
+                      return (
+                        <li key={e.id}>
+                          <span style={{ color: `var(--arch-${e.color})` }} aria-hidden>
+                            {glyph}
+                          </span>{" "}
+                          <span className="arch-card-peer">{peer.title}</span>
+                          <span className="arch-card-lbl">{e.label}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
-              </div>
-
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                {selectedNode.detail.purpose}
-              </p>
-
-              <div>
-                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-                  Technologies
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedNode.detail.technologies.map((t) => (
-                    <span
-                      key={t}
-                      className={cn(
-                        "rounded-full border px-2 py-0.5 text-[10px]",
-                        INFRA_CATEGORY_STYLE[selectedNode.category].ring,
-                        INFRA_CATEGORY_STYLE[selectedNode.category].text,
-                      )}
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-                  Responsibilities
-                </p>
-                <ul className="space-y-1 text-xs text-muted-foreground">
-                  {selectedNode.detail.responsibilities.map((r) => (
-                    <li key={r} className="flex gap-1.5">
-                      <span className="text-muted-foreground/40">•</span> {r}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div>
-                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-                  Relationships
-                </p>
-                <ul className="space-y-1 text-xs text-muted-foreground">
-                  {selectedNode.detail.relationships.map((r) => (
-                    <li key={r} className="flex gap-1.5">
-                      <span className="text-muted-foreground/40">•</span> {r}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {(selectedNode.detail.buildProcess || selectedNode.detail.runtimeDetails) && (
-                <div>
-                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-                    Workflow
-                  </p>
-                  <div className="space-y-1 text-xs text-muted-foreground">
-                    {selectedNode.detail.buildProcess && <p>{selectedNode.detail.buildProcess}</p>}
-                    {selectedNode.detail.runtimeDetails && <p>{selectedNode.detail.runtimeDetails}</p>}
-                  </div>
-                </div>
-              )}
-
-              {selectedNode.detail.configuration && (
-                <div>
-                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-                    Configuration
-                  </p>
-                  <p className="text-xs text-muted-foreground">{selectedNode.detail.configuration}</p>
-                </div>
-              )}
-
-              {selectedNode.detail.futureImprovements && (
-                <div className="border-t border-border/60 pt-3">
-                  <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
-                    Future Improvements
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {selectedNode.detail.futureImprovements}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
+              )
+            )}
           </div>
         </div>
       </div>
-
-      {/* ── Summary cards: Edge Stack · Monitoring · Build Pipeline · Communication ── */}
-      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {INFRA_SUMMARY_CARDS.map((card) => {
-          const style = INFRA_CATEGORY_STYLE[card.category];
-          return (
-            <div key={card.title} className="surface-2 rounded-xl border border-border/60 p-4">
-              <div className="mb-2 flex items-center gap-1.5">
-                <span className={cn("h-2 w-2 shrink-0 rounded-full", style.dot)} />
-                <span className="text-xs font-semibold text-foreground">{card.title}</span>
-              </div>
-              <ul className="space-y-1 text-[11px] text-muted-foreground">
-                {card.items.map((it) => (
-                  <li key={it} className="flex gap-1.5">
-                    <span className={cn("h-1 w-1 shrink-0 translate-y-1 rounded-full", style.dot)} />
-                    {it}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    </section>
   );
+}
+
+function InfraBuild({ theme }: { theme: "dark" | "light" }) {
+  return <ArchDiagram theme={theme} />;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -4090,29 +3781,11 @@ function Contact() {
   const [sending, setSending] = useState(false);
   const [cooldown, setCooldown] = useState(false);
   const [cooldownRemaining, setCooldownRemaining] = useState(0);
-  const [time, setTime] = useState("");
   const mountedAtRef = useRef(Date.now());
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileBoxRef = useRef<HTMLDivElement | null>(null);
   const turnstileIdRef = useRef<string | null>(null);
   const cooldownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Live IST clock
-  useEffect(() => {
-    const update = () =>
-      setTime(
-        new Date().toLocaleTimeString("en-IN", {
-          timeZone: "Asia/Kolkata",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: true,
-        }),
-      );
-    update();
-    const id = setInterval(update, 1000);
-    return () => clearInterval(id);
-  }, []);
 
   // Render the Turnstile widget (only when a site key is configured).
   useEffect(() => {
@@ -4561,12 +4234,12 @@ function Journey() {
 // ROUTER - Section switcher
 // ═══════════════════════════════════════════════════════════
 
-function SectionRenderer({ active }: { active: SectionKey }) {
+function SectionRenderer({ active, theme }: { active: SectionKey; theme: "dark" | "light" }) {
   const map: Record<SectionKey, React.ReactNode> = {
     about: <About />,
     resume: <Resume />,
     portfolio: <PortfolioSection />,
-    infra: <InfraBuild />,
+    infra: <InfraBuild theme={theme} />,
     contact: <Contact />,
     journey: <Journey />,
   };
@@ -4701,7 +4374,7 @@ export default function Portfolio({ section }: { section: SectionKey }) {
       <Toaster />
 
       {/* ── Main layout ── */}
-      <div className="relative mx-auto max-w-6xl px-4 py-8 md:px-5 md:py-12 lg:px-8">
+      <div className="relative mx-auto max-w-6xl px-4 py-8 md:px-8 md:py-12">
         <ProfileHero
           onJourney={() => navigateTo("journey")}
           theme={theme}
@@ -4709,9 +4382,9 @@ export default function Portfolio({ section }: { section: SectionKey }) {
           mounted={mounted}
         />
 
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_clamp(168px,22vw,200px)]">
-          <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 lg:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0">
-            <SectionRenderer active={active} />
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,1fr)_200px]">
+          <main className="surface-1 min-h-[420px] rounded-2xl border border-border/60 p-6 md:p-8 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.7)] mb-24 md:mb-0">
+            <SectionRenderer active={active} theme={theme} />
           </main>
 
           <div className="hidden md:block">
