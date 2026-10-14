@@ -11,55 +11,35 @@
 export const MAINTENANCE_IMAGE_URL = "/r2/images/maintainance.png";
 
 const CSS = `
-/* One fluid unit drives the whole layout: everything below is in em, so type,
-   spacing and icons scale together from small phones up to ultrawide displays. */
 .mp-root{
   --mp-fallback:#8fc1ea;
-  /* Anchor to the bottom so clouds and the turbine base stay in frame whatever the
-     aspect ratio crops; the cropped part is empty sky. 75% keeps the turbine in
-     view when a portrait screen crops the sides. */
-  --mp-bg-position:75% 100%;
-  /* Side gutter, capped so text stays in a centred column on very wide screens. */
-  --mp-pad-x:max(clamp(1.5rem,6vw,6rem),calc((100vw - 96rem)/2));
-  --mp-pad-y:clamp(1.5rem,5vh,4rem);
-  --mp-scrim:radial-gradient(ellipse min(64em,95vw) 100vh at var(--mp-pad-x) 50%,rgba(7,26,54,.62) 0%,rgba(7,26,54,.36) 45%,rgba(7,26,54,0) 100%);
+  --mp-bg-position:62% 50%;
   box-sizing:border-box;position:relative;display:flex;align-items:center;
-  min-height:100vh;min-height:100dvh;
-  padding:var(--mp-pad-y) var(--mp-pad-x) calc(var(--mp-pad-y) * 1.6);
-  font-size:clamp(1rem,.85rem + .35vw,1.5rem);
+  min-height:100vh;min-height:100dvh;padding:clamp(24px,6vw,96px);padding-bottom:calc(clamp(24px,6vw,96px) + 4vh);
   color:#fff;background-color:var(--mp-fallback);
   background-image:url("${MAINTENANCE_IMAGE_URL}");
   background-size:cover;background-position:var(--mp-bg-position);background-repeat:no-repeat;
   font-family:Poppins,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
-/* The scrim is centred on the text column, not on the screen edge, so it follows
-   the content at every width instead of fading out before reaching it. */
-.mp-root::before{content:"";position:absolute;inset:0;pointer-events:none;background:var(--mp-scrim)}
-.mp-content{position:relative;width:100%;max-width:52em;text-shadow:0 1px 18px rgba(7,26,54,.35)}
-.mp-status{margin:0 0 1.4em;display:flex;align-items:center;font-size:.78em;font-weight:500;letter-spacing:.18em;text-transform:uppercase;opacity:.95}
-.mp-dot{flex:none;width:.6em;height:.6em;margin-right:.9em;border-radius:50%;background:#ffd166}
-.mp-heading{margin:0;font-size:clamp(2em,1.1em + 2.9vw,3.4em);line-height:1.1;font-weight:500;letter-spacing:-.02em;text-wrap:balance}
-.mp-desc{margin:1.2em 0 0;max-width:40em;font-size:1.05em;line-height:1.65;opacity:.95}
-/* Each sentence is its own block and wraps on its own, so lines break between
-   sentences when there is room and balance when there is not. */
-.mp-desc-line{display:block;text-wrap:balance}
-.mp-contact{margin-top:2.4em;width:fit-content;max-width:100%}
-.mp-contact-title{margin:0;padding-bottom:.9em;font-size:.78em;font-weight:500;letter-spacing:.2em;text-transform:uppercase;opacity:.85;border-bottom:1px solid rgba(255,255,255,.3)}
-.mp-links{margin-top:1.1em;display:flex;flex-wrap:wrap;gap:.6em}
-.mp-link{display:inline-flex;align-items:center;justify-content:center;width:2.25em;height:2.25em;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.7);border-radius:50%;background:rgba(7,26,54,.3);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background-color .2s,border-color .2s}
-.mp-link:hover{background:rgba(255,255,255,.22);border-color:#fff}
+.mp-root::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(7,26,54,.62) 0%,rgba(7,26,54,.35) 40%,rgba(7,26,54,0) 70%);
+}
+.mp-content{position:relative;max-width:40rem;text-shadow:0 1px 18px rgba(7,26,54,.35)}
+.mp-status{margin:0 0 1.25rem;display:flex;align-items:center;font-size:.75rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;opacity:.95}
+.mp-dot{flex:none;width:7px;height:7px;margin-right:.7rem;border-radius:50%;background:#ffd166}
+.mp-heading{margin:0;font-size:clamp(2.25rem,5vw,3.5rem);line-height:1.08;font-weight:500;letter-spacing:-.02em;text-wrap:balance}
+.mp-desc{margin:1.25rem 0 0;max-width:38rem;font-size:clamp(.9375rem,1.6vw,1.0625rem);line-height:1.65;opacity:.95}
 .mp-link:focus-visible{outline:2px solid #fff;outline-offset:3px}
-.mp-icon{width:1em;height:1em;flex:none}
-/* Composition depends on the screen's shape, not its width: a portrait tablet
-   needs the same stacked layout as a phone, and a landscape phone the same as a
-   desktop. */
-@media (max-aspect-ratio:1/1){
-  .mp-root{
-    --mp-pad-y:clamp(2.5rem,9vh,6rem);
-    --mp-scrim:radial-gradient(ellipse 140vw min(46em,75vh) at 50% 0%,rgba(7,26,54,.76) 0%,rgba(7,26,54,.48) 55%,rgba(7,26,54,0) 100%);
-    align-items:flex-start;
-    padding-bottom:var(--mp-pad-y);
-  }
+.mp-contact{margin-top:2.25rem;width:fit-content;max-width:100%}
+.mp-contact-title{margin:0;padding-bottom:.8rem;font-size:.75rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;opacity:.85;border-bottom:1px solid rgba(255,255,255,.3)}
+.mp-links{margin-top:1rem;display:flex;flex-wrap:wrap;gap:.65rem}
+.mp-link{display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.55);border-radius:50%;transition:background-color .2s,border-color .2s}
+.mp-link:hover{background:rgba(255,255,255,.18);border-color:#fff}
+.mp-icon{width:1rem;height:1rem;flex:none}
+@media (max-width:640px){
+  .mp-root{align-items:flex-start;padding-top:clamp(40px,10vh,88px);padding-bottom:24px;--mp-bg-position:68% 100%}
+  .mp-root::before{background:linear-gradient(180deg,rgba(7,26,54,.78) 0%,rgba(7,26,54,.5) 50%,rgba(7,26,54,0) 80%)}
 }
 @media (prefers-reduced-motion:reduce){.mp-link{transition:none}}
 `;
@@ -85,10 +65,9 @@ export function MaintenancePage() {
           </p>
           <h1 className="mp-heading">A little work in the cloud.</h1>
           <p className="mp-desc">
-            <span className="mp-desc-line">
-              The systems are taking a short pause while I make some improvements.
-            </span>
-            <span className="mp-desc-line">Stay tuned — I'll be back online soon.</span>
+            I’m upgrading my portfolio and will be back online shortly.
+            <br />
+            Thanks for your patience.
           </p>
           <div className="mp-contact">
             <p className="mp-contact-title">Get in touch</p>
