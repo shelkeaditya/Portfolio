@@ -2233,7 +2233,16 @@ const CARD_ELEVATION_CLASSES =
 // ───────────────────────────────────────────────────────────
 const PDF_CSS_SCALE = 96 / 72;
 
-function PdfCertificate({ src, title }: { src: string; title: string }) {
+function PdfCertificate({
+  src,
+  title,
+  fallbackImage,
+}: {
+  src: string;
+  title: string;
+  /** Preview image shown directly if the PDF cannot be rendered. */
+  fallbackImage?: string;
+}) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const pageRef = useRef<PDFPageProxy | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -2316,6 +2325,18 @@ function PdfCertificate({ src, title }: { src: string; title: string }) {
       task?.cancel();
     };
   }, [renderTick]);
+
+  // pdf.js could not render the PDF: show the certificate's preview image
+  // directly instead of a bare link.
+  if (status === "error" && fallbackImage) {
+    return (
+      <img
+        src={fallbackImage}
+        alt={title}
+        className="block h-auto w-auto max-h-[78vh] max-w-full rounded-lg object-contain"
+      />
+    );
+  }
 
   return (
     <div className="relative">
@@ -2445,7 +2466,11 @@ function CertificateModal({
           // than the certificate itself.
           <div className="flex items-center justify-center bg-black/20 p-2">
             {renderAsPdfCanvas ? (
-              <PdfCertificate src={card.document as string} title={card.title} />
+              <PdfCertificate
+                src={card.document as string}
+                title={card.title}
+                fallbackImage={card.image}
+              />
             ) : (
               <img
                 src={imageSrc}
