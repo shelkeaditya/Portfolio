@@ -20,9 +20,9 @@ const CSS = `
      view when a portrait screen crops the sides. */
   --mp-bg-position:75% 100%;
   /* Side gutter, capped so text stays in a centred column on very wide screens. */
-  --mp-pad-x:max(clamp(1.5rem,6vw,6rem),calc((100% - 96rem)/2));
+  --mp-pad-x:max(clamp(1.5rem,6vw,6rem),calc((100vw - 96rem)/2));
   --mp-pad-y:clamp(1.5rem,5vh,4rem);
-  --mp-scrim:radial-gradient(ellipse min(64em,90%) 95% at var(--mp-pad-x) 50%,rgba(7,26,54,.62) 0%,rgba(7,26,54,.36) 45%,rgba(7,26,54,0) 100%);
+  --mp-scrim:radial-gradient(ellipse min(64em,95vw) 100vh at var(--mp-pad-x) 50%,rgba(7,26,54,.62) 0%,rgba(7,26,54,.36) 45%,rgba(7,26,54,0) 100%);
   box-sizing:border-box;position:relative;display:flex;align-items:center;
   min-height:100vh;min-height:100dvh;
   padding:var(--mp-pad-y) var(--mp-pad-x) calc(var(--mp-pad-y) * 1.6);
@@ -46,8 +46,8 @@ const CSS = `
 .mp-contact{margin-top:2.4em;width:fit-content;max-width:100%}
 .mp-contact-title{margin:0;padding-bottom:.9em;font-size:.78em;font-weight:500;letter-spacing:.2em;text-transform:uppercase;opacity:.85;border-bottom:1px solid rgba(255,255,255,.3)}
 .mp-links{margin-top:1.1em;display:flex;flex-wrap:wrap;gap:.6em}
-.mp-link{display:inline-flex;align-items:center;justify-content:center;width:2.25em;height:2.25em;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.55);border-radius:50%;transition:background-color .2s,border-color .2s}
-.mp-link:hover{background:rgba(255,255,255,.18);border-color:#fff}
+.mp-link{display:inline-flex;align-items:center;justify-content:center;width:2.25em;height:2.25em;color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.7);border-radius:50%;background:rgba(7,26,54,.3);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background-color .2s,border-color .2s}
+.mp-link:hover{background:rgba(255,255,255,.22);border-color:#fff}
 .mp-link:focus-visible{outline:2px solid #fff;outline-offset:3px}
 .mp-icon{width:1em;height:1em;flex:none}
 /* Composition depends on the screen's shape, not its width: a portrait tablet
@@ -56,7 +56,7 @@ const CSS = `
 @media (max-aspect-ratio:1/1){
   .mp-root{
     --mp-pad-y:clamp(2.5rem,9vh,6rem);
-    --mp-scrim:radial-gradient(ellipse 140% min(46em,75%) at 50% 0%,rgba(7,26,54,.76) 0%,rgba(7,26,54,.48) 55%,rgba(7,26,54,0) 100%);
+    --mp-scrim:radial-gradient(ellipse 140vw min(46em,75vh) at 50% 0%,rgba(7,26,54,.76) 0%,rgba(7,26,54,.48) 55%,rgba(7,26,54,0) 100%);
     align-items:flex-start;
     padding-bottom:var(--mp-pad-y);
   }
