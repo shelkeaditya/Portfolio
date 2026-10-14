@@ -966,8 +966,8 @@ function BackgroundFX() {
 // low on phones. Pixel density is capped at 2x for the same reason.
 // ───────────────────────────────────────────────────────────
 async function loadPdfjs() {
-  const pdfjs = await import("pdfjs-dist");
-  const worker = await import("pdfjs-dist/build/pdf.worker.min.mjs?url");
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const worker = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs?url");
   pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
   return pdfjs;
 }
@@ -2255,8 +2255,8 @@ function PdfCertificate({
     let loadingTask: { destroy: () => Promise<void> } | null = null;
     (async () => {
       try {
-        const pdfjs = await import("pdfjs-dist");
-        const worker = await import("pdfjs-dist/build/pdf.worker.min.mjs?url");
+        const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+        const worker = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs?url");
         pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
         const task = pdfjs.getDocument(new URL(src, window.location.origin).href);
         loadingTask = task;
