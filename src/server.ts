@@ -1,7 +1,7 @@
 import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
-import { renderErrorPage } from "./lib/error-page";
+import { renderMaintenanceHtml } from "./lib/maintenance-html";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -19,9 +19,32 @@ async function getServerEntry(): Promise<ServerEntry> {
 }
 
 function brandedErrorResponse(): Response {
-  return new Response(renderErrorPage(), {
+  return new Response(renderMaintenanceHtml(), {
     status: 500,
-    headers: { "content-type": "text/html; charset=utf-8" },
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+      "x-robots-tag": "noindex",
+    },
+  });
+}
+
+// Controlled by the MAINTENANCE_MODE var in wrangler.jsonc (or the dashboard).
+// Anything other than an explicit "on" value leaves the site running normally.
+function isMaintenanceMode(env: unknown): boolean {
+  const raw = (env as { MAINTENANCE_MODE?: string | boolean } | undefined)?.MAINTENANCE_MODE;
+  return ["true", "1", "on", "yes"].includes(String(raw ?? "").trim().toLowerCase());
+}
+
+function maintenanceResponse(): Response {
+  return new Response(renderMaintenanceHtml(), {
+    status: 503,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+      "retry-after": "600",
+      "x-robots-tag": "noindex",
+    },
   });
 }
 
@@ -101,6 +124,11 @@ export default {
 
     if (url.pathname.startsWith("/r2/")) {
       return handleAssetRequest(request, env);
+    }
+
+    // Checked before any SSR work. /r2/ stays reachable above so the page's background loads.
+    if (isMaintenanceMode(env)) {
+      return maintenanceResponse();
     }
 
     try {

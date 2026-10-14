@@ -5,7 +5,7 @@ import { SITE_URL } from "@/lib/site";
 const PAGE_TITLE: Record<string, string> = {
   resume: "Resume",
   portfolio: "Portfolio",
-  build: "Infrastructure Build",
+  build: "Build",
   contact: "Contact",
   journey: "Journey",
 };

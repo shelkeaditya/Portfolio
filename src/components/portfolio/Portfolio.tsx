@@ -1748,7 +1748,7 @@ function Resume() {
               "Performed functional and browser automation testing using Selenium and Playwright, alongside performance testing with Apache JMeter, to validate application behavior, browser compatibility, responsiveness, and release readiness.",
               "Collaborated with development and QA teams in an Agile environment to investigate application and infrastructure issues, coordinate releases, validate deployment readiness, and improve the reliability and consistency of production delivery workflows.",
             ]}
-            tech={"Linux, Bash, Shell Scripting, Git, GitHub, Jenkins, GitHub Actions, Docker, Docker Compose, Kubernetes, PM2, Nginx, Apache, SSH, TCP/IP, DNS, HTTP/HTTPS, Selenium, Playwright, Apache JMeter, SonarQube, Postman, Prometheus, Grafana, Trivy, Checkov, HashiCorp Vault, Python".split(", ")}
+            tech={"Linux, Bash, Shell Scripting, Git, GitHub, Jenkins, GitHub Actions, Docker, Kubernetes, PM2, Nginx, SSH, Selenium, Playwright, SonarQube, Prometheus, Grafana, Trivy, HashiCorp Vault, Python".split(", ")}
           />
           <div className="mt-4">
             <ResumeItem
@@ -1771,7 +1771,7 @@ function Resume() {
                 "Practiced vulnerability assessment, web security testing, and system hardening, investigating misconfigurations, access control weaknesses, exposed services, and potential attack vectors.",
                 "Deployed and experimented with self-hosted applications and cloud services, including Nextcloud, while exploring reverse proxy configuration, web hosting, infrastructure monitoring, and application availability.",
               ]}
-              tech={"AWS, GCP, Azure, OCI, Cloudflare, VMware Workstation, VMware vSphere, VirtualBox, WSL, Windows, Linux, Debian, Ubuntu, Kali Linux, Bash, Shell Scripting, Git, GitHub, Jenkins, GitHub Actions, Docker, Docker Compose, Kubernetes, Minikube, kubectl, Helm, Terraform, Coolify, PM2, Nginx, Apache, SSH, TCP/IP, DNS, HTTP/HTTPS, Nmap, Wireshark, WHOIS, Shodan, TheHarvester, Prometheus, Grafana, Trivy, Checkov, HashiCorp Vault, Python, Java, Tailwind CSS, Vite, TanStack Start, Nextcloud, Cloudflare Workers, Wrangler, Cloudflare R2, Portainer".split(", ")}
+              tech={"AWS, GCP, Azure, OCI, Cloudflare, VMware Workstation, VirtualBox, WSL, Linux, Jenkins, Docker, Kubernetes, Helm, Terraform, PM2, Nginx, Nmap, Wireshark, WHOIS, Wrangler, TheHarvester, Trivy, Python, Java, Tailwind CSS, Vite".split(", ")}
             />
           </div>
         </ResumeBlock>
@@ -4249,7 +4249,7 @@ function Contact() {
   return (
     <div>
       <SectionHeading title="Let's Connect." />
-      <p className="text-muted-foreground max-w-2xl mb-6 text-justify">
+      <p className="text-muted-foreground max-w-2xl mb-6 text-left">
         Whether it's a job opportunity, a project or just a tech conversation - I'd love to hear it
         from you.
       </p>
