@@ -77,7 +77,7 @@ export function MaintenancePage() {
             data-mp-retry=""
             onClick={() => window.location.reload()}
           >
-            ↻ RECHECK STATUS
+            RECHECK STATUS
           </button>
           <nav className="mp-links" aria-label="Social links">
             {SOCIALS.map((item) => (
