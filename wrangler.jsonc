@@ -6,7 +6,7 @@
   "main": "src/server.ts",
 
   "vars": {
-    "MAINTENANCE_MODE": "true"
+    "MAINTENANCE_MODE": "false"
   },
 
   "r2_buckets": [
