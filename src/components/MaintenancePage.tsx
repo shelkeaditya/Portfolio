@@ -63,13 +63,13 @@ export function MaintenancePage() {
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <main className="mp-root">
         <div className="mp-content">
-          <p className="mp-status">
+          {/* <p className="mp-status">
             <span className="mp-dot" aria-hidden="true" />
-            SYSTEM PAUSE · TEMPORARILY UNAVAILABLE
-          </p>
-          <h1 className="mp-heading">Taking a short break.</h1>
+            SYSTEM PAUSE · MAINTAINACE BREAK
+          </p> */}
+          <h1 className="mp-heading">A little work in the cloud.</h1>
           <p className="mp-desc">
-            I'm making a few improvements to my portfolio. Please check back soon.
+            The systems are taking a short pause while I make some improvements. Stay tuned - I'll be back online soon.
           </p>
           <button
             type="button"
@@ -77,7 +77,7 @@ export function MaintenancePage() {
             data-mp-retry=""
             onClick={() => window.location.reload()}
           >
-            TRY AGAIN
+            ↻ RECHECK STATUS
           </button>
           <nav className="mp-links" aria-label="Social links">
             {SOCIALS.map((item) => (
