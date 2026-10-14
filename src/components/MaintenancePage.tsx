@@ -65,9 +65,9 @@ export function MaintenancePage() {
           </p>
           <h1 className="mp-heading">A little work in the cloud.</h1>
           <p className="mp-desc">
-            The systems are taking a short pause while I make some improvements.
+            I’m upgrading my portfolio and will be back online shortly.
             <br />
-            Stay tuned — I'll be back online soon.
+            Thanks for your patience.
           </p>
           <div className="mp-contact">
             <p className="mp-contact-title">Get in touch</p>
