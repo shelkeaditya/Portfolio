@@ -32,6 +32,7 @@ import {
   Play,
   Square,
   RotateCw,
+  Share2,
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
@@ -1152,12 +1153,18 @@ function PdfActions({
   src,
   onRetry,
   showOpen = true,
+  showDownload = true,
+  trailing,
   className,
 }: {
   src: string;
   onRetry?: () => void;
   /** Certificates hide "Open PDF in new tab"; CV and paper keep it. */
   showOpen?: boolean;
+  /** The CV modal swaps Download for Share (see `trailing`). */
+  showDownload?: boolean;
+  /** Extra action(s) rendered after the standard ones. */
+  trailing?: React.ReactNode;
   className?: string;
 }) {
   return (
@@ -1174,10 +1181,13 @@ function PdfActions({
           <ExternalLink className="h-3 w-3" />
         </a>
       )}
-      <a href={src} download={pdfFileName(src)} className={PDF_BTN}>
-        <Download className="h-3 w-3" />
-        Download
-      </a>
+      {showDownload && (
+        <a href={src} download={pdfFileName(src)} className={PDF_BTN}>
+          <Download className="h-3 w-3" />
+          Download
+        </a>
+      )}
+      {trailing}
     </div>
   );
 }
@@ -1385,6 +1395,53 @@ function PdfReader({ src, title }: { src: string; title: string }) {
   );
 }
 
+// @share-start
+// The public, canonical address of the CV (not the portfolio page, and not a
+// workers.dev preview host), served by the same /r2/* route as the preview.
+const CV_PUBLIC_URL = "https://shelkeaditya.dev/r2/aditya-shelke-cv.pdf";
+
+async function copyText(text: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // Clipboard API refused (insecure context, permissions): try the legacy path.
+  }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+async function shareCvLink() {
+  const data = { title: "Aditya Shelke — CV", url: CV_PUBLIC_URL };
+  if (typeof navigator.share === "function" && (!navigator.canShare || navigator.canShare(data))) {
+    try {
+      await navigator.share(data);
+      return; // the system share sheet gives its own confirmation
+    } catch (e) {
+      // Dismissing the sheet is not an error and not a success: do nothing.
+      if ((e as { name?: string } | null)?.name === "AbortError") return;
+      // Any other failure: fall back to copying the link.
+    }
+  }
+  if (await copyText(CV_PUBLIC_URL)) toast.success("CV link copied to clipboard");
+  else toast.error("Couldn't copy the link", { description: CV_PUBLIC_URL });
+}
+// @share-end
+
 function CvModal({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -1426,7 +1483,21 @@ function CvModal({ onClose }: { onClose: () => void }) {
 
         <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-border/60 p-5">
           <h3 className="text-lg font-semibold text-foreground">Curriculum Vitae</h3>
-          <PdfActions src="/r2/aditya-shelke-cv.pdf" />
+          <PdfActions
+            src="/r2/aditya-shelke-cv.pdf"
+            showDownload={false}
+            trailing={
+              <button
+                type="button"
+                onClick={() => void shareCvLink()}
+                aria-label="Share CV link"
+                className={PDF_BTN}
+              >
+                <Share2 className="h-3 w-3" />
+                Share
+              </button>
+            }
+          />
         </div>
       </div>
     </div>
