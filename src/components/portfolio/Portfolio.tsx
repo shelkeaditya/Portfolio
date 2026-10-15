@@ -1458,7 +1458,7 @@ function CvModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
       onClick={onClose}
     >
       <div
@@ -1466,7 +1466,7 @@ function CvModal({ onClose }: { onClose: () => void }) {
         aria-modal="true"
         aria-label="Curriculum Vitae"
         onClick={(e) => e.stopPropagation()}
-        className="surface-2 relative flex h-[min(90vh,920px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-[color:var(--accent-blue)]/40 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)] motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200 motion-safe:ease-out"
+        className="surface-2 relative flex h-[min(90vh,920px)] max-h-full w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-[color:var(--accent-blue)]/40 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)] motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200 motion-safe:ease-out"
       >
         <button
           type="button"
@@ -1477,15 +1477,16 @@ function CvModal({ onClose }: { onClose: () => void }) {
           <X className="h-4 w-4" />
         </button>
 
-        <div className="min-h-0 flex-1 bg-black/20">
+        <div className="min-h-0 flex-1 bg-black/20 max-lg:pt-12">
           <PdfReader src="/r2/aditya-shelke-cv.pdf" title="Aditya Shelke — CV" />
         </div>
 
-        <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-border/60 p-5">
-          <h3 className="text-lg font-semibold text-foreground">Curriculum Vitae</h3>
+        <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-border/60 p-4 sm:p-5">
+          <h3 className="min-w-0 break-words text-lg font-semibold text-foreground">Curriculum Vitae</h3>
           <PdfActions
             src="/r2/aditya-shelke-cv.pdf"
             showDownload={false}
+            className="w-full sm:w-auto"
             trailing={
               <button
                 type="button"
@@ -2784,7 +2785,7 @@ function CertificateModal({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center p-4 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200",
+        "fixed inset-0 z-[60] flex items-center justify-center px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200",
         // A scrolling reader under a blurred backdrop forces a re-blur on
         // every frame, so the reader gets a plain dim backdrop instead.
         isPaperViewer ? "bg-black/80" : "bg-black/70 backdrop-blur-sm",
@@ -2803,10 +2804,10 @@ function CertificateModal({
               // certificate shown at its own size (only shrunk when it
               // would not fit the viewport). No minimum width, so it
               // never grows past the certificate.
-              "h-fit max-h-[92vh] w-fit max-w-[94vw] overflow-y-auto overflow-x-hidden"
+              "h-fit max-h-[min(92vh,100%)] w-fit max-w-[94vw] overflow-y-auto overflow-x-hidden"
             : hasDocument
               ? // Research paper: a fixed reader box with its own scroll.
-                "h-[min(92vh,1100px)] w-full max-w-4xl overflow-hidden"
+                "h-[min(92vh,1100px)] max-h-full w-full max-w-4xl overflow-hidden"
               : "max-w-lg overflow-hidden",
           ACCENT_BORDER_CLASSES[accent],
         )}
@@ -2825,7 +2826,7 @@ function CertificateModal({
           // Natural size, aspect ratio preserved, capped only by the
           // viewport. The panel wraps this tightly, so nothing is wider
           // than the certificate itself.
-          <div className="flex items-center justify-center bg-black/20 p-2">
+          <div className="flex items-center justify-center bg-black/20 p-2 max-sm:pt-12">
             {renderAsPdfCanvas ? (
               <PdfCertificate
                 src={card.document as string}
@@ -2842,7 +2843,7 @@ function CertificateModal({
           </div>
         ) : (
           hasDocument && (
-            <div className="min-h-0 flex-1 bg-black/20">
+            <div className="min-h-0 flex-1 bg-black/20 pt-12">
               <PdfReader src={card.document as string} title={card.title} />
             </div>
           )
@@ -2850,16 +2851,16 @@ function CertificateModal({
 
         <div
           className={cn(
-            "border-t border-border/60 p-5",
+            "shrink-0 border-t border-border/60 p-4 sm:p-5",
             // width:0 + min-width:100% -> the footer takes the
             // certificate's width but never adds to it.
             showAsImage && "w-0 min-w-full",
           )}
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 className="text-lg font-semibold text-foreground">{card.title}</h3>
+            <h3 className="min-w-0 break-words text-lg font-semibold text-foreground">{card.title}</h3>
             {(verifyHref || isPdfDocument) && (
-              <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+              <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto sm:justify-end">
                 {verifyHref && (
                   <a href={verifyHref} target="_blank" rel="noreferrer" className={PDF_BTN}>
                     Verify on Credly
