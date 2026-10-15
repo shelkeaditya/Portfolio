@@ -1398,7 +1398,7 @@ function PdfReader({ src, title }: { src: string; title: string }) {
 // @share-start
 // The public, canonical address of the CV (not the portfolio page, and not a
 // workers.dev preview host), served by the same /r2/* route as the preview.
-const CV_PUBLIC_URL = "https://shelkeaditya.dev/r2/aditya-shelke-cv.pdf";
+const CV_PUBLIC_URL = "https://aditya.shelkeaditya.workers.dev/r2/aditya-shelke-cv.pdf";
 
 async function copyText(text: string): Promise<boolean> {
   try {
@@ -3519,9 +3519,9 @@ function ProjectDetailPage({
 // control is on; `prefers-reduced-motion` disables all motion.
 // ═══════════════════════════════════════════════════════════
 
-type ArchCat = "backend" | "database" | "cloud" | "external";
-type ArchIcon = "browser" | "code" | "cloud" | "database";
-type ArchColor = "green" | "purple" | "red" | "grey";
+type ArchCat = "build" | "backend" | "database" | "cloud" | "external";
+type ArchIcon = "browser" | "code" | "cloud" | "database" | "laptop" | "github" | "mail";
+type ArchColor = "green" | "purple" | "red" | "grey" | "blue";
 
 interface ArchNode {
   id: string;
@@ -3533,9 +3533,12 @@ interface ArchNode {
   icon: ArchIcon;
   title: string;
   sub: string;
+  /** Optional second description line (rendered under `sub`). */
+  sub2?: string;
   src: number;
   titleDy: number;
   subDy: number;
+  sub2Dy?: number;
 }
 
 interface ArchEdge {
@@ -3547,23 +3550,32 @@ interface ArchEdge {
   dashed: boolean;
   width: number;
   label: string;
+  /** Optional second label line (rendered directly under `label`). */
+  label2?: string;
   lx: number;
   ly: number;
 }
 
 const ARCH_W = 923;
-const ARCH_H = 589;
+const ARCH_H = 556;
+
+// Dashed BUILD / SOURCE container that wraps the two build-time nodes.
+const ARCH_GROUP = { x: 120, y: 100, w: 384, h: 124, label: "BUILD / SOURCE", members: ["local", "github"] };
 
 const ARCH_NODES: ArchNode[] = [
-  { id: "browser", x: 65, y: 248, w: 155, h: 71, cat: "external", icon: "browser", title: "User Browser", sub: "Portfolio visitor", src: 2, titleDy: 32, subDy: 48 },
-  { id: "worker", x: 388, y: 248, w: 184, h: 75, cat: "backend", icon: "code", title: "Cloudflare Worker", sub: "TanStack Start SSR · src/server.ts", src: 3, titleDy: 35, subDy: 50 },
-  { id: "r2", x: 685, y: 366, w: 165, h: 71, cat: "database", icon: "database", title: "R2 Bucket", sub: "portfolio-assets", src: 2, titleDy: 32, subDy: 48 },
-  { id: "obs", x: 685, y: 102, w: 205, h: 75, cat: "cloud", icon: "cloud", title: "Observability", sub: "Worker logs · invocation logs · traces", src: 1, titleDy: 34, subDy: 50 },
-  { id: "email", x: 338, y: 448, w: 174, h: 71, cat: "external", icon: "browser", title: "EmailJS", sub: "Contact form delivery", src: 1, titleDy: 33, subDy: 49 },
+  { id: "local", x: 136, y: 134, w: 150, h: 76, cat: "build", icon: "laptop", title: "Local Development", sub: "VS Code · Bun · Git", sub2: "Development & Testing", src: 1, titleDy: 36, subDy: 51, sub2Dy: 63 },
+  { id: "github", x: 338, y: 134, w: 150, h: 76, cat: "build", icon: "github", title: "GitHub Repository", sub: "aditya-shelke/portfolio", sub2: "main branch", src: 2, titleDy: 36, subDy: 51, sub2Dy: 63 },
+  { id: "worker", x: 445, y: 268, w: 184, h: 75, cat: "backend", icon: "code", title: "Cloudflare Worker", sub: "TanStack Start SSR · src/server.ts", src: 3, titleDy: 35, subDy: 50 },
+  { id: "r2", x: 725, y: 378, w: 170, h: 75, cat: "database", icon: "database", title: "R2 Bucket", sub: "portfolio-assets", sub2: "Images · PDFs · Static files", src: 5, titleDy: 34, subDy: 49, sub2Dy: 61 },
+  { id: "obs", x: 706, y: 108, w: 205, h: 75, cat: "cloud", icon: "cloud", title: "Observability", sub: "Worker logs · invocation logs · traces", src: 6, titleDy: 34, subDy: 50 },
+  { id: "browser", x: 100, y: 288, w: 155, h: 71, cat: "external", icon: "browser", title: "User Browser", sub: "Portfolio visitor", src: 7, titleDy: 32, subDy: 48 },
+  { id: "email", x: 380, y: 458, w: 170, h: 71, cat: "external", icon: "mail", title: "EmailJS", sub: "Contact form delivery", src: 8, titleDy: 33, subDy: 49 },
 ];
 
 // Order matters for the trace stagger (160ms per step).
 const ARCH_DESC: Record<string, string> = {
+  local: "Where the portfolio is developed and tested locally with VS Code, Bun, and Git before changes are committed and pushed to GitHub.",
+  github: "The source repository (aditya-shelke/portfolio, main branch). Pushes to main trigger the existing automatic deployment to Cloudflare through Wrangler.",
   browser: "The visitor's browser loads the portfolio page, receives the server-rendered HTML, and requests the assets needed to display the site.",
   worker: "Runs the TanStack Start SSR application through src/server.ts. Handles incoming portfolio requests, returns server-rendered HTML, serves application responses, and retrieves static assets from R2.",
   r2: "Stores portfolio assets such as images, the profile photo, favicon, and resume. The Worker retrieves these objects when the application requests them.",
@@ -3575,13 +3587,18 @@ const ARCH_DESC: Record<string, string> = {
 const ARCH_FLOW: string[] = ["req", "assets", "bytes", "html", "logs"];
 
 const ARCH_EDGES: ArchEdge[] = [
-  { id: "req-r2", from: "browser", to: "worker", d: "M142 248 V232 Q142 226 148 226 H474 Q480 226 480 232 V246", color: "grey", dashed: false, width: 1.4, label: "GET /r2/* · images and PDFs", lx: 310, ly: 175 },
-  { id: "req", from: "browser", to: "worker", d: "M220 276 H386", color: "green", dashed: false, width: 2, label: "HTTPS page request · /portfolio", lx: 304, ly: 264 },
-  { id: "html", from: "worker", to: "browser", d: "M480 323 V342 Q480 348 474 348 H148 Q142 348 142 342 V321", color: "purple", dashed: true, width: 1.5, label: "SSR HTML", lx: 310, ly: 337 },
-  { id: "assets", from: "worker", to: "r2", d: "M572 299 H622 Q628 299 628 305 V404 Q628 410 634 410 H683", color: "green", dashed: false, width: 2, label: "Assets.get(key)", lx: 585, ly: 355 },
-  { id: "bytes", from: "r2", to: "worker", d: "M685 396 H669 Q663 396 663 390 V291 Q663 285 657 285 H574", color: "purple", dashed: true, width: 1.5, label: "Object bytes", lx: 663, ly: 328 },
-  { id: "logs", from: "worker", to: "obs", d: "M572 271 H622 Q628 271 628 265 V145 Q628 139 634 139 H683", color: "purple", dashed: true, width: 1.5, label: "Invocation logs · traces", lx: 628, ly: 194 },
-  { id: "contact", from: "browser", to: "email", d: "M220 290 H273 Q279 290 279 296 V478 Q279 484 285 484 H336", color: "red", dashed: true, width: 1.5, label: "Contact form · EmailJS API", lx: 279, ly: 375 },
+  // Build-time path: Local Development → GitHub → (auto deploy) → Cloudflare Worker.
+  { id: "push", from: "local", to: "github", d: "M286 172 H336", color: "blue", dashed: false, width: 2, label: "git push", lx: 311, ly: 165 },
+  { id: "deploy", from: "github", to: "worker", d: "M488 172 H544 Q550 172 550 178 V266", color: "blue", dashed: false, width: 2, label: "Push to main · Auto Deploy", label2: "via Wrangler (Cloudflare)", lx: 583, ly: 150 },
+  // Runtime paths. "req-r2" shares the request line's geometry (the reference draws one
+  // browser → worker line carrying both labels); it sits underneath the green line.
+  { id: "req-r2", from: "browser", to: "worker", d: "M255 306 H443", color: "grey", dashed: false, width: 1.4, label: "GET /r2/* · images and PDFs", lx: 362, ly: 320 },
+  { id: "req", from: "browser", to: "worker", d: "M255 306 H443", color: "green", dashed: false, width: 2, label: "HTTPS page request · /portfolio", lx: 346, ly: 299 },
+  { id: "html", from: "worker", to: "browser", d: "M535 343 V379 Q535 385 529 385 H183 Q177 385 177 379 V361", color: "purple", dashed: true, width: 1.5, label: "SSR HTML", lx: 350, ly: 378 },
+  { id: "assets", from: "worker", to: "r2", d: "M629 322 H654 Q660 322 660 328 V418 Q660 424 666 424 H723", color: "green", dashed: false, width: 2, label: "Assets.get(key)", lx: 620, ly: 376 },
+  { id: "bytes", from: "r2", to: "worker", d: "M725 402 H700 Q694 402 694 396 V312 Q694 306 688 306 H631", color: "purple", dashed: true, width: 1.5, label: "Object bytes", lx: 730, ly: 354 },
+  { id: "logs", from: "worker", to: "obs", d: "M629 289 H664 Q670 289 670 283 V156 Q670 150 676 150 H704", color: "purple", dashed: true, width: 1.5, label: "Invocation logs · traces", lx: 746, ly: 218 },
+  { id: "contact", from: "browser", to: "email", d: "M255 327 H289 Q295 327 295 333 V484 Q295 490 301 490 H378", color: "red", dashed: true, width: 1.5, label: "Contact form · EmailJS API", label2: "POST /api/v1.0/email/send", lx: 359, ly: 410 },
 ];
 
 /** Final point (the arrowhead tip) of an edge path — where the arrival ping fires.
@@ -3610,12 +3627,17 @@ const ARCH_END: Record<string, { x: number; y: number }> = Object.fromEntries(
   ARCH_EDGES.map((e) => [e.id, pathEnd(e.d)]),
 );
 
-const ARCH_LEGEND: { cat: ArchCat; label: string; count: number; x: number }[] = [
-  { cat: "backend", label: "Backend", count: 1, x: 38 },
-  { cat: "database", label: "Database", count: 1, x: 129 },
-  { cat: "cloud", label: "Cloud", count: 1, x: 224 },
-  { cat: "external", label: "External", count: 2, x: 306 },
-];
+// Legend categories, in display order. Counts are derived from ARCH_NODES so they
+// can never drift from the diagram (Build / Source 2, Backend 1, Database 1, Cloud 1, External 2).
+const ARCH_LEGEND: { cat: ArchCat; label: string; count: number }[] = (
+  [
+    { cat: "build", label: "Build / Source" },
+    { cat: "backend", label: "Backend" },
+    { cat: "database", label: "Database" },
+    { cat: "cloud", label: "Cloud" },
+    { cat: "external", label: "External" },
+  ] as { cat: ArchCat; label: string }[]
+).map((l) => ({ ...l, count: ARCH_NODES.filter((n) => n.cat === l.cat).length }));
 
 function ArchIconGlyph({ icon }: { icon: ArchIcon }) {
   const common = { fill: "none", stroke: "currentColor", strokeWidth: 1, strokeLinecap: "round", strokeLinejoin: "round" } as const;
@@ -3625,6 +3647,28 @@ function ArchIconGlyph({ icon }: { icon: ArchIcon }) {
         <g {...common}>
           <rect x="3" y="0.7" width="6" height="6" rx="1" />
           <rect x="0.7" y="3" width="6" height="6.3" rx="1" />
+        </g>
+      );
+    case "laptop":
+      return (
+        <g {...common}>
+          <rect x="1.8" y="1.4" width="6.4" height="5" rx="0.8" />
+          <path d="M0.6 8.4h8.8" />
+        </g>
+      );
+    case "github":
+      // Lucide "github" mark, drawn in its native 24-unit box and scaled into the 10-unit icon cell.
+      return (
+        <g {...common} transform="scale(0.42)" strokeWidth={2.2}>
+          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+          <path d="M9 18c-4.51 2-5-2-7-2" />
+        </g>
+      );
+    case "mail":
+      return (
+        <g {...common}>
+          <rect x="0.8" y="1.8" width="8.4" height="6.4" rx="1" />
+          <path d="m1 2.6 4 3 4-3" />
         </g>
       );
     case "code":
@@ -3657,6 +3701,8 @@ const ARCH_CSS = `
   --arch-green: #059669;
   --arch-purple: #7c3aed;
   --arch-red: #e11d48;
+  --arch-blue: #2563eb;
+  --arch-group-fill: rgba(37, 99, 235, 0.06);
   --arch-grey: #94a3b8;
   --arch-border: #e2e8f0;
   --arch-hl: #3b82f6;
@@ -3670,6 +3716,7 @@ const ARCH_CSS = `
   --arch-database-fill: #e9e4fa; --arch-database-stroke: #7c3aed;
   --arch-cloud-fill: #fbf0d4;    --arch-cloud-stroke: #d97706;
   --arch-external-fill: #e9ebef; --arch-external-stroke: #64748b;
+  --arch-build-fill: #dbe8ff;    --arch-build-stroke: #2563eb;
 }
 .arch-root[data-theme="dark"] {
   --arch-bg: #16181f;
@@ -3682,6 +3729,8 @@ const ARCH_CSS = `
   --arch-green: #34d399;
   --arch-purple: #a78bfa;
   --arch-red: #fb7185;
+  --arch-blue: #60a5fa;
+  --arch-group-fill: rgba(96, 165, 250, 0.07);
   --arch-grey: #64748b;
   --arch-border: rgba(148, 163, 184, 0.16);
   --arch-hl: #60a5fa;
@@ -3695,6 +3744,7 @@ const ARCH_CSS = `
   --arch-database-fill: #2a194d; --arch-database-stroke: #a78bfa;
   --arch-cloud-fill: #321f19;    --arch-cloud-stroke: #eab308;
   --arch-external-fill: #181f2b; --arch-external-stroke: #94a3b8;
+  --arch-build-fill: #11264a;    --arch-build-stroke: #60a5fa;
 }
 
 .arch-canvas {
@@ -3712,6 +3762,7 @@ const ARCH_CSS = `
   font-family: var(--arch-font);
 }
 
+.arch-cat-build    { --n-fill: var(--arch-build-fill);    --n-stroke: var(--arch-build-stroke); }
 .arch-cat-backend  { --n-fill: var(--arch-backend-fill);  --n-stroke: var(--arch-backend-stroke); }
 .arch-cat-database { --n-fill: var(--arch-database-fill); --n-stroke: var(--arch-database-stroke); }
 .arch-cat-cloud    { --n-fill: var(--arch-cloud-fill);    --n-stroke: var(--arch-cloud-stroke); }
@@ -3738,22 +3789,36 @@ const ARCH_CSS = `
 .arch-edge.purple { stroke: var(--arch-purple); }
 .arch-edge.red    { stroke: var(--arch-red); }
 .arch-edge.grey   { stroke: var(--arch-grey); }
+.arch-edge.blue   { stroke: var(--arch-blue); }
 .arch-edge.dashed { stroke-dasharray: 5 4; }
 .arch-label { font-size: 7.2px; paint-order: stroke; stroke: var(--arch-bg); stroke-width: 4px; stroke-linejoin: round; }
 .arch-label.green { fill: var(--arch-green); }
 .arch-label.purple { fill: var(--arch-purple); }
 .arch-label.red { fill: var(--arch-red); }
 .arch-label.grey { fill: var(--arch-grey); }
+.arch-label.blue { fill: var(--arch-blue); }
 .arch-arrow.green { fill: var(--arch-green); }
 .arch-arrow.purple { fill: var(--arch-purple); }
 .arch-arrow.red { fill: var(--arch-red); }
 .arch-arrow.grey { fill: var(--arch-grey); }
+.arch-arrow.blue { fill: var(--arch-blue); }
 
-.arch-legend-title { fill: var(--arch-title); font-size: 10.5px; font-weight: 700; }
-.arch-legend-label { fill: var(--arch-legend); font-size: 9px; }
-.arch-legend-swatch { fill: var(--n-fill); stroke: var(--n-stroke); stroke-width: 1; }
-.arch-legend-pill { fill: none; stroke: var(--arch-pill); stroke-opacity: 0.5; stroke-width: 0.8; }
-.arch-legend-count { fill: var(--arch-pill); font-size: 7px; }
+/* BUILD / SOURCE container — dashed blue frame behind the two build nodes. */
+.arch-group { transition: opacity 200ms ease; pointer-events: none; }
+.arch-group.dim { opacity: 0.28; }
+.arch-group-box { fill: var(--arch-group-fill); stroke: var(--arch-blue); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.arch-group-label { fill: var(--arch-blue); font-size: 9px; font-weight: 700; letter-spacing: 0.02em; }
+
+/* Legend — HTML (not SVG) so it wraps cleanly on narrow screens and never overlaps the diagram. */
+.arch-legend { padding: 2px 20px 16px; font-family: var(--arch-font); }
+.arch-legend-title { margin: 0 0 4px; color: var(--arch-title); font-size: 10.5px; font-weight: 700; }
+.arch-legend-items { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-left: -7px; }
+.arch-legend-swatch { flex: none; box-sizing: border-box; width: 15px; height: 9px; border-radius: 3px;
+  background: var(--n-fill); border: 1px solid var(--n-stroke); }
+.arch-legend-label { color: var(--arch-legend); font-size: 9.5px; line-height: 1; white-space: nowrap; transition: color 160ms ease; }
+.arch-legend-count { display: inline-flex; flex: none; align-items: center; justify-content: center; box-sizing: border-box;
+  min-width: 16px; height: 16px; border-radius: 999px; color: var(--arch-pill); font-size: 8px; line-height: 1;
+  border: 1px solid color-mix(in srgb, var(--arch-pill) 50%, transparent); }
 
 .arch-card { position: absolute; z-index: 5; width: min(320px, calc(100% - 16px)); box-sizing: border-box;
   padding: 12px 14px; border-radius: 10px; font-family: var(--arch-font);
@@ -3778,9 +3843,11 @@ const ARCH_CSS = `
 .arch-card-body { margin: 0; font-size: 11px; line-height: 1.65; }
 
 /* One-time intro reveal (only while data-reveal is set; never loops). */
+.arch-root[data-reveal="pending"] .arch-group,
 .arch-root[data-reveal="pending"] .arch-node,
 .arch-root[data-reveal="pending"] .arch-edge-g,
 .arch-root[data-reveal="pending"] .arch-label { opacity: 0; }
+.arch-root[data-reveal="done"] .arch-group { animation: arch-fade 500ms ease backwards; }
 .arch-root[data-reveal="done"] .arch-node { animation: arch-in 420ms var(--arch-ease) backwards; animation-delay: calc(var(--i, 0) * 80ms); }
 .arch-root[data-reveal="done"] .arch-edge-g,
 .arch-root[data-reveal="done"] .arch-label { animation: arch-fade 500ms ease backwards; animation-delay: calc(450ms + var(--i, 0) * 70ms); }
@@ -3795,15 +3862,18 @@ const ARCH_CSS = `
   animation: arch-packet calc(var(--dur, 2.4s) * 0.8) linear both; animation-delay: calc(var(--step, 0) * 160ms); }
 .arch-packet.green { stroke: var(--arch-green); } .arch-packet.purple { stroke: var(--arch-purple); }
 .arch-packet.red { stroke: var(--arch-red); }     .arch-packet.grey { stroke: var(--arch-grey); }
+.arch-packet.blue { stroke: var(--arch-blue); }
 @keyframes arch-packet { 0% { stroke-dashoffset: 0.015; opacity: 1; } 99% { opacity: 1; } 100% { stroke-dashoffset: -1; opacity: 0; } }
 
-.arch-legend-item { cursor: pointer; outline: none; }
-.arch-legend-hit { fill: transparent; stroke: transparent; transition: stroke 160ms ease; }
-.arch-legend-item:focus-visible .arch-legend-hit { stroke: var(--arch-hl); stroke-width: 1; }
-.arch-legend-item:hover .arch-legend-label, .arch-legend-item.on .arch-legend-label { fill: var(--arch-title); }
-.arch-legend-item.on .arch-legend-swatch { stroke-width: 1.8; }
+.arch-legend-item { display: inline-flex; align-items: center; gap: 6px; padding: 4px 7px; margin: 0;
+  border: 1px solid transparent; border-radius: 6px; background: none; cursor: pointer; font: inherit; outline: none;
+  transition: border-color 160ms ease; }
+.arch-legend-item:focus-visible { border-color: var(--arch-hl); }
+.arch-legend-item:hover .arch-legend-label, .arch-legend-item.on .arch-legend-label { color: var(--arch-title); }
+.arch-legend-item.on .arch-legend-swatch { border-width: 2px; }
 .arch-trace.green { stroke: var(--arch-green); } .arch-trace.purple { stroke: var(--arch-purple); }
 .arch-trace.red { stroke: var(--arch-red); }     .arch-trace.grey { stroke: var(--arch-grey); }
+.arch-trace.blue { stroke: var(--arch-blue); }
 @keyframes arch-trace { 0% { stroke-dashoffset: 1; opacity: 0.95; } 80% { stroke-dashoffset: 0; opacity: 0.95; } 100% { stroke-dashoffset: 0; opacity: 0; } }
 
 /* Arrival ping — fires at the path's arrowhead the moment the trace/packet gets there
@@ -3813,6 +3883,7 @@ const ARCH_CSS = `
 .arch-ping-g.purple { --ping: var(--arch-purple); }
 .arch-ping-g.red    { --ping: var(--arch-red); }
 .arch-ping-g.grey   { --ping: var(--arch-grey); }
+.arch-ping-g.blue   { --ping: var(--arch-blue); }
 .arch-ping, .arch-ping-dot, .arch-ping-node {
   opacity: 0; transform-box: fill-box; transform-origin: center;
   animation-delay: calc(var(--step, 0) * 160ms + var(--dur, 2.4s) * 0.8);
@@ -3836,7 +3907,7 @@ const ARCH_CSS = `
 
 function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const colors: ArchColor[] = ["green", "purple", "red", "grey"];
+  const colors: ArchColor[] = ["green", "purple", "red", "grey", "blue"];
 
   // Single source of truth for the interaction: `active` drives node
   // highlight, dimming and the floating card. `cardId` keeps the last
@@ -4068,6 +4139,8 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
             ? ""
             : "dim"
           : "";
+  // The dashed container fades only when every node inside it is dimmed.
+  const groupDim = ARCH_GROUP.members.every((id) => nodeState(id) === "dim");
 
   // Arrow keys hop to the nearest connected node in that direction.
   const moveFocus = (fromId: string, key: string) => {
@@ -4154,7 +4227,7 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
               className="arch-svg"
               viewBox={`0 0 ${ARCH_W} ${ARCH_H}`}
               role="img"
-              aria-label="Portfolio system architecture: a User Browser requests pages from a Cloudflare Worker, which reads assets from an R2 bucket and sends logs to Observability; the browser also posts the contact form to EmailJS."
+              aria-label="Portfolio system architecture: Local Development pushes to a GitHub Repository, which auto-deploys to a Cloudflare Worker through Wrangler. A User Browser requests pages from the Worker, which reads assets from an R2 bucket and sends logs to Observability; the browser also posts the contact form to EmailJS."
             >
               <defs>
                 {colors.map((c) => (
@@ -4165,6 +4238,14 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
               </defs>
 
               <>
+                {/* BUILD / SOURCE container — sits behind the edges and its two nodes. */}
+                <g className={cn("arch-group", groupDim && "dim")} aria-hidden>
+                  <rect className="arch-group-box" x={ARCH_GROUP.x} y={ARCH_GROUP.y} width={ARCH_GROUP.w} height={ARCH_GROUP.h} rx={9} />
+                  <text className="arch-group-label" x={ARCH_GROUP.x + 16} y={ARCH_GROUP.y + 21}>
+                    {ARCH_GROUP.label}
+                  </text>
+                </g>
+
                 {ARCH_EDGES.map((e) => (
                   <g key={e.id} className={cn("arch-edge-g", edgeState(e))} style={{ ["--i" as string]: ARCH_EDGES.indexOf(e) } as React.CSSProperties}>
                     <path
@@ -4189,7 +4270,12 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
 
                 {ARCH_EDGES.map((e) => (
                   <text key={`${e.id}-l`} className={cn("arch-label", e.color, edgeState(e))} style={{ ["--i" as string]: ARCH_EDGES.indexOf(e) } as React.CSSProperties} x={e.lx} y={e.ly} textAnchor="middle">
-                    {e.label}
+                    <tspan x={e.lx}>{e.label}</tspan>
+                    {e.label2 && (
+                      <tspan x={e.lx} dy={10.5}>
+                        {e.label2}
+                      </tspan>
+                    )}
                   </text>
                 ))}
 
@@ -4245,7 +4331,7 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
                     }}
                   >
                     <rect className="arch-box" x={n.x} y={n.y} width={n.w} height={n.h} rx={7} />
-                    <g className="arch-node-icon" transform={`translate(${n.x + 9} ${n.y + 8})`}>
+                    <g className="arch-node-icon" transform={`translate(${n.x + 9} ${n.y + 8}) scale(1.3)`}>
                       <ArchIconGlyph icon={n.icon} />
                     </g>
                     <rect className="arch-badge" x={n.x + n.w - 34} y={n.y + 4} width={28} height={12} rx={6} />
@@ -4258,6 +4344,11 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
                     <text className="arch-sub" x={n.x + n.w / 2} y={n.y + n.subDy} textAnchor="middle">
                       {n.sub}
                     </text>
+                    {n.sub2 && (
+                      <text className="arch-sub" x={n.x + n.w / 2} y={n.y + (n.sub2Dy ?? n.subDy + 12)} textAnchor="middle">
+                        {n.sub2}
+                      </text>
+                    )}
                   </g>
                 ))}
 
@@ -4281,44 +4372,38 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
                   );
                 })}
 
-                <text className="arch-legend-title" x={38} y={549}>
-                  Legend
-                </text>
-                {ARCH_LEGEND.map((l) => {
-                  const labelW = l.label.length * 5.4;
-                  const px = l.x + 19 + labelW + 6;
-                  const on = legendCat === l.cat;
-                  return (
-                    <g
-                      key={l.cat}
-                      className={cn("arch-legend-item", `arch-cat-${l.cat}`, on && "on")}
-                      data-arch-hit={hitAttr}
-                      role="button"
-                      tabIndex={0}
-                      aria-pressed={on}
-                      aria-label={`Highlight ${l.label} nodes`}
-                      onClick={() => toggleLegend(l.cat)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          toggleLegend(l.cat);
-                        } else if (e.key === "Escape") dismiss();
-                      }}
-                    >
-                      <rect className="arch-legend-hit" x={l.x - 5} y={553} width={px + 21 - l.x} height={22} rx={6} />
-                      <rect className="arch-legend-swatch" x={l.x} y={559} width={15} height={9} rx={3} />
-                      <text className="arch-legend-label" x={l.x + 19} y={567}>
-                        {l.label}
-                      </text>
-                      <rect className="arch-legend-pill" x={px} y={558} width={11} height={11} rx={5.5} />
-                      <text className="arch-legend-count" x={px + 5.5} y={566} textAnchor="middle">
-                        {l.count}
-                      </text>
-                    </g>
-                  );
-                })}
               </>
             </svg>
+          </div>
+
+          {/* Legend — bottom-left of the outer container; wraps onto extra rows on narrow screens. */}
+          <div className="arch-legend">
+            <div className="arch-legend-title">Legend</div>
+            <div className="arch-legend-items">
+              {ARCH_LEGEND.map((l) => {
+                const on = legendCat === l.cat;
+                return (
+                  <button
+                    key={l.cat}
+                    type="button"
+                    className={cn("arch-legend-item", `arch-cat-${l.cat}`, on && "on")}
+                    data-arch-hit={hitAttr}
+                    aria-pressed={on}
+                    aria-label={`Highlight ${l.label} nodes (${l.count})`}
+                    onClick={() => toggleLegend(l.cat)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") dismiss();
+                    }}
+                  >
+                    <span className="arch-legend-swatch" aria-hidden />
+                    <span className="arch-legend-label">{l.label}</span>
+                    <span className="arch-legend-count" aria-hidden>
+                      {l.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
           <div
@@ -4370,7 +4455,15 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
                             {glyph}
                           </span>{" "}
                           <span className="arch-card-peer">{peer.title}</span>
-                          <span className="arch-card-lbl">{e.label}</span>
+                          <span className="arch-card-lbl">
+                            {e.label}
+                            {e.label2 && (
+                              <>
+                                <br />
+                                {e.label2}
+                              </>
+                            )}
+                          </span>
                         </li>
                       );
                     })}
