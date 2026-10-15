@@ -31,6 +31,7 @@ import {
   ArrowLeft,
   Play,
   Square,
+  RotateCw,
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
@@ -965,11 +966,252 @@ function BackgroundFX() {
 // and pages that scroll far away release their pixels, so memory stays
 // low on phones. Pixel density is capped at 2x for the same reason.
 // ───────────────────────────────────────────────────────────
-async function loadPdfjs() {
-  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-  const worker = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs?url");
-  pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
-  return pdfjs;
+// @pdf-core-start
+// ── Shared PDF loading ──────────────────────────────────────
+// Every PDF on the site (CV, certificates, research paper) goes through
+// openPdf(). It downloads the file itself with fetch() and hands the bytes
+// to pdf.js, instead of letting pdf.js stream it with HTTP Range requests.
+// That matters because:
+//   - Range streaming silently depends on the /r2/* Worker route answering
+//     Range headers correctly (206 + Content-Range). If it returns the full
+//     body with a 200, pdf.js reads garbage and fails with no useful error.
+//   - fetch() lets us check the response (status, content-type, "%PDF-"
+//     magic bytes) so a missing object, an HTML fallback page served with
+//     200, or a broken deploy is reported precisely instead of showing a
+//     blank viewer.
+type PdfErrorKind = "network" | "timeout" | "http" | "not-pdf" | "viewer";
+
+class PdfLoadError extends Error {
+  kind: PdfErrorKind;
+  status?: number;
+  original?: unknown;
+  constructor(kind: PdfErrorKind, message: string, status?: number, original?: unknown) {
+    super(message);
+    this.name = "PdfLoadError";
+    this.kind = kind;
+    this.status = status;
+    this.original = original;
+  }
+}
+
+const PDF_FETCH_TIMEOUT_MS = 30_000;
+
+async function fetchPdfBytes(
+  src: string,
+  signal?: AbortSignal,
+  reload = false,
+): Promise<Uint8Array> {
+  const url = new URL(src, window.location.origin).href;
+  const ctrl = new AbortController();
+  const onOuterAbort = () => ctrl.abort();
+  signal?.addEventListener("abort", onOuterAbort);
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    ctrl.abort();
+  }, PDF_FETCH_TIMEOUT_MS);
+
+  try {
+    let res: Response;
+    try {
+      // On a manual retry, skip any cached (possibly bad) copy.
+      res = await fetch(url, { signal: ctrl.signal, cache: reload ? "reload" : "default" });
+    } catch (e) {
+      if (timedOut) throw new PdfLoadError("timeout", `Timed out fetching ${url}`, undefined, e);
+      if (signal?.aborted) throw e;
+      throw new PdfLoadError("network", `Network error fetching ${url}`, undefined, e);
+    }
+    if (!res.ok) {
+      throw new PdfLoadError("http", `HTTP ${res.status} for ${url}`, res.status);
+    }
+
+    let buf: Uint8Array;
+    try {
+      buf = new Uint8Array(await res.arrayBuffer());
+    } catch (e) {
+      if (timedOut) throw new PdfLoadError("timeout", `Timed out reading ${url}`, undefined, e);
+      if (signal?.aborted) throw e;
+      throw new PdfLoadError("network", `Download interrupted for ${url}`, undefined, e);
+    }
+
+    // A real PDF has "%PDF-" near the start. Anything else (an HTML error
+    // page returned with 200, an empty body, a wrong object) is not a PDF
+    // no matter what the content-type header claims.
+    const head = new TextDecoder("latin1").decode(buf.subarray(0, 1024));
+    const contentType = res.headers.get("content-type") ?? "(none)";
+    if (!head.includes("%PDF-")) {
+      throw new PdfLoadError(
+        "not-pdf",
+        `${url} is not a PDF (content-type: ${contentType}, ${buf.byteLength} bytes)`,
+      );
+    }
+    if (!/application\/pdf/i.test(contentType)) {
+      console.warn(
+        `[pdf] ${url} is a valid PDF but was served as "${contentType}". ` +
+          `Serve it as application/pdf so browsers can preview it natively.`,
+      );
+    }
+    return buf;
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener("abort", onOuterAbort);
+  }
+}
+
+function toPdfLoadError(e: unknown): PdfLoadError {
+  if (e instanceof PdfLoadError) return e;
+  const name = (e as { name?: string } | null)?.name;
+  const message = e instanceof Error ? e.message : String(e);
+  if (name === "InvalidPDFException") {
+    return new PdfLoadError("not-pdf", `Corrupt PDF: ${message}`, undefined, e);
+  }
+  return new PdfLoadError("viewer", message, undefined, e);
+}
+
+function pdfErrorMessage(err: PdfLoadError): string {
+  switch (err.kind) {
+    case "timeout":
+      return "The document took too long to load.";
+    case "network":
+      return "Couldn't reach the server. Check your connection and try again.";
+    case "http":
+      return err.status === 404
+        ? "This document couldn't be found on the server."
+        : `The server couldn't deliver this document (error ${err.status}).`;
+    case "not-pdf":
+      return "The server didn't return a valid PDF file.";
+    default:
+      return "This browser couldn't display the document in the preview.";
+  }
+}
+
+function pdfFileName(src: string): string {
+  try {
+    return decodeURIComponent(src.split("?")[0].split("/").pop() || "document.pdf");
+  } catch {
+    return "document.pdf";
+  }
+}
+// @pdf-core-end
+
+let pdfjsPromise: Promise<typeof import("pdfjs-dist/legacy/build/pdf.mjs")> | null = null;
+
+function loadPdfjs() {
+  if (!pdfjsPromise) {
+    pdfjsPromise = (async () => {
+      const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+      const worker = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs?url");
+      pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
+      return pdfjs;
+    })().catch((e) => {
+      pdfjsPromise = null; // let a retry import the viewer again
+      throw e;
+    });
+  }
+  return pdfjsPromise;
+}
+
+/** Download a PDF, validate it, and open it with pdf.js. Throws PdfLoadError. */
+async function openPdf(
+  src: string,
+  signal: AbortSignal,
+  reload = false,
+): Promise<PDFDocumentProxy> {
+  const bytes = await fetchPdfBytes(src, signal, reload);
+  let pdfjs: Awaited<ReturnType<typeof loadPdfjs>>;
+  try {
+    pdfjs = await loadPdfjs();
+  } catch (e) {
+    throw new PdfLoadError("viewer", "The PDF viewer library failed to load", undefined, e);
+  }
+  try {
+    return await pdfjs.getDocument({ data: bytes }).promise;
+  } catch (e) {
+    throw toPdfLoadError(e);
+  }
+}
+
+/** Release a document's worker + memory. Goes through the loading task, which
+ *  exposes destroy() in every pdf.js version (PDFDocumentProxy.destroy() does not). */
+function destroyPdf(doc: PDFDocumentProxy | null) {
+  if (!doc) return;
+  doc.loadingTask.destroy().catch(() => {});
+}
+
+function isRenderCancelled(e: unknown) {
+  return (e as { name?: string } | null)?.name === "RenderingCancelledException";
+}
+
+// ── Shared PDF actions + error panel ────────────────────────
+const PDF_BTN =
+  "inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-3 py-1.5 text-xs font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15";
+
+function PdfActions({
+  src,
+  onRetry,
+  className,
+}: {
+  src: string;
+  onRetry?: () => void;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex flex-wrap items-center gap-2", className)}>
+      {onRetry && (
+        <button type="button" onClick={onRetry} className={PDF_BTN}>
+          <RotateCw className="h-3 w-3" />
+          Retry
+        </button>
+      )}
+      <a href={src} target="_blank" rel="noreferrer" className={PDF_BTN}>
+        Open PDF in new tab
+        <ExternalLink className="h-3 w-3" />
+      </a>
+      <a href={src} download={pdfFileName(src)} className={PDF_BTN}>
+        <Download className="h-3 w-3" />
+        Download
+      </a>
+    </div>
+  );
+}
+
+function PdfSpinner({ label }: { label: string }) {
+  return (
+    <div
+      role="status"
+      className="flex flex-col items-center justify-center gap-3 text-sm text-muted-foreground"
+    >
+      <span
+        aria-hidden
+        className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-[color:var(--accent-blue)] motion-reduce:animate-none"
+      />
+      {label}
+    </div>
+  );
+}
+
+function PdfErrorPanel({
+  src,
+  error,
+  onRetry,
+}: {
+  src: string;
+  error: PdfLoadError;
+  onRetry: () => void;
+}) {
+  return (
+    <div
+      role="alert"
+      className="flex h-full min-h-48 flex-col items-center justify-center gap-4 p-6 text-center"
+    >
+      <FileText className="h-8 w-8 text-muted-foreground" aria-hidden />
+      <div className="space-y-1">
+        <p className="text-sm font-medium text-foreground">Couldn&apos;t load the preview</p>
+        <p className="max-w-xs text-xs text-muted-foreground">{pdfErrorMessage(error)}</p>
+      </div>
+      <PdfActions src={src} onRetry={onRetry} className="justify-center" />
+    </div>
+  );
 }
 
 function PdfReaderPage({
@@ -1020,7 +1262,11 @@ function PdfReaderPage({
       canvas,
       viewport,
     } as Parameters<PDFPageProxy["render"]>[0]);
-    task.promise.catch(() => {}); // a cancelled render rejects - ignore
+    task.promise.catch((e) => {
+      // A cancelled render (scrolled away / resized) is expected; anything
+      // else is a real failure and must not vanish silently.
+      if (!isRenderCancelled(e)) console.error("[pdf] page render failed", e);
+    });
     return () => task.cancel();
   }, [visible, width, page, base.width]);
 
@@ -1039,32 +1285,50 @@ function PdfReader({ src, title }: { src: string; title: string }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [pages, setPages] = useState<PDFPageProxy[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [error, setError] = useState<PdfLoadError | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const [pageWidth, setPageWidth] = useState(0);
 
   // Load every page's size up front so the scroll height is correct and
-  // stable before anything is drawn.
+  // stable before anything is drawn. `attempt` re-runs this for Retry.
   useEffect(() => {
-    let cancelled = false;
+    const ctrl = new AbortController();
     let doc: PDFDocumentProxy | null = null;
+    setStatus("loading");
+    setError(null);
+    setPages([]);
     (async () => {
       try {
-        const pdfjs = await loadPdfjs();
-        const task = pdfjs.getDocument(new URL(src, window.location.origin).href);
-        doc = await task.promise;
+        doc = await openPdf(src, ctrl.signal, attempt > 0);
+        if (ctrl.signal.aborted) {
+          destroyPdf(doc);
+          doc = null;
+          return;
+        }
         const loaded: PDFPageProxy[] = [];
         for (let i = 1; i <= doc.numPages; i++) loaded.push(await doc.getPage(i));
-        if (cancelled) return;
+        if (ctrl.signal.aborted) {
+          destroyPdf(doc);
+          return;
+        }
         setPages(loaded);
         setStatus("ready");
-      } catch {
-        if (!cancelled) setStatus("error");
+      } catch (e) {
+        if (ctrl.signal.aborted) {
+          destroyPdf(doc);
+          return;
+        }
+        const err = toPdfLoadError(e);
+        console.error(`[pdf] could not load ${src} (${err.kind}): ${err.message}`, err.original ?? "");
+        setError(err);
+        setStatus("error");
       }
     })();
     return () => {
-      cancelled = true;
-      void doc?.destroy();
+      ctrl.abort();
+      destroyPdf(doc);
     };
-  }, [src]);
+  }, [src, attempt]);
 
   // Fit pages to the reader's width (capped so desktop text stays readable).
   useEffect(() => {
@@ -1094,24 +1358,16 @@ function PdfReader({ src, title }: { src: string; title: string }) {
       ref={scrollRef}
       role="document"
       aria-label={title}
+      aria-busy={status === "loading"}
       className="h-full overflow-y-auto overscroll-contain px-3 py-3 sm:px-5 sm:py-5"
     >
       {status === "loading" && (
-        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-          Loading…
+        <div className="flex h-full items-center justify-center">
+          <PdfSpinner label="Loading document…" />
         </div>
       )}
-      {status === "error" && (
-        <div className="flex h-full items-center justify-center text-sm">
-          <a
-            href={src}
-            target="_blank"
-            rel="noreferrer"
-            className="text-accent-blue underline underline-offset-2"
-          >
-            Open the PDF
-          </a>
-        </div>
+      {status === "error" && error && (
+        <PdfErrorPanel src={src} error={error} onRetry={() => setAttempt((n) => n + 1)} />
       )}
       {status === "ready" &&
         pageWidth > 0 &&
@@ -1161,8 +1417,9 @@ function CvModal({ onClose }: { onClose: () => void }) {
           <PdfReader src="/r2/aditya-shelke-cv.pdf" title="Aditya Shelke — CV" />
         </div>
 
-        <div className="shrink-0 border-t border-border/60 p-5">
+        <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-border/60 p-5">
           <h3 className="text-lg font-semibold text-foreground">Curriculum Vitae</h3>
+          <PdfActions src="/r2/aditya-shelke-cv.pdf" />
         </div>
       </div>
     </div>
@@ -2246,35 +2503,50 @@ function PdfCertificate({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const pageRef = useRef<PDFPageProxy | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [error, setError] = useState<PdfLoadError | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const [cssSize, setCssSize] = useState<{ w: number; h: number } | null>(null);
   const [renderTick, setRenderTick] = useState(0);
 
-  // Load the document and its first page.
+  const fail = useCallback(
+    (e: unknown) => {
+      const err = toPdfLoadError(e);
+      console.error(`[pdf] could not load ${src} (${err.kind}): ${err.message}`, err.original ?? "");
+      setError(err);
+      setStatus("error");
+    },
+    [src],
+  );
+
+  // Load the document and its first page. `attempt` re-runs this for Retry.
   useEffect(() => {
-    let cancelled = false;
-    let loadingTask: { destroy: () => Promise<void> } | null = null;
+    const ctrl = new AbortController();
+    let doc: PDFDocumentProxy | null = null;
+    pageRef.current = null;
+    setStatus("loading");
+    setError(null);
+    setCssSize(null);
     (async () => {
       try {
-        const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-        const worker = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs?url");
-        pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
-        const task = pdfjs.getDocument(new URL(src, window.location.origin).href);
-        loadingTask = task;
-        const doc = await task.promise;
+        doc = await openPdf(src, ctrl.signal, attempt > 0);
         const page = await doc.getPage(1);
-        if (cancelled) return;
+        if (ctrl.signal.aborted) {
+          destroyPdf(doc);
+          return;
+        }
         pageRef.current = page;
         setRenderTick((n) => n + 1);
-      } catch {
-        if (!cancelled) setStatus("error");
+      } catch (e) {
+        if (ctrl.signal.aborted) destroyPdf(doc);
+        else fail(e);
       }
     })();
     return () => {
-      cancelled = true;
+      ctrl.abort();
       pageRef.current = null;
-      void loadingTask?.destroy();
+      destroyPdf(doc);
     };
-  }, [src]);
+  }, [src, attempt, fail]);
 
   // Re-fit when the window is resized (debounced).
   useEffect(() => {
@@ -2307,14 +2579,20 @@ function PdfCertificate({
       canvas.width = Math.floor(viewport.width);
       canvas.height = Math.floor(viewport.height);
       const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+      if (!ctx) {
+        fail(new PdfLoadError("viewer", "Canvas 2D context is unavailable"));
+        return;
+      }
       task = page.render({ canvasContext: ctx, canvas, viewport } as Parameters<
         PDFPageProxy["render"]
       >[0]);
       try {
         await task.promise;
-      } catch {
-        return; // cancelled by a newer render
+      } catch (e) {
+        // Cancelled by a newer render: fine. Anything else is a real
+        // failure - report it instead of leaving "Loading…" up forever.
+        if (!cancelled && !isRenderCancelled(e)) fail(e);
+        return;
       }
       if (cancelled) return;
       setCssSize({ w: base.width * fit, h: base.height * fit });
@@ -2324,36 +2602,42 @@ function PdfCertificate({
       cancelled = true;
       task?.cancel();
     };
-  }, [renderTick]);
+  }, [renderTick, fail]);
 
-  // pdf.js could not render the PDF: show the certificate's preview image
-  // directly instead of a bare link.
+  // The PDF could not be loaded or drawn: show the certificate's preview
+  // image (same artwork) and say so, with a way to retry the real file.
   if (status === "error" && fallbackImage) {
     return (
-      <img
-        src={fallbackImage}
-        alt={title}
-        className="block h-auto w-auto max-h-[78vh] max-w-full rounded-lg object-contain"
-      />
+      <div className="flex flex-col items-center gap-2">
+        <img
+          src={fallbackImage}
+          alt={title}
+          className="block h-auto w-auto max-h-[72vh] max-w-full rounded-lg object-contain"
+        />
+        <p role="status" className="w-0 min-w-full text-center text-xs text-muted-foreground">
+          Showing the preview image — the PDF itself couldn&apos;t be loaded.{" "}
+          <button
+            type="button"
+            onClick={() => setAttempt((n) => n + 1)}
+            className="text-accent-blue underline underline-offset-2"
+          >
+            Retry
+          </button>
+        </p>
+      </div>
     );
   }
 
   return (
     <div className="relative">
-      {status !== "ready" && (
-        <div className="flex h-48 w-[min(80vw,420px)] items-center justify-center text-sm text-muted-foreground">
-          {status === "error" ? (
-            <a
-              href={src}
-              target="_blank"
-              rel="noreferrer"
-              className="text-accent-blue underline underline-offset-2"
-            >
-              Open certificate PDF
-            </a>
-          ) : (
-            "Loading certificate…"
-          )}
+      {status === "loading" && (
+        <div className="flex h-48 w-[min(80vw,420px)] items-center justify-center">
+          <PdfSpinner label="Loading certificate…" />
+        </div>
+      )}
+      {status === "error" && error && (
+        <div className="w-[min(80vw,420px)]">
+          <PdfErrorPanel src={src} error={error} onRetry={() => setAttempt((n) => n + 1)} />
         </div>
       )}
       <canvas
@@ -2401,11 +2685,10 @@ function CertificateModal({
   // Certificates that ship a preview image (every PDF certificate has a
   // matching .webp) are shown as that image, so the panel hugs the
   // certificate's own size — no empty space on the sides — with the
-  // short details underneath. The iframe viewer is only a fallback for a
-  // PDF with no preview image.
+  // short details underneath.
   // PDF certificates are drawn from the PDF itself (the document file,
   // not the thumbnail). A research paper is a multi-page PDF, so it keeps
-  // the scrollable iframe viewer instead.
+  // the scrollable canvas reader (PdfReader) instead.
   const isPaper = Boolean(card.paperDocument) && card.document === card.paperDocument;
   const renderAsPdfCanvas = isPdfDocument && !isPaper;
   const imageSrc = renderAsPdfCanvas
@@ -2525,6 +2808,8 @@ function CertificateModal({
               <ExternalLink className="h-3 w-3" />
             </a>
           )}
+
+          {isPdfDocument && <PdfActions src={card.document as string} className="mt-4" />}
         </div>
       </div>
     </div>
