@@ -1458,7 +1458,7 @@ function CvModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 max-md:z-[60] max-md:pb-[max(1rem,env(safe-area-inset-bottom))] motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200"
       onClick={onClose}
     >
       <div
@@ -1466,7 +1466,7 @@ function CvModal({ onClose }: { onClose: () => void }) {
         aria-modal="true"
         aria-label="Curriculum Vitae"
         onClick={(e) => e.stopPropagation()}
-        className="surface-2 relative flex h-[min(90vh,920px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-[color:var(--accent-blue)]/40 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)] motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200 motion-safe:ease-out"
+        className="surface-2 relative flex h-[min(90vh,920px)] w-full max-w-5xl flex-col max-md:max-h-full overflow-hidden rounded-2xl border border-[color:var(--accent-blue)]/40 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.85)] motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-200 motion-safe:ease-out"
       >
         <button
           type="button"
@@ -1477,7 +1477,7 @@ function CvModal({ onClose }: { onClose: () => void }) {
           <X className="h-4 w-4" />
         </button>
 
-        <div className="min-h-0 flex-1 bg-black/20">
+        <div className="min-h-0 flex-1 bg-black/20 max-md:pt-12">
           <PdfReader src="/r2/aditya-shelke-cv.pdf" title="Aditya Shelke — CV" />
         </div>
 
@@ -2784,7 +2784,7 @@ function CertificateModal({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center p-4 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200",
+        "fixed inset-0 z-50 flex items-center justify-center p-4 max-md:z-[60] max-md:pb-[max(1rem,env(safe-area-inset-bottom))] motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200",
         // A scrolling reader under a blurred backdrop forces a re-blur on
         // every frame, so the reader gets a plain dim backdrop instead.
         isPaperViewer ? "bg-black/80" : "bg-black/70 backdrop-blur-sm",
@@ -2806,7 +2806,7 @@ function CertificateModal({
               "h-fit max-h-[92vh] w-fit max-w-[94vw] overflow-y-auto overflow-x-hidden"
             : hasDocument
               ? // Research paper: a fixed reader box with its own scroll.
-                "h-[min(92vh,1100px)] w-full max-w-4xl overflow-hidden"
+                "h-[min(92vh,1100px)] w-full max-w-4xl overflow-hidden max-md:max-h-full"
               : "max-w-lg overflow-hidden",
           ACCENT_BORDER_CLASSES[accent],
         )}
@@ -2825,7 +2825,7 @@ function CertificateModal({
           // Natural size, aspect ratio preserved, capped only by the
           // viewport. The panel wraps this tightly, so nothing is wider
           // than the certificate itself.
-          <div className="flex items-center justify-center bg-black/20 p-2">
+          <div className="flex items-center justify-center bg-black/20 p-2 max-md:pt-12">
             {renderAsPdfCanvas ? (
               <PdfCertificate
                 src={card.document as string}
@@ -2842,7 +2842,7 @@ function CertificateModal({
           </div>
         ) : (
           hasDocument && (
-            <div className="min-h-0 flex-1 bg-black/20">
+            <div className="min-h-0 flex-1 bg-black/20 max-md:pt-12">
               <PdfReader src={card.document as string} title={card.title} />
             </div>
           )
@@ -2858,7 +2858,7 @@ function CertificateModal({
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-lg font-semibold text-foreground">{card.title}</h3>
-            {(verifyHref || isPdfDocument) && (
+            {(verifyHref || hasDocument) && (
               <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
                 {verifyHref && (
                   <a href={verifyHref} target="_blank" rel="noreferrer" className={PDF_BTN}>
@@ -2866,10 +2866,10 @@ function CertificateModal({
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 )}
-                {isPdfDocument && (
-                  // Certificates: Download only. The research paper keeps
-                  // "Open PDF in new tab" as well.
-                  <PdfActions src={card.document as string} showOpen={!renderAsPdfCanvas} />
+                {hasDocument && (
+                  // Certificates (PDF or image): Download only. The research
+                  // paper keeps "Open PDF in new tab" as well.
+                  <PdfActions src={card.document as string} showOpen={isPaper} />
                 )}
               </div>
             )}
