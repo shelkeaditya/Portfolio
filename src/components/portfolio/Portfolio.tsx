@@ -1143,16 +1143,21 @@ function isRenderCancelled(e: unknown) {
 }
 
 // ── Shared PDF actions + error panel ────────────────────────
+// Same look as the Portfolio filter buttons (inactive + hover), so every
+// document action matches them.
 const PDF_BTN =
-  "inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-3 py-1.5 text-xs font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15";
+  "surface-2 inline-flex items-center gap-1.5 rounded-lg border border-border/60 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-[color:var(--accent-blue)]/50 hover:text-[color:var(--accent-blue)]";
 
 function PdfActions({
   src,
   onRetry,
+  showOpen = true,
   className,
 }: {
   src: string;
   onRetry?: () => void;
+  /** Certificates hide "Open PDF in new tab"; CV and paper keep it. */
+  showOpen?: boolean;
   className?: string;
 }) {
   return (
@@ -1163,10 +1168,12 @@ function PdfActions({
           Retry
         </button>
       )}
-      <a href={src} target="_blank" rel="noreferrer" className={PDF_BTN}>
-        Open PDF in new tab
-        <ExternalLink className="h-3 w-3" />
-      </a>
+      {showOpen && (
+        <a href={src} target="_blank" rel="noreferrer" className={PDF_BTN}>
+          Open PDF in new tab
+          <ExternalLink className="h-3 w-3" />
+        </a>
+      )}
       <a href={src} download={pdfFileName(src)} className={PDF_BTN}>
         <Download className="h-3 w-3" />
         Download
@@ -2778,7 +2785,24 @@ function CertificateModal({
             showAsImage && "w-0 min-w-full",
           )}
         >
-          <h3 className="text-lg font-semibold text-foreground">{card.title}</h3>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-lg font-semibold text-foreground">{card.title}</h3>
+            {(verifyHref || isPdfDocument) && (
+              <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
+                {verifyHref && (
+                  <a href={verifyHref} target="_blank" rel="noreferrer" className={PDF_BTN}>
+                    Verify on Credly
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+                {isPdfDocument && (
+                  // Certificates: Download only. The research paper keeps
+                  // "Open PDF in new tab" as well.
+                  <PdfActions src={card.document as string} showOpen={!renderAsPdfCanvas} />
+                )}
+              </div>
+            )}
+          </div>
 
           {card.certDetails && (
             <dl className="mt-3 space-y-1.5 text-sm">
@@ -2796,20 +2820,6 @@ function CertificateModal({
               </div>
             </dl>
           )}
-
-          {verifyHref && (
-            <a
-              href={verifyHref}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-4 inline-flex items-center gap-1.5 rounded-md border border-[color:var(--accent-blue)]/50 bg-[color:var(--accent-blue)]/10 px-3 py-1.5 text-xs font-medium text-accent-blue transition-colors hover:bg-[color:var(--accent-blue)]/15"
-            >
-              Verify on Credly
-              <ExternalLink className="h-3 w-3" />
-            </a>
-          )}
-
-          {isPdfDocument && <PdfActions src={card.document as string} className="mt-4" />}
         </div>
       </div>
     </div>
