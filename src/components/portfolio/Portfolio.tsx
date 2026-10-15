@@ -3563,13 +3563,13 @@ const ARCH_H = 556;
 const ARCH_GROUP = { x: 120, y: 100, w: 384, h: 124, label: "BUILD / SOURCE", members: ["local", "github"] };
 
 const ARCH_NODES: ArchNode[] = [
-  { id: "local", x: 136, y: 134, w: 150, h: 76, cat: "build", icon: "laptop", title: "Local Development", sub: "VS Code · Bun · Git", sub2: "Development & Testing", src: 1, titleDy: 36, subDy: 51, sub2Dy: 63 },
-  { id: "github", x: 338, y: 134, w: 150, h: 76, cat: "build", icon: "github", title: "GitHub Repository", sub: "aditya-shelke/portfolio", sub2: "main branch", src: 2, titleDy: 36, subDy: 51, sub2Dy: 63 },
+  { id: "local", x: 136, y: 134, w: 150, h: 76, cat: "build", icon: "laptop", title: "Local Development", sub: "VS Code · Bun · Git", src: 1, titleDy: 36, subDy: 51, sub2Dy: 63 },
+  { id: "github", x: 338, y: 134, w: 150, h: 76, cat: "build", icon: "github", title: "GitHub Repository", sub: "Push → GitHub", src: 2, titleDy: 36, subDy: 51, sub2Dy: 63 },
   { id: "worker", x: 445, y: 268, w: 184, h: 75, cat: "backend", icon: "code", title: "Cloudflare Worker", sub: "TanStack Start SSR · src/server.ts", src: 3, titleDy: 35, subDy: 50 },
-  { id: "r2", x: 725, y: 378, w: 170, h: 75, cat: "database", icon: "database", title: "R2 Bucket", sub: "portfolio-assets", sub2: "Images · PDFs · Static files", src: 5, titleDy: 34, subDy: 49, sub2Dy: 61 },
+  { id: "r2", x: 725, y: 378, w: 170, h: 75, cat: "database", icon: "database", title: "R2 Bucket", sub: "portfolio-assets", sub2: "Storage · Static files", src: 5, titleDy: 34, subDy: 49, sub2Dy: 61 },
   { id: "obs", x: 706, y: 108, w: 205, h: 75, cat: "cloud", icon: "cloud", title: "Observability", sub: "Worker logs · invocation logs · traces", src: 6, titleDy: 34, subDy: 50 },
   { id: "browser", x: 100, y: 288, w: 155, h: 71, cat: "external", icon: "browser", title: "User Browser", sub: "Portfolio visitor", src: 7, titleDy: 32, subDy: 48 },
-  { id: "email", x: 380, y: 458, w: 170, h: 71, cat: "external", icon: "mail", title: "EmailJS", sub: "Contact form delivery", src: 8, titleDy: 33, subDy: 49 },
+  { id: "email", x: 380, y: 458, w: 170, h: 71, cat: "external", icon: "mail", title: "EmailJS", sub: "Mail Service", src: 8, titleDy: 33, subDy: 49 },
 ];
 
 // Order matters for the trace stagger (160ms per step).
@@ -3589,7 +3589,7 @@ const ARCH_FLOW: string[] = ["req", "assets", "bytes", "html", "logs"];
 const ARCH_EDGES: ArchEdge[] = [
   // Build-time path: Local Development → GitHub → (auto deploy) → Cloudflare Worker.
   { id: "push", from: "local", to: "github", d: "M286 172 H336", color: "blue", dashed: false, width: 2, label: "git push", lx: 311, ly: 165 },
-  { id: "deploy", from: "github", to: "worker", d: "M488 172 H544 Q550 172 550 178 V266", color: "blue", dashed: false, width: 2, label: "Push to main · Auto Deploy", label2: "via Wrangler (Cloudflare)", lx: 583, ly: 150 },
+  { id: "deploy", from: "github", to: "worker", d: "M488 172 H544 Q550 172 550 178 V266", color: "blue", dashed: false, width: 2, label: "via Wrangler (Cloudflare)", lx: 583, ly: 150 },
   // Runtime paths. "req-r2" shares the request line's geometry (the reference draws one
   // browser → worker line carrying both labels); it sits underneath the green line.
   { id: "req-r2", from: "browser", to: "worker", d: "M255 306 H443", color: "grey", dashed: false, width: 1.4, label: "GET /r2/* · images and PDFs", lx: 362, ly: 320 },
