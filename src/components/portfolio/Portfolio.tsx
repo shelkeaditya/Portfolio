@@ -3556,8 +3556,12 @@ interface ArchEdge {
   ly: number;
 }
 
-const ARCH_W = 923;
-const ARCH_H = 556;
+// Cropped viewBox: origin + size chosen from the content bounds (x 100–911, y 100–529) with an
+// even 22-unit margin on every side, so the diagram sits centred in its canvas.
+const ARCH_X0 = 78;
+const ARCH_Y0 = 78;
+const ARCH_W = 855;
+const ARCH_H = 473;
 
 // Dashed BUILD / SOURCE container that wraps the two build-time nodes.
 const ARCH_GROUP = { x: 120, y: 100, w: 384, h: 124, label: "BUILD / SOURCE", members: ["local", "github"] };
@@ -3575,7 +3579,7 @@ const ARCH_NODES: ArchNode[] = [
 // Order matters for the trace stagger (160ms per step).
 const ARCH_DESC: Record<string, string> = {
   local: "Where the portfolio is developed and tested locally with VS Code, Bun, and Git before changes are committed and pushed to GitHub.",
-  github: "The source repository (aditya-shelke/portfolio, main branch). Pushes to main trigger the existing automatic deployment to Cloudflare through Wrangler.",
+  github: "A Push to main triggers the existing automatic deployment to Cloudflare through Wrangler.",
   browser: "The visitor's browser loads the portfolio page, receives the server-rendered HTML, and requests the assets needed to display the site.",
   worker: "Runs the TanStack Start SSR application through src/server.ts. Handles incoming portfolio requests, returns server-rendered HTML, serves application responses, and retrieves static assets from R2.",
   r2: "Stores portfolio assets such as images, the profile photo, favicon, and resume. The Worker retrieves these objects when the application requests them.",
@@ -3702,7 +3706,6 @@ const ARCH_CSS = `
   --arch-purple: #7c3aed;
   --arch-red: #e11d48;
   --arch-blue: #2563eb;
-  --arch-group-fill: rgba(37, 99, 235, 0.06);
   --arch-grey: #94a3b8;
   --arch-border: #e2e8f0;
   --arch-hl: #3b82f6;
@@ -3730,7 +3733,6 @@ const ARCH_CSS = `
   --arch-purple: #a78bfa;
   --arch-red: #fb7185;
   --arch-blue: #60a5fa;
-  --arch-group-fill: rgba(96, 165, 250, 0.07);
   --arch-grey: #64748b;
   --arch-border: rgba(148, 163, 184, 0.16);
   --arch-hl: #60a5fa;
@@ -3806,7 +3808,7 @@ const ARCH_CSS = `
 /* BUILD / SOURCE container — dashed blue frame behind the two build nodes. */
 .arch-group { transition: opacity 200ms ease; pointer-events: none; }
 .arch-group.dim { opacity: 0.28; }
-.arch-group-box { fill: var(--arch-group-fill); stroke: var(--arch-blue); stroke-width: 1.2; stroke-dasharray: 4 3; }
+.arch-group-box { fill: none; stroke: var(--arch-blue); stroke-width: 1.2; stroke-dasharray: 4 3; }
 .arch-group-label { fill: var(--arch-blue); font-size: 9px; font-weight: 700; letter-spacing: 0.02em; }
 
 /* Legend — HTML (not SVG) so it wraps cleanly on narrow screens and never overlaps the diagram. */
@@ -4043,7 +4045,7 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
     const s = vr.width / ARCH_W;
     const ox = vr.left - sr.left;
     const oy = vr.top - sr.top;
-    const box = (m: ArchNode) => ({ l: ox + m.x * s, t: oy + m.y * s, r: ox + (m.x + m.w) * s, b: oy + (m.y + m.h) * s });
+    const box = (m: ArchNode) => ({ l: ox + (m.x - ARCH_X0) * s, t: oy + (m.y - ARCH_Y0) * s, r: ox + (m.x + m.w - ARCH_X0) * s, b: oy + (m.y + m.h - ARCH_Y0) * s });
     const nb = box(n);
     const cw = card.offsetWidth;
     const ch = card.offsetHeight;
@@ -4066,7 +4068,7 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
       const len = el.getTotalLength();
       for (let d = 0; d <= len; d += 6) {
         const pt = el.getPointAtLength(d);
-        pts.push({ x: ox + pt.x * s, y: oy + pt.y * s });
+        pts.push({ x: ox + (pt.x - ARCH_X0) * s, y: oy + (pt.y - ARCH_Y0) * s });
       }
     });
     const hit = (c: { left: number; top: number }, r: { l: number; t: number; r: number; b: number }, pad = 0) =>
@@ -4225,7 +4227,7 @@ function ArchDiagram({ theme }: { theme: "dark" | "light" }) {
             <svg
               ref={svgRef}
               className="arch-svg"
-              viewBox={`0 0 ${ARCH_W} ${ARCH_H}`}
+              viewBox={`${ARCH_X0} ${ARCH_Y0} ${ARCH_W} ${ARCH_H}`}
               role="img"
               aria-label="Portfolio system architecture: Local Development pushes to a GitHub Repository, which auto-deploys to a Cloudflare Worker through Wrangler. A User Browser requests pages from the Worker, which reads assets from an R2 bucket and sends logs to Observability; the browser also posts the contact form to EmailJS."
             >
