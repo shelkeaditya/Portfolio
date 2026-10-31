@@ -6,8 +6,7 @@
   "main": "src/server.ts",
 
   "vars": {
-    "MAINTENANCE_MODE": "false"
-  },
+    "MAINTENANCE_MODE": "flase" },
 
   "r2_buckets": [
     { "binding": "Assets", "bucket_name": "portfolio-assets" }
