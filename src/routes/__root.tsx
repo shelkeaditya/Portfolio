@@ -41,6 +41,14 @@ function ErrorComponent({ error }: { error: Error }) {
 
 // schema.org Person data. Emitted from head() so it's in the server-rendered
 // HTML that crawlers read, rather than injected after hydration.
+// Runs before first paint so the saved/system theme is applied to <html>
+// immediately - no light flash before hydration. Keep the logic in sync with
+// getInitialTheme() in components/portfolio/Portfolio.tsx.
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");var d=t==="dark"||t==="light"?t==="dark":!window.matchMedia("(prefers-color-scheme: light)").matches;document.documentElement.classList.toggle("dark",d)}catch(e){document.documentElement.classList.add("dark")}})()`;
+
+const FONTS_HREF =
+  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap";
+
 const PERSON_JSON_LD = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Person",
@@ -71,7 +79,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Aditya Shelke | Cloud and DevOps Engineer" },
-      { name: "description", content: "Aditya Shelke - AWS Certified Cloud Practitioner. Cloud, DevOps, Linux and Cybersecurity portfolio." },
+      {
+        name: "description",
+        content:
+          "Aditya Shelke - AWS Certified Cloud Practitioner. Cloud, DevOps, Linux and Cybersecurity portfolio.",
+      },
       { name: "author", content: "Aditya Shelke" },
       { property: "og:title", content: "Aditya Shelke | Cloud and DevOps Engineer" },
       { property: "og:description", content: "Cloud, DevOps, Linux and Cybersecurity portfolio." },
@@ -80,8 +92,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@shelkeaditya" },
     ],
-    scripts: [{ type: "application/ld+json", children: PERSON_JSON_LD }],
+    scripts: [
+      { children: THEME_INIT_SCRIPT },
+      { type: "application/ld+json", children: PERSON_JSON_LD },
+    ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: FONTS_HREF },
       {
         rel: "stylesheet",
         href: appCss,
@@ -101,7 +119,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

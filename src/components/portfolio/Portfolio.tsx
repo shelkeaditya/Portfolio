@@ -34,7 +34,8 @@ import {
   RotateCw,
   Share2,
 } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { SITE_URL } from "@/lib/site";
 import type { PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import emailjs from "@emailjs/browser";
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
@@ -92,7 +92,8 @@ function getInitialTheme(): "dark" | "light" {
   } catch {
     // localStorage unavailable (privacy mode, etc.) — fall through to system preference
   }
-  return "dark";
+  // Must mirror the inline pre-paint script in routes/__root.tsx.
+  return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
 }
 function useTheme() {
   const [theme, setTheme] = useState<"dark" | "light">(() => getInitialTheme());
@@ -122,17 +123,18 @@ function useTheme() {
     document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
-  // Persist the theme choice whenever it changes.
-  useEffect(() => {
-    try {
-      localStorage.setItem("theme", theme);
-    } catch {
-      // ignore write failures (privacy mode, etc.)
-    }
-  }, [theme]);
-
+  // Persist only an explicit choice (not the system default) so visitors
+  // who never touch the toggle keep following their OS setting.
   const toggle = () => {
-    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem("theme", next);
+      } catch {
+        // ignore write failures (privacy mode, etc.)
+      }
+      return next;
+    });
   };
 
   return { theme, toggle, mounted };
@@ -1398,7 +1400,7 @@ function PdfReader({ src, title }: { src: string; title: string }) {
 // @share-start
 // The public, canonical address of the CV (not the portfolio page, and not a
 // workers.dev preview host), served by the same /r2/* route as the preview.
-const CV_PUBLIC_URL = "https://aditya.shelkeaditya.workers.dev/r2/aditya-shelke-cv.pdf";
+const CV_PUBLIC_URL = `${SITE_URL}/r2/aditya-shelke-cv.pdf`;
 
 async function copyText(text: string): Promise<boolean> {
   try {
@@ -1802,6 +1804,16 @@ const NAV: {
 // COMPONENT - NavPanel (desktop sidebar)
 // ═══════════════════════════════════════════════════════════
 
+function navParams(key: SectionKey) {
+  return { section: key === "about" ? undefined : SECTION_SLUG[key] };
+}
+
+// Plain left-clicks get the animated transition; ctrl/cmd/middle-click keep
+// the browser's normal "open in new tab" behaviour.
+function isPlainLeftClick(e: React.MouseEvent) {
+  return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+}
+
 function NavPanel({
   active,
   setActive,
@@ -1821,9 +1833,17 @@ function NavPanel({
         {NAV.map(({ key, label, icon: Icon }) => {
           const isActive = active === key;
           return (
-            <button
+            <Link
               key={key}
-              onClick={() => setActive(key)}
+              to="/{-$section}"
+              params={navParams(key)}
+              aria-current={isActive ? "page" : undefined}
+              onClick={(e) => {
+                if (isPlainLeftClick(e)) {
+                  e.preventDefault();
+                  setActive(key);
+                }
+              }}
               className={cn(
                 "group relative flex items-center gap-2 rounded-2xl px-4 py-3.5 transition-all duration-300 ease-out",
                 isActive
@@ -1843,7 +1863,7 @@ function NavPanel({
               </span>
               <span className="flex-1 text-left">{label}</span>
               {isActive && <span className="h-5 w-1 rounded-full bg-violet-500" aria-hidden />}
-            </button>
+            </Link>
           );
         })}
       </nav>
@@ -3690,8 +3710,6 @@ function ArchIconGlyph({ icon }: { icon: ArchIcon }) {
 }
 
 const ARCH_CSS = `
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap");
-
 .arch-root {
   --arch-font: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --arch-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -4689,7 +4707,7 @@ function Contact() {
       }
     }
 
-    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+    if (!turnstileToken) {
       toast.warning("Please complete the verification first.");
       return;
     }
@@ -4698,20 +4716,18 @@ function Contact() {
     const field = (n: string) =>
       (form.elements.namedItem(n) as HTMLInputElement | HTMLTextAreaElement | null)?.value ?? "";
 
-    const request: Promise<unknown> = TURNSTILE_SITE_KEY
-      ? fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: field("name"),
-            email: field("email"),
-            message: field("message"),
-            token: turnstileToken,
-          }),
-        }).then((res) => {
-          if (!res.ok) throw new Error(`Contact API ${res.status}`);
-        })
-      : emailjs.sendForm("service_fdq7bwf", "template_jpawssn", form, "X7cczgqlSFWmadFLE");
+    const request: Promise<unknown> = fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: field("name"),
+        email: field("email"),
+        message: field("message"),
+        token: turnstileToken,
+      }),
+    }).then((res) => {
+      if (!res.ok) throw new Error(`Contact API ${res.status}`);
+    });
 
     request
       .then(() => {
@@ -4801,7 +4817,7 @@ function Contact() {
           <div className="pt-1">
             <Button
               type="submit"
-              disabled={sending || cooldown || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
+              disabled={sending || cooldown || !turnstileToken}
               className="gap-2"
             >
               <Send className="h-4 w-4" />
@@ -5413,9 +5429,17 @@ export default function Portfolio({ section }: { section: SectionKey }) {
           {NAV.map(({ key, label, icon: Icon }) => {
             const isActive = active === key;
             return (
-              <button
+              <Link
                 key={key}
-                onClick={() => navigateTo(key)}
+                to="/{-$section}"
+                params={navParams(key)}
+                aria-current={isActive ? "page" : undefined}
+                onClick={(e) => {
+                  if (isPlainLeftClick(e)) {
+                    e.preventDefault();
+                    navigateTo(key);
+                  }
+                }}
                 className={cn(
                   "flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200",
                   isActive
@@ -5425,7 +5449,7 @@ export default function Portfolio({ section }: { section: SectionKey }) {
               >
                 <Icon className="h-5 w-5" />
                 <span className="text-[10px] font-medium uppercase tracking-wider">{label}</span>
-              </button>
+              </Link>
             );
           })}
         </div>

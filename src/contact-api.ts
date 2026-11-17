@@ -23,12 +23,12 @@
 export interface ContactEnv {
   TURNSTILE_SECRET_KEY: string;
   EMAILJS_PRIVATE_KEY: string;
+  EMAILJS_PUBLIC_KEY: string;
 }
 
-// Same ids the browser used before. The public key is fine to keep here.
+// Service/template ids are not secret. Keys come from the Worker environment.
 const EMAILJS_SERVICE_ID = "service_fdq7bwf";
 const EMAILJS_TEMPLATE_ID = "template_jpawssn";
-const EMAILJS_PUBLIC_KEY = "X7cczgqlSFWmadFLE";
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -43,6 +43,10 @@ const isText = (v: unknown, max: number): v is string =>
 
 export async function handleContact(request: Request, env: ContactEnv): Promise<Response> {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+
+  // Only accept posts from this site's own pages.
+  const origin = request.headers.get("Origin");
+  if (origin !== new URL(request.url).origin) return json({ error: "Forbidden" }, 403);
 
   let body: Payload;
   try {
@@ -81,7 +85,7 @@ export async function handleContact(request: Request, env: ContactEnv): Promise<
     body: JSON.stringify({
       service_id: EMAILJS_SERVICE_ID,
       template_id: EMAILJS_TEMPLATE_ID,
-      user_id: EMAILJS_PUBLIC_KEY,
+      user_id: env.EMAILJS_PUBLIC_KEY,
       accessToken: env.EMAILJS_PRIVATE_KEY,
       template_params: { name, email, message },
     }),

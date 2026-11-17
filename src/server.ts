@@ -2,6 +2,16 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderMaintenanceHtml } from "./lib/maintenance-html";
+import { SITE_URL } from "./lib/site";
+import { handleContact, type ContactEnv } from "./contact-api";
+
+const SITEMAP_PATHS = ["/", "/resume", "/portfolio", "/build", "/contact", "/journey"];
+
+function textResponse(body: string, type: string): Response {
+  return new Response(body, {
+    headers: { "content-type": `${type}; charset=utf-8`, "cache-control": "public, max-age=3600" },
+  });
+}
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -12,7 +22,7 @@ let serverEntryPromise: Promise<ServerEntry> | undefined;
 async function getServerEntry(): Promise<ServerEntry> {
   if (!serverEntryPromise) {
     serverEntryPromise = import("@tanstack/react-start/server-entry").then(
-      (m) => ((m as { default?: ServerEntry }).default ?? (m as unknown as ServerEntry)),
+      (m) => (m as { default?: ServerEntry }).default ?? (m as unknown as ServerEntry),
     );
   }
   return serverEntryPromise;
@@ -33,7 +43,11 @@ function brandedErrorResponse(): Response {
 // Anything other than an explicit "on" value leaves the site running normally.
 function isMaintenanceMode(env: unknown): boolean {
   const raw = (env as { MAINTENANCE_MODE?: string | boolean } | undefined)?.MAINTENANCE_MODE;
-  return ["true", "1", "on", "yes"].includes(String(raw ?? "").trim().toLowerCase());
+  return ["true", "1", "on", "yes"].includes(
+    String(raw ?? "")
+      .trim()
+      .toLowerCase(),
+  );
 }
 
 function maintenanceResponse(): Response {
@@ -126,9 +140,27 @@ export default {
       return handleAssetRequest(request, env);
     }
 
+    if (url.pathname === "/robots.txt") {
+      return textResponse(
+        `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`,
+        "text/plain",
+      );
+    }
+    if (url.pathname === "/sitemap.xml") {
+      const urls = SITEMAP_PATHS.map((p) => `<url><loc>${SITE_URL}${p}</loc></url>`).join("");
+      return textResponse(
+        `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`,
+        "application/xml",
+      );
+    }
+
     // Checked before any SSR work. /r2/ stays reachable above so the page's background loads.
     if (isMaintenanceMode(env)) {
       return maintenanceResponse();
+    }
+
+    if (url.pathname === "/api/contact") {
+      return handleContact(request, env as ContactEnv);
     }
 
     try {

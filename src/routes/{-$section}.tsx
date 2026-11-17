@@ -10,6 +10,19 @@ const PAGE_TITLE: Record<string, string> = {
   journey: "Journey",
 };
 
+const PAGE_DESC: Record<string, string> = {
+  resume:
+    "Resume of Aditya Shelke, Cloud & DevOps Engineer: CI/CD, Docker, Linux, AWS and server security. B.Tech in Cloud Technology & Information Security.",
+  portfolio:
+    "Projects, certifications and publications by Aditya Shelke: DevSecOps, CI/CD, server monitoring and self-hosted cloud. AWS Certified Cloud Practitioner.",
+  build:
+    "How this portfolio is built and deployed: TanStack Start on Cloudflare Workers with R2 storage, GitHub deployments and observability.",
+  contact:
+    "Get in touch with Aditya Shelke, a Cloud & DevOps Engineer based in Pune, India, about jobs, projects or tech conversations.",
+  journey:
+    "Aditya Shelke's journey from learning web basics to working as a Cloud & DevOps Engineer.",
+};
+
 export const Route = createFileRoute("/{-$section}")({
   beforeLoad: ({ params }) => {
     const slug = params.section;
@@ -30,6 +43,12 @@ export const Route = createFileRoute("/{-$section}")({
     return {
       meta: [
         { title },
+        ...(PAGE_DESC[slug]
+          ? [
+              { name: "description", content: PAGE_DESC[slug] },
+              { property: "og:description", content: PAGE_DESC[slug] },
+            ]
+          : []),
         { property: "og:title", content: title },
         { property: "og:url", content: url },
       ],
