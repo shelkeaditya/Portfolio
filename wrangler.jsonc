@@ -6,7 +6,8 @@
   "main": "src/server.ts",
 
   "vars": {
-    "MAINTENANCE_MODE": "flase" },
+    "MAINTENANCE_MODE": "flase" ,
+    "VITE_TURNSTILE_SITE_KEY": "0x4AAAAAAFGedns-VZl7YZYs"},
 
   "r2_buckets": [
     { "binding": "Assets", "bucket_name": "portfolio-assets" }
