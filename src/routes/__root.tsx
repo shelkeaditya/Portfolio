@@ -39,7 +39,7 @@ function ErrorComponent({ error }: { error: Error }) {
   return <MaintenancePage />;
 }
 
-// schema.org Person data. Emitted from head() so it's in the server-rendered
+
 // HTML that crawlers read, rather than injected after hydration.
 // Runs before first paint so the saved/system theme is applied to <html>
 // immediately - no light flash before hydration. Keep the logic in sync with
@@ -49,6 +49,7 @@ const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");v
 const FONTS_HREF =
   "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap";
 
+  // schema.org Person data. Emitted from head() so it's in the server-rendered
 const PERSON_JSON_LD = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "Person",
@@ -85,6 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Aditya Shelke - AWS Certified Cloud Practitioner. Cloud, DevOps, Linux and Cybersecurity portfolio.",
       },
       { name: "author", content: "Aditya Shelke" },
+      { name: "google-site-verification", content: "DsYjGqptbiT3Cjm33ngQBFdqQKl86nwyuzUqnPGrl2o" },
       { property: "og:title", content: "Aditya Shelke | Cloud and DevOps Engineer" },
       { property: "og:description", content: "Cloud, DevOps, Linux and Cybersecurity portfolio." },
       { property: "og:type", content: "website" },
